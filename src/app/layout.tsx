@@ -14,7 +14,15 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'UoScholar',
-  description: 'motivated by uoslink',
+  description: '서울시립대 학생을 위한 학습 커뮤니티',
+  metadataBase: new URL('https://uocholar.example.com'),
+  openGraph: {
+    title: 'UoScholar',
+    description: '서울시립대 학생을 위한 학습 커뮤니티',
+    type: 'website',
+    locale: 'ko_KR',
+  },
+  alternates: { canonical: '/' },
 };
 
 export default function RootLayout({
@@ -23,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en'>
+    <html lang='ko'>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
