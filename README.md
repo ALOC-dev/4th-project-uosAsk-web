@@ -1,4 +1,4 @@
-# uoScholar-web
+# uosAsk-web
 
 ![Next.js](https://img.shields.io/badge/Next.js-15.5.3-black?logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-blue?logo=typescript)
@@ -16,8 +16,8 @@
 
 ```bash
 # 레포지토리 클론
+cd 4th-project-uosAsk-Client
 git clone <repository-url>
-cd 4th-project-uoScholar-Client
 
 # 의존성 설치
 pnpm install
