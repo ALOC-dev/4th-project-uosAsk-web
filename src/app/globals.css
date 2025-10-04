@@ -1,4 +1,4 @@
-/* CSS Reset */
+/* Minimal CSS Reset - Only essential global styles */
 *,
 *::before,
 *::after {
@@ -7,46 +7,12 @@
   padding: 0;
 }
 
-/* CSS Variables */
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-/* Base Styles */
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family:
-    var(--font-sans),
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    'Segoe UI',
-    Roboto,
-    'Noto Sans',
-    Ubuntu,
-    Cantarell,
-    'Helvetica Neue',
-    Arial,
-    'Apple Color Emoji',
-    'Segoe UI Emoji',
-    'Segoe UI Symbol',
-    'Noto Color Emoji';
   line-height: 1.5;
 }
 
@@ -83,14 +49,4 @@ h4,
 h5,
 h6 {
   overflow-wrap: break-word;
-}
-
-/* Link styles */
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
 }
