@@ -13,11 +13,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'UoScholar',
+  title: 'uosAsk',
   description: '서울시립대 학생을 위한 학습 커뮤니티',
-  metadataBase: new URL('https://uoscholar.example.com'),
+  metadataBase: new URL('https://uosask.example.com'),
   openGraph: {
-    title: 'UoScholar',
+    title: 'uosAsk',
     description: '서울시립대 학생을 위한 학습 커뮤니티',
     type: 'website',
     locale: 'ko_KR',

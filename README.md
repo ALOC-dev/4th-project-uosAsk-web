@@ -1,10 +1,9 @@
-# UoScholar - 서울시립대 학습 커뮤니티
+# uosAsk - 서울시립대 학습 커뮤니티
 
 ![Next.js](https://img.shields.io/badge/Next.js-15.5.3-black?logo=next.js)
 ![React](https://img.shields.io/badge/React-19.1.0-61DAFB?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-blue?logo=typescript)
 ![Emotion](https://img.shields.io/badge/Emotion-11.14.0-D26AC2?logo=styled-components)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.1.13-06B6D4?logo=tailwindcss)
 ![pnpm](https://img.shields.io/badge/pnpm-10.15.1-orange?logo=pnpm)
 
 ## 📚 프로젝트 소개
@@ -15,7 +14,7 @@
 
 - **프레임워크**: Next.js 15 (App Router)
 - **언어**: TypeScript
-- **스타일링**: Emotion + Tailwind CSS
+- **스타일링**: Emotion (CSS-in-JS)
 - **패키지 매니저**: pnpm
 
 ## 🚀 빠른 시작
@@ -69,10 +68,40 @@ src/
 
 ## 🎨 스타일링
 
-이 프로젝트는 **Emotion**과 **Tailwind CSS**를 함께 사용합니다.
+이 프로젝트는 **Emotion (CSS-in-JS)**을 사용합니다.
 
-- **Emotion**: 컴포넌트 레벨의 동적 스타일링
-- **Tailwind CSS**: 유틸리티 클래스 기반 빠른 스타일링
+### Emotion 사용 방법
+
+#### 1. Styled Components 방식
+
+```tsx
+'use client';
+import styled from '@emotion/styled';
+
+const Button = styled.button`
+  padding: 12px 24px;
+  background-color: #667eea;
+  color: white;
+  border-radius: 8px;
+`;
+```
+
+#### 2. CSS Prop 방식
+
+```tsx
+'use client';
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react';
+
+<div
+  css={css`
+    color: red;
+    font-size: 20px;
+  `}
+>
+  Hello
+</div>;
+```
 
 자세한 내용은 [Emotion 설정 가이드](./docs/EMOTION_SETUP.md)를 참고하세요.
 

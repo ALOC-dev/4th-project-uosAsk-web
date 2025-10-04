@@ -4,7 +4,7 @@ export default function Home() {
       <h1
         style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}
       >
-        UoScholar
+        uosAsk
       </h1>
       <p
         style={{
