@@ -61,11 +61,40 @@ const EditIcon = styled.div`
   color: ${theme.colors.primary};
 `;
 
+const IconButton = styled.button`
+  width: 53px;
+  height: 53px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${theme.colors.background};
+  border: 0.5px solid ${theme.colors.borderLight};
+  border-radius: ${theme.radii.sm};
+  box-shadow: ${theme.shadows.md};
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    box-shadow: ${theme.shadows.lg};
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+`;
+
 interface HeaderProps {
   onNewChat?: () => void;
+  onSettingsClick?: () => void;
+  onThemeToggle?: () => void;
 }
 
-export function Header({ onNewChat }: HeaderProps) {
+export function Header({
+  onNewChat,
+  onSettingsClick,
+  onThemeToggle,
+}: HeaderProps) {
   return (
     <HeaderContainer>
       <HeaderActions>
@@ -80,6 +109,24 @@ export function Header({ onNewChat }: HeaderProps) {
           </EditIcon>
           <ButtonText>새 채팅</ButtonText>
         </NewChatButton>
+
+        <IconButton onClick={onSettingsClick} aria-label='설정'>
+          <Image
+            src='/images/setting-icon.png'
+            alt='설정'
+            width={28}
+            height={28}
+          />
+        </IconButton>
+
+        <IconButton onClick={onThemeToggle} aria-label='테마 전환'>
+          <Image
+            src='/images/day-icon.png'
+            alt='테마 전환'
+            width={28}
+            height={28}
+          />
+        </IconButton>
       </HeaderActions>
     </HeaderContainer>
   );
