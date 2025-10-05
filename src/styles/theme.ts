@@ -2,15 +2,33 @@ import { Theme } from '@emotion/react';
 
 export const lightTheme: Theme = {
   colors: {
-    primary: '#3b82f6',
-    secondary: '#8b5cf6',
-    background: '#ffffff',
-    foreground: '#171717',
+    // Primary Colors (from Figma design)
+    primary: '#408CFF',
+    secondary: '#98BFFA',
+
+    // Background Colors
+    background: '#FFFFFF',
+    backgroundSecondary: '#F0F1F5',
+    backgroundTertiary: '#E5E6EC',
+    contentContainer: '#D9D9D9',
+
+    // Text Colors
+    foreground: '#000000',
+    text: '#000000',
+    textSecondary: '#5C5E66',
+    textTertiary: '#A9ADB9',
+
+    // Border Colors
+    border: 'rgba(0, 0, 0, 0.1)',
+    borderLight: 'rgba(0, 0, 0, 0.3)',
+
+    // Status Colors
     error: '#ef4444',
     success: '#22c55e',
     warning: '#f59e0b',
     info: '#06b6d4',
-    border: '#e5e7eb',
+
+    // Utility
     muted: '#6b7280',
     mutedBackground: '#f3f4f6',
   },
@@ -29,7 +47,7 @@ export const lightTheme: Theme = {
     desktop: '1024px',
   },
   fonts: {
-    sans: 'var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif',
+    sans: "'Noto Sans KR', ui-sans-serif, system-ui, sans-serif",
     mono: 'var(--font-geist-mono), monospace',
   },
   fontSizes: {
@@ -43,14 +61,14 @@ export const lightTheme: Theme = {
     '4xl': '2.25rem',
   },
   radii: {
-    sm: '0.375rem',
-    md: '0.5rem',
-    lg: '0.75rem',
+    sm: '0.625rem',
+    md: '1.25rem',
+    lg: '1.75rem',
     full: '9999px',
   },
   shadows: {
-    sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-    md: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+    sm: '0.1px 0.1px 2px 0px rgba(0, 0, 0, 0.25)',
+    md: '1px 1px 5px 0px rgba(0, 0, 0, 0.25)',
     lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
     xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
   },
