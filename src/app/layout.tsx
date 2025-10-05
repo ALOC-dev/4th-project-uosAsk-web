@@ -36,6 +36,7 @@ export default function RootLayout({
       </head>
       <body className='antialiased'>
         <ThemeProvider>{children}</ThemeProvider>
+        <div id='modal' />
       </body>
     </html>
   );
