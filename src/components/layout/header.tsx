@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import styled from '@emotion/styled';
 import { theme } from '@/styles/theme';
 
@@ -9,39 +10,12 @@ const HeaderContainer = styled.header`
   background-color: ${theme.colors.background};
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   padding: 0 ${theme.spacing['2xl']};
   position: relative;
 `;
 
-const LogoSection = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${theme.spacing.md};
-`;
-
-const LogoImage = styled.div`
-  width: 53px;
-  height: 53px;
-  border-radius: 50%;
-  background-color: ${theme.colors.backgroundTertiary};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-`;
-
-const LogoText = styled.h1`
-  font-family: ${theme.fonts.sans};
-  font-size: ${theme.fontSizes['2xl']};
-  font-weight: 700;
-  color: ${theme.colors.textTertiary};
-  letter-spacing: -0.08em;
-  line-height: 1.2;
-  margin: 0;
-`;
-
 const HeaderActions = styled.div`
-  margin-left: auto;
   display: flex;
   align-items: center;
   gap: ${theme.spacing.md};
@@ -87,15 +61,6 @@ const EditIcon = styled.div`
   color: ${theme.colors.primary};
 `;
 
-const HeaderDivider = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: ${theme.spacing.sm};
-  right: ${theme.spacing.sm};
-  height: 2px;
-  background-color: ${theme.colors.border};
-`;
-
 interface HeaderProps {
   onNewChat?: () => void;
 }
@@ -103,46 +68,19 @@ interface HeaderProps {
 export function Header({ onNewChat }: HeaderProps) {
   return (
     <HeaderContainer>
-      <LogoSection>
-        <LogoImage>{/* 로고 이미지를 여기에 추가할 수 있습니다 */}</LogoImage>
-        <LogoText>시누공</LogoText>
-      </LogoSection>
-
       <HeaderActions>
         <NewChatButton onClick={onNewChat}>
           <EditIcon>
-            <svg
-              width='28'
-              height='28'
-              viewBox='0 0 28 28'
-              fill='none'
-              xmlns='http://www.w3.org/2000/svg'
-            >
-              <g>
-                <path
-                  d='M4 24L10 22L24 8C25.1 6.9 25.1 5.1 24 4C22.9 2.9 21.1 2.9 20 4L6 18L4 24Z'
-                  stroke='currentColor'
-                  strokeWidth='2'
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                />
-                <path
-                  d='M18 6L22 10'
-                  fill='currentColor'
-                  opacity='0.5'
-                  stroke='currentColor'
-                  strokeWidth='2'
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                />
-              </g>
-            </svg>
+            <Image
+              src='/images/newChat-icon.png'
+              alt='새 채팅'
+              width={28}
+              height={28}
+            />
           </EditIcon>
           <ButtonText>새 채팅</ButtonText>
         </NewChatButton>
       </HeaderActions>
-
-      <HeaderDivider />
     </HeaderContainer>
   );
 }
