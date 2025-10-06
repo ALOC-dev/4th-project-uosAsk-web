@@ -24,8 +24,9 @@ const HeaderActions = styled.div`
 const NewChatButton = styled.button`
   display: flex;
   align-items: center;
-  gap: ${theme.spacing.sm};
-  padding: ${theme.spacing.md} ${theme.spacing.lg};
+  justify-content: center;
+  width: 100px;
+  height: 48px;
   background-color: ${theme.colors.background};
   border: 0.5px solid ${theme.colors.borderLight};
   border-radius: ${theme.radii.sm};
@@ -62,8 +63,8 @@ const EditIcon = styled.div`
 `;
 
 const IconButton = styled.button`
-  width: 53px;
-  height: 53px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
