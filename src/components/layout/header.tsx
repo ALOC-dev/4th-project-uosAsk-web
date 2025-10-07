@@ -6,7 +6,7 @@ import { theme } from '@/styles/theme';
 
 const HeaderContainer = styled.header`
   width: 100%;
-  height: 85px;
+  height: 90px;
   background-color: ${theme.colors.background};
   display: flex;
   align-items: center;
