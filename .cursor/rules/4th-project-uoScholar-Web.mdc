@@ -1,14 +1,14 @@
 ---
-description: 4th-project-uoScholar-Client 개발 및 코드 스타일 가이드
+description: 4th-project-uoScholar-Web 개발 및 코드 스타일 가이드
 globs:
     - 'src/**/*.{ts, tsx, js, jsx}'
 alwaysApply: true
 ---
 
-# 4th-project-uoScholar-Client  - Cursor Rules
+# 4th-project-uoScholar-Web  - Cursor Rules
 
 ## 프로젝트 개요
-- **프로젝트명**: 4th-project-uoScholar-Client
+- **프로젝트명**: 4th-project-uoScholar-Web
 - **기술 스택**: Next.js 15, React 19, TypeScript, Tailwind CSS
 - **UI 라이브러리**: Shadcn/ui, Radix UI
 - **패키지 매니저**: pnpm
