@@ -25,22 +25,19 @@ const SidebarContent = styled.div`
 const LogoSection = styled.div`
   display: flex;
   align-items: center;
-  gap: ${theme.spacing.md};
-  padding: ${theme.spacing.sm} ${theme.spacing.lg};
-  margin-bottom: ${theme.spacing.sm};
+  gap: ${theme.spacing.xs} -${theme.spacing.md};
+  padding: ${0} ${theme.spacing.md};
 `;
 
 const LogoIcon = styled.div`
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
+  width: 53px;
+  height: 53px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
-
   img {
     object-fit: cover;
   }
@@ -48,31 +45,25 @@ const LogoIcon = styled.div`
 
 const LogoText = styled.span`
   font-family: ${theme.fonts.sans};
-  font-size: ${theme.fontSizes.sm};
+  font-size: ${theme.fontSizes['2xl']};
   font-weight: 700;
   color: ${theme.colors.textSecondary};
   letter-spacing: -0.08em;
-  line-height: 1.2;
-`;
-
-const TopDivider = styled.div`
-  width: calc(100% - ${theme.spacing.xl});
-  height: 2px;
-  background-color: ${theme.colors.border};
-  margin: ${theme.spacing.sm} auto;
 `;
 
 const NavSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing.sm};
+  width: calc(100% - ${theme.spacing.xl});
+  gap: ${theme.spacing.xs};
+  margin: 0 auto;
 `;
 
 const NavItem = styled.button<{ isActive?: boolean }>`
   display: flex;
   align-items: center;
   gap: ${theme.spacing.md};
-  padding: ${theme.spacing.sm} ${theme.spacing.lg};
+  padding: ${theme.spacing.sm} ${theme.spacing.sm};
   background: ${(props) =>
     props.isActive ? theme.colors.backgroundTertiary : 'transparent'};
   border: none;
@@ -94,7 +85,7 @@ const NavIcon = styled.div`
   align-items: center;
   justify-content: center;
   color: ${theme.colors.primary};
-  opacity: 0.5;
+  opacity: 1;
 
   ${NavItem}:hover & {
     opacity: 1;
@@ -104,7 +95,7 @@ const NavIcon = styled.div`
 const NavText = styled.span<{ isActive?: boolean }>`
   font-family: ${theme.fonts.sans};
   font-size: ${theme.fontSizes.sm};
-  font-weight: ${theme.fontSizes.base === '1rem' ? 500 : 700};
+  font-weight: ${theme.fontSizes.base === '1rem' ? 600 : 800};
   color: ${theme.colors.textSecondary};
   opacity: ${(props) => (props.isActive ? 1 : 0.5)};
   letter-spacing: -0.08em;
@@ -115,9 +106,8 @@ const SectionTitle = styled.h3`
   font-family: ${theme.fonts.sans};
   font-size: ${theme.fontSizes.sm};
   font-weight: 700;
-  color: ${theme.colors.textSecondary};
+  color: ${theme.colors.primary};
   padding: 0 ${theme.spacing.lg};
-  margin-top: ${theme.spacing.lg};
   letter-spacing: -0.08em;
   line-height: 1.2;
 `;
@@ -125,7 +115,6 @@ const SectionTitle = styled.h3`
 const HistoryList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing.sm};
   padding: 0 ${theme.spacing.lg};
 `;
 
@@ -152,7 +141,7 @@ const Divider = styled.div`
   width: calc(100% - ${theme.spacing.xl});
   height: 2px;
   background-color: ${theme.colors.border};
-  margin: 0 auto;
+  margin: ${theme.spacing.sm} auto;
 `;
 
 interface SidebarProps {
@@ -175,15 +164,15 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
             <Image
               src='/images/mainLogo.png'
               alt='시누공 로고'
-              width={35}
-              height={35}
+              width={53}
+              height={53}
               priority
             />
           </LogoIcon>
           <LogoText>시누공</LogoText>
         </LogoSection>
 
-        <TopDivider />
+        <Divider />
 
         <NavSection>
           <NavItem
@@ -255,12 +244,12 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
             <NavIcon>
               <Image
                 src='/images/search-icon.png'
-                alt='공지 검색'
+                alt='공지검색'
                 width={22}
                 height={22}
               />
             </NavIcon>
-            <NavText isActive={activeSection === 'search'}>공지 검색</NavText>
+            <NavText isActive={activeSection === 'search'}>공지검색</NavText>
           </NavItem>
         </NavSection>
 
