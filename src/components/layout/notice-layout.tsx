@@ -50,7 +50,7 @@ const NoticeItem = styled.div`
   flex-direction: column;
   justify-content: center; /* 세로 중앙 정렬 */
   gap: ${({ theme }) => theme.spacing.sm};
-  padding: ${({ theme }) => `${theme.spacing.xs} ${theme.spacing['xl']}`};
+  padding: ${({ theme }) => `${theme.spacing.xs} ${theme.spacing.lg}`};
   background-color: transparent;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   cursor: pointer;
