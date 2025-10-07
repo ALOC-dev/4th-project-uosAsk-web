@@ -20,6 +20,29 @@ const NoticeList = styled.div`
   flex-direction: column;
   height: 100%;
   overflow-y: auto;
+
+  /* 스크롤바 스타일링 */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent; /* 스크롤바 트랙 투명 */
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2); /* 스크롤바 색상 */
+    border-radius: 4px;
+    transition: background-color 0.2s;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.4); /* 호버 시 진한 색상 */
+  }
+
+  /* Firefox 스크롤바 스타일링 */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 `;
 
 const NoticeItem = styled.div`
