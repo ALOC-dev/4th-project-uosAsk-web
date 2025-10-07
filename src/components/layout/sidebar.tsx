@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import styled from '@emotion/styled';
 
 const SidebarContainer = styled.aside`
@@ -149,10 +150,28 @@ interface SidebarProps {
   onNavigate?: (section: string) => void;
 }
 
+// 섹션별 라우트 매핑
+const ROUTE_MAP: Record<string, string> = {
+  chatbot: '/',
+  general: '/general',
+  academic: '/academic',
+  department: '/department',
+  search: '/search',
+};
+
 export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
+  const router = useRouter();
+
   const handleNavClick = (section: string) => {
+    // onNavigate 콜백이 있으면 호출 (하위 호환성)
     if (onNavigate) {
       onNavigate(section);
+    }
+
+    // 라우팅 처리
+    const route = ROUTE_MAP[section];
+    if (route) {
+      router.push(route);
     }
   };
 
