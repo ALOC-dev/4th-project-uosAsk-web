@@ -10,6 +10,7 @@ export const lightTheme: Theme = {
     background: '#FFFFFF',
     backgroundSecondary: '#F0F1F5',
     backgroundTertiary: '#E5E6EC',
+    backgroundButton: '#FFFFFF',
     contentContainer: '#D9D9D9',
 
     // Text Colors
@@ -17,6 +18,7 @@ export const lightTheme: Theme = {
     text: '#000000',
     textSecondary: '#5C5E66',
     textTertiary: '#A9ADB9',
+    navTextActive: '#5C5E66',
 
     // Border Colors
     border: 'rgba(0, 0, 0, 0.1)',
@@ -74,17 +76,51 @@ export const lightTheme: Theme = {
   },
 };
 
-export const darkTheme: Theme = {
+export const nightTheme: Theme = {
   ...lightTheme,
   colors: {
     ...lightTheme.colors,
-    background: '#0a0a0a',
-    foreground: '#ededed',
-    border: '#27272a',
-    muted: '#a1a1aa',
-    mutedBackground: '#18181b',
+    // Primary Colors (same as light theme)
+    primary: '#408CFF',
+    secondary: '#98BFFA',
+
+    // Background Colors (from Figma night theme)
+    background: '#1D2127',
+    backgroundSecondary: '#2C3038',
+    backgroundTertiary: '#414651',
+    backgroundButton: '#414651',
+    contentContainer: '#2C3038',
+
+    // Text Colors
+    foreground: '#FFFFFF',
+    text: '#FFFFFF',
+    textSecondary: '#A9ADB9',
+    textTertiary: '#A9ADB9',
+    textQuaternary: '#B4B7C4',
+    textFaded: 'rgba(180, 183, 196, 0.5)',
+    navTextActive: '#FFFFFF',
+
+    // Border Colors
+    border: 'rgba(0, 0, 0, 0.1)',
+    borderLight: 'rgba(0, 0, 0, 0.3)',
+
+    // Status Colors (same as light theme)
+    error: '#ef4444',
+    success: '#22c55e',
+    warning: '#f59e0b',
+    info: '#06b6d4',
+
+    // Utility
+    muted: '#6b7280',
+    mutedBackground: '#2C3038',
   },
 };
+
+// 별칭 (day 모드)
+export const dayTheme: Theme = lightTheme;
+
+// Deprecated: use dayTheme or lightTheme instead
+export const darkTheme: Theme = nightTheme;
 
 // 기본 테마
 export const theme = lightTheme;

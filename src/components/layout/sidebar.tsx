@@ -1,13 +1,13 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import styled from '@emotion/styled';
-import { theme } from '@/styles/theme';
 
 const SidebarContainer = styled.aside`
   width: 275px;
   height: 100vh;
-  background-color: ${theme.colors.backgroundSecondary};
+  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
   position: fixed;
   left: 0;
   top: 0;
@@ -18,72 +18,63 @@ const SidebarContainer = styled.aside`
 const SidebarContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing.md};
-  padding: ${theme.spacing.lg} 0;
+  gap: ${({ theme }) => theme.spacing.md};
+  padding: ${({ theme }) => theme.spacing.lg} 0;
 `;
 
 const LogoSection = styled.div`
   display: flex;
   align-items: center;
-  gap: ${theme.spacing.md};
-  padding: ${theme.spacing.sm} ${theme.spacing.lg};
-  margin-bottom: ${theme.spacing.sm};
+  gap: ${({ theme }) => `${theme.spacing.xs} -${theme.spacing.md}`};
+  padding: ${({ theme }) => `0 ${theme.spacing.md}`};
 `;
 
 const LogoIcon = styled.div`
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
+  width: 53px;
+  height: 53px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
-
   img {
     object-fit: cover;
   }
 `;
 
 const LogoText = styled.span`
-  font-family: ${theme.fonts.sans};
-  font-size: ${theme.fontSizes.sm};
+  font-family: ${({ theme }) => theme.fonts.sans};
+  font-size: ${({ theme }) => theme.fontSizes['2xl']};
   font-weight: 700;
-  color: ${theme.colors.textSecondary};
+  color: ${({ theme }) => theme.colors.textSecondary};
   letter-spacing: -0.08em;
-  line-height: 1.2;
-`;
-
-const TopDivider = styled.div`
-  width: calc(100% - ${theme.spacing.xl});
-  height: 2px;
-  background-color: ${theme.colors.border};
-  margin: ${theme.spacing.sm} auto;
 `;
 
 const NavSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing.sm};
+  width: calc(100% - ${({ theme }) => theme.spacing.xl});
+  gap: ${({ theme }) => theme.spacing.xs};
+  margin: 0 auto;
 `;
 
 const NavItem = styled.button<{ isActive?: boolean }>`
   display: flex;
   align-items: center;
-  gap: ${theme.spacing.md};
-  padding: ${theme.spacing.sm} ${theme.spacing.lg};
-  background: ${(props) =>
-    props.isActive ? theme.colors.backgroundTertiary : 'transparent'};
+  gap: ${({ theme }) => theme.spacing.md};
+  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.sm}`};
+  background: ${({ isActive, theme }) =>
+    isActive ? theme.colors.backgroundTertiary : 'transparent'};
   border: none;
-  border-radius: ${theme.radii.sm};
+  border-radius: ${({ theme }) => theme.radii.sm};
   cursor: pointer;
   transition: background-color 0.2s;
   width: 100%;
   text-align: left;
 
   &:hover {
-    background-color: ${theme.colors.backgroundTertiary};
+    background-color: ${({ theme }) => theme.colors.backgroundTertiary};
   }
 `;
 
@@ -93,8 +84,8 @@ const NavIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${theme.colors.primary};
-  opacity: 0.5;
+  color: ${({ theme }) => theme.colors.primary};
+  opacity: 1;
 
   ${NavItem}:hover & {
     opacity: 1;
@@ -102,22 +93,22 @@ const NavIcon = styled.div`
 `;
 
 const NavText = styled.span<{ isActive?: boolean }>`
-  font-family: ${theme.fonts.sans};
-  font-size: ${theme.fontSizes.sm};
-  font-weight: ${theme.fontSizes.base === '1rem' ? 500 : 700};
-  color: ${theme.colors.textSecondary};
-  opacity: ${(props) => (props.isActive ? 1 : 0.5)};
+  font-family: ${({ theme }) => theme.fonts.sans};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => (theme.fontSizes.base === '1rem' ? 600 : 800)};
+  color: ${({ isActive, theme }) =>
+    isActive ? theme.colors.navTextActive : theme.colors.textSecondary};
+  opacity: ${({ isActive }) => (isActive ? 1 : 0.5)};
   letter-spacing: -0.08em;
   line-height: 1.2;
 `;
 
 const SectionTitle = styled.h3`
-  font-family: ${theme.fonts.sans};
-  font-size: ${theme.fontSizes.sm};
+  font-family: ${({ theme }) => theme.fonts.sans};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: 700;
-  color: ${theme.colors.textSecondary};
-  padding: 0 ${theme.spacing.lg};
-  margin-top: ${theme.spacing.lg};
+  color: ${({ theme }) => theme.colors.primary};
+  padding: 0 ${({ theme }) => theme.spacing.lg};
   letter-spacing: -0.08em;
   line-height: 1.2;
 `;
@@ -125,20 +116,19 @@ const SectionTitle = styled.h3`
 const HistoryList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing.sm};
-  padding: 0 ${theme.spacing.lg};
+  padding: 0 ${({ theme }) => theme.spacing.lg};
 `;
 
 const HistoryItem = styled.div`
-  font-family: ${theme.fonts.sans};
-  font-size: ${theme.fontSizes.sm};
+  font-family: ${({ theme }) => theme.fonts.sans};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: 500;
-  color: ${theme.colors.textSecondary};
+  color: ${({ theme }) => theme.colors.textSecondary};
   opacity: 0.5;
   letter-spacing: -0.08em;
   line-height: 1.2;
   cursor: pointer;
-  padding: ${theme.spacing.sm} 0;
+  padding: ${({ theme }) => theme.spacing.sm} 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -149,10 +139,10 @@ const HistoryItem = styled.div`
 `;
 
 const Divider = styled.div`
-  width: calc(100% - ${theme.spacing.xl});
+  width: calc(100% - ${({ theme }) => theme.spacing.xl});
   height: 2px;
-  background-color: ${theme.colors.border};
-  margin: 0 auto;
+  background-color: ${({ theme }) => theme.colors.border};
+  margin: ${({ theme }) => theme.spacing.sm} auto;
 `;
 
 interface SidebarProps {
@@ -160,10 +150,28 @@ interface SidebarProps {
   onNavigate?: (section: string) => void;
 }
 
+// 섹션별 라우트 매핑
+const ROUTE_MAP: Record<string, string> = {
+  chatbot: '/',
+  general: '/general',
+  academic: '/academic',
+  department: '/department',
+  search: '/search',
+};
+
 export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
+  const router = useRouter();
+
   const handleNavClick = (section: string) => {
+    // onNavigate 콜백이 있으면 호출 (하위 호환성)
     if (onNavigate) {
       onNavigate(section);
+    }
+
+    // 라우팅 처리
+    const route = ROUTE_MAP[section];
+    if (route) {
+      router.push(route);
     }
   };
 
@@ -175,15 +183,15 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
             <Image
               src='/images/mainLogo.png'
               alt='시누공 로고'
-              width={35}
-              height={35}
+              width={53}
+              height={53}
               priority
             />
           </LogoIcon>
           <LogoText>시누공</LogoText>
         </LogoSection>
 
-        <TopDivider />
+        <Divider />
 
         <NavSection>
           <NavItem
@@ -255,12 +263,12 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
             <NavIcon>
               <Image
                 src='/images/search-icon.png'
-                alt='공지 검색'
+                alt='공지검색'
                 width={22}
                 height={22}
               />
             </NavIcon>
-            <NavText isActive={activeSection === 'search'}>공지 검색</NavText>
+            <NavText isActive={activeSection === 'search'}>공지검색</NavText>
           </NavItem>
         </NavSection>
 
