@@ -8,11 +8,15 @@ declare module '@emotion/react' {
       background: string;
       backgroundSecondary: string;
       backgroundTertiary: string;
+      backgroundButton: string;
       contentContainer: string;
       foreground: string;
       text: string;
       textSecondary: string;
       textTertiary: string;
+      textQuaternary?: string;
+      textFaded?: string;
+      navTextActive: string;
       border: string;
       borderLight: string;
       error: string;

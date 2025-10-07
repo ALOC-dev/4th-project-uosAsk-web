@@ -2,14 +2,13 @@
 
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
-import { theme } from '@/styles/theme';
 import { Sidebar } from './sidebar';
 import { Header } from './header';
 
 const LayoutContainer = styled.div`
   display: flex;
   height: 100vh;
-  background-color: ${theme.colors.background};
+  background-color: ${({ theme }) => theme.colors.background};
   overflow: hidden;
 `;
 
@@ -24,10 +23,10 @@ const MainContent = styled.main`
 
 const ContentArea = styled.div`
   flex: 1;
-  padding-left: ${theme.spacing['xl']};
-  padding-right: ${theme.spacing['xl']};
-  padding-top: ${theme.spacing['sm']};
-  padding-bottom: ${theme.spacing['xl']};
+  padding-left: ${({ theme }) => theme.spacing['xl']};
+  padding-right: ${({ theme }) => theme.spacing['xl']};
+  padding-top: ${({ theme }) => theme.spacing['sm']};
+  padding-bottom: ${({ theme }) => theme.spacing['xl']};
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -38,9 +37,9 @@ const ContentContainer = styled.div`
   width: 100%;
   max-width: 1262px;
   height: 100%;
-  background-color: ${theme.colors.contentContainer};
-  border-radius: ${theme.radii.lg};
-  padding: ${theme.spacing['2xl']};
+  background-color: ${({ theme }) => theme.colors.contentContainer};
+  border-radius: ${({ theme }) => theme.radii.lg};
+  padding: ${({ theme }) => theme.spacing['2xl']};
   box-sizing: border-box;
   overflow: hidden;
 `;

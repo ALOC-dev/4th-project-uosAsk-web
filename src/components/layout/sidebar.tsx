@@ -2,12 +2,11 @@
 
 import Image from 'next/image';
 import styled from '@emotion/styled';
-import { theme } from '@/styles/theme';
 
 const SidebarContainer = styled.aside`
   width: 275px;
   height: 100vh;
-  background-color: ${theme.colors.backgroundSecondary};
+  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
   position: fixed;
   left: 0;
   top: 0;
@@ -18,15 +17,15 @@ const SidebarContainer = styled.aside`
 const SidebarContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing.md};
-  padding: ${theme.spacing.lg} 0;
+  gap: ${({ theme }) => theme.spacing.md};
+  padding: ${({ theme }) => theme.spacing.lg} 0;
 `;
 
 const LogoSection = styled.div`
   display: flex;
   align-items: center;
-  gap: ${theme.spacing.xs} -${theme.spacing.md};
-  padding: ${0} ${theme.spacing.md};
+  gap: ${({ theme }) => `${theme.spacing.xs} -${theme.spacing.md}`};
+  padding: ${({ theme }) => `0 ${theme.spacing.md}`};
 `;
 
 const LogoIcon = styled.div`
@@ -44,37 +43,37 @@ const LogoIcon = styled.div`
 `;
 
 const LogoText = styled.span`
-  font-family: ${theme.fonts.sans};
-  font-size: ${theme.fontSizes['2xl']};
+  font-family: ${({ theme }) => theme.fonts.sans};
+  font-size: ${({ theme }) => theme.fontSizes['2xl']};
   font-weight: 700;
-  color: ${theme.colors.textSecondary};
+  color: ${({ theme }) => theme.colors.textSecondary};
   letter-spacing: -0.08em;
 `;
 
 const NavSection = styled.div`
   display: flex;
   flex-direction: column;
-  width: calc(100% - ${theme.spacing.xl});
-  gap: ${theme.spacing.xs};
+  width: calc(100% - ${({ theme }) => theme.spacing.xl});
+  gap: ${({ theme }) => theme.spacing.xs};
   margin: 0 auto;
 `;
 
 const NavItem = styled.button<{ isActive?: boolean }>`
   display: flex;
   align-items: center;
-  gap: ${theme.spacing.md};
-  padding: ${theme.spacing.sm} ${theme.spacing.sm};
-  background: ${(props) =>
-    props.isActive ? theme.colors.backgroundTertiary : 'transparent'};
+  gap: ${({ theme }) => theme.spacing.md};
+  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.sm}`};
+  background: ${({ isActive, theme }) =>
+    isActive ? theme.colors.backgroundTertiary : 'transparent'};
   border: none;
-  border-radius: ${theme.radii.sm};
+  border-radius: ${({ theme }) => theme.radii.sm};
   cursor: pointer;
   transition: background-color 0.2s;
   width: 100%;
   text-align: left;
 
   &:hover {
-    background-color: ${theme.colors.backgroundTertiary};
+    background-color: ${({ theme }) => theme.colors.backgroundTertiary};
   }
 `;
 
@@ -84,7 +83,7 @@ const NavIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${theme.colors.primary};
+  color: ${({ theme }) => theme.colors.primary};
   opacity: 1;
 
   ${NavItem}:hover & {
@@ -93,21 +92,22 @@ const NavIcon = styled.div`
 `;
 
 const NavText = styled.span<{ isActive?: boolean }>`
-  font-family: ${theme.fonts.sans};
-  font-size: ${theme.fontSizes.sm};
-  font-weight: ${theme.fontSizes.base === '1rem' ? 600 : 800};
-  color: ${theme.colors.textSecondary};
-  opacity: ${(props) => (props.isActive ? 1 : 0.5)};
+  font-family: ${({ theme }) => theme.fonts.sans};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => (theme.fontSizes.base === '1rem' ? 600 : 800)};
+  color: ${({ isActive, theme }) =>
+    isActive ? theme.colors.navTextActive : theme.colors.textSecondary};
+  opacity: ${({ isActive }) => (isActive ? 1 : 0.5)};
   letter-spacing: -0.08em;
   line-height: 1.2;
 `;
 
 const SectionTitle = styled.h3`
-  font-family: ${theme.fonts.sans};
-  font-size: ${theme.fontSizes.sm};
+  font-family: ${({ theme }) => theme.fonts.sans};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: 700;
-  color: ${theme.colors.primary};
-  padding: 0 ${theme.spacing.lg};
+  color: ${({ theme }) => theme.colors.primary};
+  padding: 0 ${({ theme }) => theme.spacing.lg};
   letter-spacing: -0.08em;
   line-height: 1.2;
 `;
@@ -115,19 +115,19 @@ const SectionTitle = styled.h3`
 const HistoryList = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0 ${theme.spacing.lg};
+  padding: 0 ${({ theme }) => theme.spacing.lg};
 `;
 
 const HistoryItem = styled.div`
-  font-family: ${theme.fonts.sans};
-  font-size: ${theme.fontSizes.sm};
+  font-family: ${({ theme }) => theme.fonts.sans};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: 500;
-  color: ${theme.colors.textSecondary};
+  color: ${({ theme }) => theme.colors.textSecondary};
   opacity: 0.5;
   letter-spacing: -0.08em;
   line-height: 1.2;
   cursor: pointer;
-  padding: ${theme.spacing.sm} 0;
+  padding: ${({ theme }) => theme.spacing.sm} 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -138,10 +138,10 @@ const HistoryItem = styled.div`
 `;
 
 const Divider = styled.div`
-  width: calc(100% - ${theme.spacing.xl});
+  width: calc(100% - ${({ theme }) => theme.spacing.xl});
   height: 2px;
-  background-color: ${theme.colors.border};
-  margin: ${theme.spacing.sm} auto;
+  background-color: ${({ theme }) => theme.colors.border};
+  margin: ${({ theme }) => theme.spacing.sm} auto;
 `;
 
 interface SidebarProps {

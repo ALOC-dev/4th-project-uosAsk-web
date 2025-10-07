@@ -13,14 +13,12 @@ const nextConfig: NextConfig = {
 
     return config;
   },
-  experimental: {
-    turbo: {
-      rules: {
-        // Turbopack에서 SVG를 React 컴포넌트로 import할 수 있도록 설정
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
+  turbopack: {
+    rules: {
+      // Turbopack에서 SVG를 React 컴포넌트로 import할 수 있도록 설정
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
       },
     },
   },
