@@ -1,12 +1,12 @@
 import { apiClient } from "../api/client";
-import { Category, Deparment } from "@/constants";
+import { Category, Department } from "@/constants";
 
 /*
 category 값을 넘길 때, Category 타입에서 index number로 접근해서 가져오기.
 department 값을 넘길 때, Department 타입에서 index number로 접근해서 Department[] 가져오기.
 */
 interface GetNoticeListParams {
-    department: Deparment[],
+    department: Department[],
     keyword: string,
     category: Category,
     page: number,
