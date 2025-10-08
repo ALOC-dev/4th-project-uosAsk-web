@@ -40,7 +40,6 @@ const ContentContainer = styled.div`
   height: 100%;
   background-color: ${({ theme }) => theme.colors.contentContainer};
   border-radius: ${({ theme }) => theme.radii.lg};
-  padding: ${({ theme }) => theme.spacing['2xl']};
   box-sizing: border-box;
   overflow: hidden;
 `;
