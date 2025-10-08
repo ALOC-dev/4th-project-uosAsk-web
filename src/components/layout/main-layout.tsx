@@ -1,9 +1,10 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import styled from '@emotion/styled';
 import { Sidebar } from './sidebar';
 import { Header } from './header';
+import { SettingsDropdown } from '@/components/ui/settings-dropdown';
 
 const LayoutContainer = styled.div`
   display: flex;
@@ -57,11 +58,26 @@ export function MainLayout({
   onNavigate,
   onNewChat,
 }: MainLayoutProps) {
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const handleOpenSettings = () => setIsSettingsOpen((prev) => !prev);
+  const handleCloseSettings = () => setIsSettingsOpen(false);
+  const handleChangeSettings = (_payload: {
+    university: string;
+    department: string;
+  }) => {
+    // Reserved for propagating selection to app state if needed later
+  };
   return (
     <LayoutContainer>
       <Sidebar activeSection={activeSection} onNavigate={onNavigate} />
       <MainContent>
-        <Header onNewChat={onNewChat} />
+        <Header onNewChat={onNewChat} onSettingsClick={handleOpenSettings} />
+        <SettingsDropdown
+          open={isSettingsOpen}
+          onClose={handleCloseSettings}
+          onChange={handleChangeSettings}
+        />
         <ContentArea>
           <ContentContainer>{children}</ContentContainer>
         </ContentArea>
