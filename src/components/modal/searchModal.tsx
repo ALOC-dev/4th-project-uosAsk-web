@@ -2,7 +2,6 @@
 
 import styled from '@emotion/styled';
 import { createPortal } from 'react-dom';
-import SearchIcon from '@/../public/images/Union.svg';
 import Image from 'next/image';
 import { theme } from '@/styles/theme';
 import { useEffect, useState } from 'react';
@@ -52,7 +51,7 @@ export default function SearchModal() {
   return createPortal(
     <>
       <SearchInputContainer>
-        <Image src={SearchIcon} alt='icon' />
+        <Image src='/images/Union.svg' alt='icon' width={24} height={24} />
         <SearchInput placeholder='공지사항 제목을 입력해주세요.' />
       </SearchInputContainer>
     </>,
