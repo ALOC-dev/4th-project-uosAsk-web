@@ -3,6 +3,8 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import styled from '@emotion/styled';
+import { theme } from '@/styles/theme';
+import SearchModal from '../modal/searchModal';
 
 const SidebarContainer = styled.aside`
   width: 275px;
@@ -270,6 +272,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
             </NavIcon>
             <NavText isActive={activeSection === 'search'}>공지검색</NavText>
           </NavItem>
+          {activeSection === 'search' && <SearchModal />}
         </NavSection>
 
         <Divider />
