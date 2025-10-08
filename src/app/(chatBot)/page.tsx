@@ -1,6 +1,7 @@
 'use client';
 
 import { MainLayout } from '@/components/layout/main-layout';
+import ChatbotComponent from '@/components/ChatbotComponent';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
@@ -9,7 +10,7 @@ export default function Home() {
       activeSection='chatbot'
       onNewChat={() => useRouter().replace('/')}
     >
-      <div>채팅봇 페이지 컨텐츠가 여기에 들어갑니다.</div>
+      <ChatbotComponent />
     </MainLayout>
   );
 }
