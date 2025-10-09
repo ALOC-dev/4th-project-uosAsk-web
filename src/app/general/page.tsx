@@ -1,6 +1,5 @@
 'use client';
 
-import { MainLayout } from '@/components/layout/main-layout';
 import { NoticeLayout } from '@/components/layout/notice-layout';
 import { generalNotices } from '@/data/notices';
 import { Notice } from '@/types/notice';
@@ -12,11 +11,6 @@ export default function GeneralPage() {
   };
 
   return (
-    <MainLayout activeSection='general'>
-      <NoticeLayout
-        notices={generalNotices}
-        onNoticeClick={handleNoticeClick}
-      />
-    </MainLayout>
+    <NoticeLayout notices={generalNotices} onNoticeClick={handleNoticeClick} />
   );
 }

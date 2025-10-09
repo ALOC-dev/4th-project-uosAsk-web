@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/providers/theme-provider';
+import { MainLayoutWrapper } from '@/components/layout/main-layout-wrapper';
 
 const notoSansKR = Noto_Sans_KR({
   weight: ['400', '500', '700'],
@@ -43,7 +44,9 @@ export default function RootLayout({
         />
       </head>
       <body className={`${notoSansKR.className} antialiased`}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <MainLayoutWrapper>{children}</MainLayoutWrapper>
+        </ThemeProvider>
         <div id='modal' />
       </body>
     </html>

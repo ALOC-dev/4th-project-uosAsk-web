@@ -1,6 +1,5 @@
 'use client';
 
-import { MainLayout } from '@/components/layout/main-layout';
 import { NoticeLayout } from '@/components/layout/notice-layout';
 import { academicNotices } from '@/data/notices';
 import { Notice } from '@/types/notice';
@@ -12,11 +11,6 @@ export default function AcademicPage() {
   };
 
   return (
-    <MainLayout activeSection='academic'>
-      <NoticeLayout
-        notices={academicNotices}
-        onNoticeClick={handleNoticeClick}
-      />
-    </MainLayout>
+    <NoticeLayout notices={academicNotices} onNoticeClick={handleNoticeClick} />
   );
 }
