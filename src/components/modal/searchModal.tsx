@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { theme } from '@/styles/theme';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const SearchInputContainer = styled.figure`
   display: flex;
@@ -13,7 +14,7 @@ const SearchInputContainer = styled.figure`
   position: fixed;
   top: 25%;
   left: 25%;
-  /* z-index: 50; */
+  z-index: 50;
   justify-content: center;
   align-items: center;
   padding: ${theme.spacing.md};
@@ -37,10 +38,19 @@ const SearchInput = styled.input`
   }
 `;
 
+const Backdrop = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+`;
+
 export default function SearchModal() {
   const [portalElement, setPortalElement] = useState<HTMLElement | null>(null);
+  const router = useRouter();
 
-  // ✅ 클라이언트에서만 document 접근
   useEffect(() => {
     const el = document.getElementById('modal');
     setPortalElement(el);
@@ -50,6 +60,7 @@ export default function SearchModal() {
 
   return createPortal(
     <>
+      <Backdrop onClick={() => router.replace('/')} />
       <SearchInputContainer>
         <Image src='/images/Union.svg' alt='icon' width={24} height={24} />
         <SearchInput placeholder='공지사항 제목을 입력해주세요.' />
