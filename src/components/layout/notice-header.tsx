@@ -9,13 +9,13 @@ const HeaderContainer = styled.div`
   align-items: center;
   gap: ${({ theme }) => theme.spacing.md};
   padding: ${({ theme }) => `${theme.spacing.lg} ${theme.spacing.lg}`};
-  background-color: ${({ theme }) => theme.colors.backgroundPrimary};
+  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
 `;
 
 const IconWrapper = styled.div`
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25,9 +25,9 @@ const IconWrapper = styled.div`
 
 const HeaderTitle = styled.h2`
   font-family: ${({ theme }) => theme.fonts.sans};
-  font-size: ${({ theme }) => theme.fontSizes.lg};
+  font-size: ${({ theme }) => theme.fontSizes['2xl']};
   font-weight: 600;
-  color: ${({ theme }) => theme.colors.textPrimary};
+  color: ${({ theme }) => theme.colors.textSecondary};
   margin: 0;
   letter-spacing: -0.02em;
 `;
@@ -73,8 +73,8 @@ export function NoticeHeader({ type, count }: NoticeHeaderProps) {
         <Image
           src={config.icon}
           alt={`${config.title} 아이콘`}
-          width={24}
-          height={24}
+          width={40}
+          height={40}
         />
       </IconWrapper>
       <HeaderTitle>{config.title}</HeaderTitle>

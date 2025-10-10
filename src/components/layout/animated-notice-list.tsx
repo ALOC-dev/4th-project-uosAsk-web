@@ -28,33 +28,18 @@ const slideIn = keyframes`
 `;
 
 const NoticeListContainer = styled.div`
-  padding: ${({ theme }) => `${theme.spacing.md} 0`};
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
   overflow-y: auto;
 
-  /* 스크롤바 스타일링 */
+  /* 스크롤바 숨기기 */
   &::-webkit-scrollbar {
-    width: 8px;
+    display: none;
   }
 
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-    transition: background-color 0.2s;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(0, 0, 0, 0.4);
-  }
-
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  /* Firefox 스크롤바 숨기기 */
+  scrollbar-width: none;
 `;
 
 const NoticeItem = styled.div<{ delay: number }>`
@@ -66,8 +51,8 @@ const NoticeItem = styled.div<{ delay: number }>`
   background-color: transparent;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  min-height: 56px;
-  max-height: 56px;
+  min-height: 64.5px;
+  max-height: 64.5px;
   overflow: hidden;
 
   animation: ${fadeInUp} 0.5s ease-out forwards;
@@ -90,9 +75,7 @@ const NoticeItem = styled.div<{ delay: number }>`
 const NoticeTitle = styled.h3<{ isImportant?: boolean }>`
   font-family: ${({ theme }) => theme.fonts.sans};
   font-size: ${({ theme }) => theme.fontSizes.sm};
-  font-weight: ${({ isImportant }) => (isImportant ? 600 : 500)};
-  color: ${({ theme, isImportant }) =>
-    isImportant ? theme.colors.primary : theme.colors.textSecondary};
+  color: ${({ theme }) => theme.colors.textSecondary};
   letter-spacing: -0.04em;
   line-height: 1.2;
   margin: 0;

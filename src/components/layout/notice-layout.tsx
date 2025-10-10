@@ -21,6 +21,20 @@ const NoticeContainer = styled.div`
   }
 `;
 
+const NoticeContent = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+`;
+
+const NoticeFooter = styled.div`
+  height: 72px; /* notice-header와 동일한 높이 (padding 포함) */
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
+  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
+  flex-shrink: 0;
+`;
+
 interface NoticeLayoutProps {
   notices: Notice[];
   type: NoticeType;
@@ -35,7 +49,10 @@ export function NoticeLayout({
   return (
     <NoticeContainer>
       <NoticeHeader type={type} count={notices.length} />
-      <AnimatedNoticeList notices={notices} onNoticeClick={onNoticeClick} />
+      <NoticeContent>
+        <AnimatedNoticeList notices={notices} onNoticeClick={onNoticeClick} />
+      </NoticeContent>
+      <NoticeFooter />
     </NoticeContainer>
   );
 }
