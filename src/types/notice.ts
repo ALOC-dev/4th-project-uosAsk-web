@@ -3,6 +3,7 @@ export interface Notice {
   title: string;
   department: string;
   date: string;
+  clickCount: number;
   isImportant?: boolean;
 }
 

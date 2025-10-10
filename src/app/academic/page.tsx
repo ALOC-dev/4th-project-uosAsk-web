@@ -1,6 +1,6 @@
 'use client';
 
-import { NoticeLayout } from '@/components/layout/notice-layout';
+import { NoticeLayout } from '@/components/notice/notice-layout';
 import { academicNotices } from '@/data/notices';
 import { Notice } from '@/types/notice';
 
@@ -11,6 +11,10 @@ export default function AcademicPage() {
   };
 
   return (
-    <NoticeLayout notices={academicNotices} onNoticeClick={handleNoticeClick} />
+    <NoticeLayout
+      notices={academicNotices}
+      type='academic'
+      onNoticeClick={handleNoticeClick}
+    />
   );
 }
