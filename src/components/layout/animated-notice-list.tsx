@@ -73,9 +73,9 @@ const NoticeItem = styled.div<{
     `
     margin: ${theme.spacing.xs} ${theme.spacing.md};
     border-radius: ${theme.radii.md};
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    background-color: ${theme.colors.backgroundButton};
+    padding-left: 60px; /* 불꽃 이모티콘 공간 확보 */
     }
   `}
 
@@ -146,6 +146,23 @@ const NoticeClickCount = styled.span`
   white-space: nowrap;
   flex-shrink: 0;
   opacity: 0.7;
+`;
+
+const HotBadge = styled.span`
+  position: absolute;
+  left: ${({ theme }) => theme.spacing.md};
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: ${({ theme }) => theme.fonts.sans};
+  font-size: ${({ theme }) => theme.fontSizes.xs};
+  font-weight: 700;
+  background: ${({ theme }) => theme.colors.primary};
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 1px 2px rgba(255, 68, 68, 0.3);
+  letter-spacing: 0.5px;
+  z-index: 1;
 `;
 
 const EmptyState = styled.div`
@@ -247,6 +264,7 @@ export function AnimatedNoticeList({
             rank={rank}
             onClick={() => handleNoticeClick(notice)}
           >
+            {isTopNotice && <HotBadge>HOT!</HotBadge>}
             <NoticeTitle isImportant={notice.isImportant}>
               {notice.title}
             </NoticeTitle>
