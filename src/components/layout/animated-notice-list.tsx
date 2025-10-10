@@ -32,7 +32,7 @@ const NoticeListContainer = styled.div`
   flex-direction: column;
   flex: 1;
   overflow-y: auto;
-
+  margin-top: ${({ theme }) => theme.spacing.sm};
   /* 스크롤바 숨기기 */
   &::-webkit-scrollbar {
     display: none;
@@ -43,7 +43,6 @@ const NoticeListContainer = styled.div`
 `;
 
 const NoticeItem = styled.div<{
-  delay: number;
   isTopNotice: boolean;
   rank?: number;
 }>`
@@ -61,9 +60,8 @@ const NoticeItem = styled.div<{
   overflow: hidden;
   position: relative;
 
-  animation: ${fadeInUp} 0.5s ease-out forwards;
-  animation-delay: ${({ delay }) => delay * 0.1}s;
-  opacity: 0;
+  animation: ${fadeInUp} 0.3s ease-out forwards;
+  opacity: 1;
 
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -95,10 +93,7 @@ const NoticeTitle = styled.h3<{ isImportant?: boolean }>`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-
-  animation: ${slideIn} 0.6s ease-out forwards;
-  animation-delay: ${({ isImportant }) => (isImportant ? '0.2s' : '0.3s')};
-  opacity: 0;
+  opacity: 1;
 `;
 
 const NoticeInfo = styled.div`
@@ -106,10 +101,7 @@ const NoticeInfo = styled.div`
   align-items: flex-end;
   gap: ${({ theme }) => theme.spacing.md};
   min-width: 0;
-
-  animation: ${slideIn} 0.6s ease-out forwards;
-  animation-delay: 0.4s;
-  opacity: 0;
+  opacity: 1;
 `;
 
 const NoticeDepartment = styled.span`
@@ -160,7 +152,6 @@ const HotBadge = styled.span`
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 1px 2px rgba(255, 68, 68, 0.3);
   letter-spacing: 0.5px;
   z-index: 1;
 `;
@@ -259,7 +250,6 @@ export function AnimatedNoticeList({
         return (
           <NoticeItem
             key={notice.id}
-            delay={index}
             isTopNotice={isTopNotice}
             rank={rank}
             onClick={() => handleNoticeClick(notice)}

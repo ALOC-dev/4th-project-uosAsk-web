@@ -78,6 +78,10 @@ const IconWrapper = styled.div`
   &:hover {
     transform: scale(1.1);
   }
+
+  img {
+    filter: brightness(0.8) contrast(1.2) saturate(1.3);
+  }
 `;
 
 const HeaderTitle = styled.h2`
