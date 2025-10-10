@@ -79,19 +79,6 @@ const NoticeItem = styled.div<{
     }
   `}
 
-  &:hover {
-    background-color: ${({ theme, isTopNotice }) =>
-      isTopNotice
-        ? theme.colors.backgroundTertiary
-        : theme.colors.backgroundTertiary};
-    transform: ${({ isTopNotice }) =>
-      isTopNotice ? 'translateY(-2px)' : 'translateX(4px)'};
-    box-shadow: ${({ isTopNotice }) =>
-      isTopNotice
-        ? '0 4px 16px rgba(0, 0, 0, 0.15)'
-        : '0 2px 8px rgba(0, 0, 0, 0.1)'};
-  }
-
   &:last-child {
     border-bottom: none;
   }
