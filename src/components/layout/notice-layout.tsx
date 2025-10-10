@@ -29,8 +29,7 @@ const NoticeContent = styled.div`
 `;
 
 const NoticeFooter = styled.div`
-  height: 72px; /* notice-header와 동일한 높이 (padding 포함) */
-  border-top: 1px solid ${({ theme }) => theme.colors.border};
+  height: 18px; /* notice-header와 동일한 높이 (padding 포함) */
   background-color: ${({ theme }) => theme.colors.backgroundSecondary};
   flex-shrink: 0;
 `;

@@ -74,8 +74,9 @@ const NoticeItem = styled.div<{ delay: number }>`
 
 const NoticeTitle = styled.h3<{ isImportant?: boolean }>`
   font-family: ${({ theme }) => theme.fonts.sans};
-  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-size: ${({ theme }) => theme.fontSizes.base};
   color: ${({ theme }) => theme.colors.textSecondary};
+  font-weight: 500;
   letter-spacing: -0.04em;
   line-height: 1.2;
   margin: 0;
@@ -101,7 +102,7 @@ const NoticeInfo = styled.div`
 
 const NoticeDepartment = styled.span`
   font-family: ${({ theme }) => theme.fonts.sans};
-  font-size: ${({ theme }) => theme.fontSizes.xs};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: 400;
   color: ${({ theme }) => theme.colors.textSecondary};
   letter-spacing: -0.04em;
@@ -114,7 +115,7 @@ const NoticeDepartment = styled.span`
 
 const NoticeDate = styled.span`
   font-family: ${({ theme }) => theme.fonts.sans};
-  font-size: ${({ theme }) => theme.fontSizes.xs};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: 400;
   color: ${({ theme }) => theme.colors.textSecondary};
   letter-spacing: -0.04em;

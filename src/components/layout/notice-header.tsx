@@ -1,8 +1,53 @@
 'use client';
 
 import styled from '@emotion/styled';
+import { keyframes } from '@emotion/react';
 import Image from 'next/image';
 import { NoticeType } from '@/types/notice';
+
+const slideInDown = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+const fadeInScale = keyframes`
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+`;
+
+const slideInLeft = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+`;
+
+const slideInRight = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+`;
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -11,6 +56,9 @@ const HeaderContainer = styled.div`
   padding: ${({ theme }) => `${theme.spacing.lg} ${theme.spacing.lg}`};
   background-color: ${({ theme }) => theme.colors.backgroundSecondary};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+
+  animation: ${slideInDown} 0.6s ease-out forwards;
+  opacity: 0;
 `;
 
 const IconWrapper = styled.div`
@@ -21,6 +69,15 @@ const IconWrapper = styled.div`
   justify-content: center;
   border-radius: ${({ theme }) => theme.radii.sm};
   background-color: ${({ theme }) => theme.colors.backgroundSecondary};
+
+  animation: ${fadeInScale} 0.7s ease-out forwards;
+  animation-delay: 0.2s;
+  opacity: 0;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
 `;
 
 const HeaderTitle = styled.h2`
@@ -30,6 +87,10 @@ const HeaderTitle = styled.h2`
   color: ${({ theme }) => theme.colors.textSecondary};
   margin: 0;
   letter-spacing: -0.02em;
+
+  animation: ${slideInLeft} 0.8s ease-out forwards;
+  animation-delay: 0.4s;
+  opacity: 0;
 `;
 
 const HeaderSubtitle = styled.p`
@@ -39,6 +100,10 @@ const HeaderSubtitle = styled.p`
   color: ${({ theme }) => theme.colors.textSecondary};
   margin: 0;
   margin-left: auto;
+
+  animation: ${slideInRight} 0.8s ease-out forwards;
+  animation-delay: 0.6s;
+  opacity: 0;
 `;
 
 interface NoticeHeaderProps {
