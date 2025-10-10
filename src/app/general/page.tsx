@@ -11,6 +11,10 @@ export default function GeneralPage() {
   };
 
   return (
-    <NoticeLayout notices={generalNotices} onNoticeClick={handleNoticeClick} />
+    <NoticeLayout
+      notices={generalNotices}
+      type='general'
+      onNoticeClick={handleNoticeClick}
+    />
   );
 }

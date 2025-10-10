@@ -13,6 +13,7 @@ export default function DepartmentPage() {
   return (
     <NoticeLayout
       notices={departmentNotices}
+      type='department'
       onNoticeClick={handleNoticeClick}
     />
   );

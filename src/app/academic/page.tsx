@@ -11,6 +11,10 @@ export default function AcademicPage() {
   };
 
   return (
-    <NoticeLayout notices={academicNotices} onNoticeClick={handleNoticeClick} />
+    <NoticeLayout
+      notices={academicNotices}
+      type='academic'
+      onNoticeClick={handleNoticeClick}
+    />
   );
 }
