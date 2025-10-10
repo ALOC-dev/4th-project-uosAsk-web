@@ -74,59 +74,8 @@ const NoticeItem = styled.div<{
     margin: ${theme.spacing.xs} ${theme.spacing.md};
     border-radius: ${theme.radii.md};
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border: 2px solid ${
-      rank === 1
-        ? theme.colors.primary
-        : rank === 2
-          ? '#fbbf24'
-          : rank === 3
-            ? '#fb7185'
-            : theme.colors.border
-    };
-    
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: ${
-        rank === 1
-          ? `linear-gradient(90deg, ${theme.colors.primary}, #3b82f6)`
-          : rank === 2
-            ? 'linear-gradient(90deg, #fbbf24, #f59e0b)'
-            : rank === 3
-              ? 'linear-gradient(90deg, #fb7185, #f43f5e)'
-              : 'transparent'
-      };
-      border-radius: ${theme.radii.md} ${theme.radii.md} 0 0;
-    }
-    
-    &::after {
-      content: '${rank}';
-      position: absolute;
-      top: ${theme.spacing.xs};
-      right: ${theme.spacing.md};
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: ${theme.fontSizes.xs};
-      color: white;
-      background: ${
-        rank === 1
-          ? 'linear-gradient(135deg, #3b82f6, #1d4ed8)'
-          : rank === 2
-            ? 'linear-gradient(135deg, #fbbf24, #d97706)'
-            : rank === 3
-              ? 'linear-gradient(135deg, #fb7185, #dc2626)'
-              : '#6b7280'
-      };
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border: 1px solid;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
   `}
 
