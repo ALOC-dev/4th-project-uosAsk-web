@@ -1,6 +1,6 @@
 'use client';
 
-import { NoticeLayout } from '@/components/layout/notice-layout';
+import { NoticeLayout } from '@/components/notice/notice-layout';
 import { generalNotices } from '@/data/notices';
 import { Notice } from '@/types/notice';
 
