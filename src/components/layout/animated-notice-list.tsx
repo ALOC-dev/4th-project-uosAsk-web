@@ -124,6 +124,18 @@ const NoticeDate = styled.span`
   flex-shrink: 0;
 `;
 
+const NoticeClickCount = styled.span`
+  font-family: ${({ theme }) => theme.fonts.sans};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: 400;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+  white-space: nowrap;
+  flex-shrink: 0;
+  opacity: 0.7;
+`;
+
 const EmptyState = styled.div`
   display: flex;
   flex-direction: column;
@@ -206,6 +218,7 @@ export function AnimatedNoticeList({
           <NoticeInfo>
             <NoticeDepartment>{notice.department}</NoticeDepartment>
             <NoticeDate>{notice.date}</NoticeDate>
+            <NoticeClickCount>{notice.clickCount} 조회</NoticeClickCount>
           </NoticeInfo>
         </NoticeItem>
       ))}
