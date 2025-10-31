@@ -38,17 +38,6 @@ const slideInLeft = keyframes`
   }
 `;
 
-const slideInRight = keyframes`
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-`;
-
 const HeaderContainer = styled.div`
   display: flex;
   align-items: center;
@@ -97,22 +86,8 @@ const HeaderTitle = styled.h2`
   opacity: 0;
 `;
 
-const HeaderSubtitle = styled.p`
-  font-family: ${({ theme }) => theme.fonts.sans};
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  font-weight: 400;
-  color: ${({ theme }) => theme.colors.textSecondary};
-  margin: 0;
-  margin-left: auto;
-
-  animation: ${slideInRight} 0.8s ease-out forwards;
-  animation-delay: 0.6s;
-  opacity: 0;
-`;
-
 interface NoticeHeaderProps {
   type: NoticeType;
-  count?: number;
 }
 
 const NOTICE_CONFIG = {
@@ -133,7 +108,7 @@ const NOTICE_CONFIG = {
   },
 } as const;
 
-export function NoticeHeader({ type, count }: NoticeHeaderProps) {
+export function NoticeHeader({ type }: NoticeHeaderProps) {
   const config = NOTICE_CONFIG[type];
 
   return (
@@ -147,7 +122,6 @@ export function NoticeHeader({ type, count }: NoticeHeaderProps) {
         />
       </IconWrapper>
       <HeaderTitle>{config.title}</HeaderTitle>
-      {count !== undefined && <HeaderSubtitle>{count}개의 공지</HeaderSubtitle>}
     </HeaderContainer>
   );
 }
