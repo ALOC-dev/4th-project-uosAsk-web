@@ -118,17 +118,17 @@ interface NoticeHeaderProps {
 const NOTICE_CONFIG = {
   general: {
     title: '일반공지',
-    icon: '/images/general-icon.png',
+    icon: '/images/general-icon.svg',
     description: '전체 공지사항',
   },
   academic: {
     title: '학사공지',
-    icon: '/images/academic-icon.png',
+    icon: '/images/academic-icon.svg',
     description: '학사 관련 공지',
   },
   department: {
     title: '학과공지',
-    icon: '/images/department-icon.png',
+    icon: '/images/department-icon.svg',
     description: '학과별 공지사항',
   },
 } as const;

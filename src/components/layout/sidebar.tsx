@@ -183,7 +183,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
         <LogoSection>
           <LogoIcon>
             <Image
-              src='/images/mainLogo.png'
+              src='/images/main-logo.svg'
               alt='시누공 로고'
               width={53}
               height={53}
@@ -202,7 +202,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
           >
             <NavIcon>
               <Image
-                src='/images/chatBot-icon.png'
+                src='/images/chatBot-icon.svg'
                 alt='채팅봇'
                 width={30}
                 height={30}
@@ -217,7 +217,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
           >
             <NavIcon>
               <Image
-                src='/images/general-icon.png'
+                src='/images/general-icon.svg'
                 alt='일반공지'
                 width={35}
                 height={35}
@@ -232,7 +232,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
           >
             <NavIcon>
               <Image
-                src='/images/academic-icon.png'
+                src='/images/academic-icon.svg'
                 alt='학사공지'
                 width={35}
                 height={35}
@@ -247,7 +247,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
           >
             <NavIcon>
               <Image
-                src='/images/department-icon.png'
+                src='/images/department-icon.svg'
                 alt='학과공지'
                 width={35}
                 height={35}
@@ -264,7 +264,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
           >
             <NavIcon>
               <Image
-                src='/images/search-icon.png'
+                src='/images/search-icon.svg'
                 alt='공지검색'
                 width={22}
                 height={22}

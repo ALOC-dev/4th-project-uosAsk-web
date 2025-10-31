@@ -99,7 +99,7 @@ export function Header({ onNewChat, onSettingsClick }: HeaderProps) {
         <NewChatButton onClick={onNewChat}>
           <SettingButton>
             <Image
-              src='/images/newChat-icon.png'
+              src='/images/newChat-icon.svg'
               alt='새 채팅'
               width={28}
               height={28}
@@ -110,7 +110,7 @@ export function Header({ onNewChat, onSettingsClick }: HeaderProps) {
 
         <ThemeButton onClick={onSettingsClick} aria-label='설정'>
           <Image
-            src='/images/setting-icon.png'
+            src='/images/setting-icon.svg'
             alt='설정'
             width={28}
             height={28}
@@ -121,8 +121,8 @@ export function Header({ onNewChat, onSettingsClick }: HeaderProps) {
           <Image
             src={
               themeMode === 'night'
-                ? '/images/night-icon.png'
-                : '/images/day-icon.png'
+                ? '/images/night-icon.svg'
+                : '/images/day-icon.svg'
             }
             alt='테마 전환'
             width={28}
