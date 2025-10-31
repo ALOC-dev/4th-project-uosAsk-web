@@ -1,6 +1,7 @@
 'use client';
 
 import { NoticeLayout } from '@/components/notice/notice-layout';
+import { AnimatedNoticeList } from '@/components/notice/animated-notice-list';
 import { departmentNotices } from '@/data/notices';
 import { Notice } from '@/types/notice';
 
@@ -11,10 +12,11 @@ export default function DepartmentPage() {
   };
 
   return (
-    <NoticeLayout
-      notices={departmentNotices}
-      type='department'
-      onNoticeClick={handleNoticeClick}
-    />
+    <NoticeLayout type='department'>
+      <AnimatedNoticeList
+        notices={departmentNotices}
+        onNoticeClick={handleNoticeClick}
+      />
+    </NoticeLayout>
   );
 }

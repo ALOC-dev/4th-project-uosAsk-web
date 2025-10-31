@@ -206,8 +206,15 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
   const router = useRouter();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
   const handleNavClick = (section: string) => {
+    // 검색 모달 처리
+    if (section === 'search') {
+      setIsSearchModalOpen(true);
+      return;
+    }
+
     // onNavigate 콜백이 있으면 호출 (하위 호환성)
     if (onNavigate) {
       onNavigate(section);
@@ -317,11 +324,8 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
             </NavText>
           </NavItem>
 
-          <NavItem
-            isActive={activeSection === 'search'}
-            onClick={() => handleNavClick('search')}
-          >
-            <NavIcon isActive={activeSection === 'search'}>
+          <NavItem onClick={() => handleNavClick('search')}>
+            <NavIcon>
               <Image
                 src='/images/search-icon.svg'
                 alt='공지검색'
@@ -329,10 +333,14 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
                 height={22}
               />
             </NavIcon>
-            <NavText isActive={activeSection === 'search'}>공지검색</NavText>
+            <NavText>공지검색</NavText>
           </NavItem>
-          {activeSection === 'search' && <SearchModal />}
         </NavSection>
+
+        <SearchModal
+          isOpen={isSearchModalOpen}
+          onClose={() => setIsSearchModalOpen(false)}
+        />
 
         <Divider />
 

@@ -7,4 +7,4 @@ export interface Notice {
   isImportant?: boolean;
 }
 
-export type NoticeType = 'general' | 'academic' | 'department';
+export type NoticeType = 'general' | 'academic' | 'department' | 'search';

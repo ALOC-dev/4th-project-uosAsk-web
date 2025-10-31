@@ -1,9 +1,9 @@
 'use client';
 
 import styled from '@emotion/styled';
-import { Notice, NoticeType } from '@/types/notice';
+import { ReactNode } from 'react';
+import { NoticeType } from '@/types/notice';
 import { NoticeHeader } from './notice-header';
-import { AnimatedNoticeList } from './animated-notice-list';
 
 const NoticeContainer = styled.div`
   width: 100%;
@@ -30,22 +30,22 @@ const NoticeFooter = styled.div`
 `;
 
 interface NoticeLayoutProps {
-  notices: Notice[];
   type: NoticeType;
-  onNoticeClick?: (notice: Notice) => void;
+  icon?: string;
+  title?: string;
+  children: ReactNode;
 }
 
 export function NoticeLayout({
-  notices,
   type,
-  onNoticeClick,
+  icon,
+  title,
+  children,
 }: NoticeLayoutProps) {
   return (
     <NoticeContainer>
-      <NoticeHeader type={type} count={notices.length} />
-      <NoticeContent>
-        <AnimatedNoticeList notices={notices} onNoticeClick={onNoticeClick} />
-      </NoticeContent>
+      <NoticeHeader type={type} icon={icon} title={title} />
+      <NoticeContent>{children}</NoticeContent>
       <NoticeFooter />
     </NoticeContainer>
   );

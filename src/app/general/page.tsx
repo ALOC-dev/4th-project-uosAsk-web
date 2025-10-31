@@ -1,6 +1,7 @@
 'use client';
 
 import { NoticeLayout } from '@/components/notice/notice-layout';
+import { AnimatedNoticeList } from '@/components/notice/animated-notice-list';
 import { generalNotices } from '@/data/notices';
 import { Notice } from '@/types/notice';
 
@@ -11,10 +12,11 @@ export default function GeneralPage() {
   };
 
   return (
-    <NoticeLayout
-      notices={generalNotices}
-      type='general'
-      onNoticeClick={handleNoticeClick}
-    />
+    <NoticeLayout type='general'>
+      <AnimatedNoticeList
+        notices={generalNotices}
+        onNoticeClick={handleNoticeClick}
+      />
+    </NoticeLayout>
   );
 }

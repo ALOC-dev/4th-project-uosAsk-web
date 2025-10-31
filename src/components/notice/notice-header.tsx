@@ -88,6 +88,8 @@ const HeaderTitle = styled.h2`
 
 interface NoticeHeaderProps {
   type: NoticeType;
+  icon?: string;
+  title?: string;
 }
 
 const NOTICE_CONFIG = {
@@ -106,22 +108,29 @@ const NOTICE_CONFIG = {
     icon: '/images/department-icon.svg',
     description: '학과별 공지사항',
   },
+  search: {
+    title: '검색결과',
+    icon: '/images/search-icon.svg',
+    description: '검색 결과',
+  },
 } as const;
 
-export function NoticeHeader({ type }: NoticeHeaderProps) {
+export function NoticeHeader({ type, icon, title }: NoticeHeaderProps) {
   const config = NOTICE_CONFIG[type];
+  const displayIcon = icon || config.icon;
+  const displayTitle = title || config.title;
 
   return (
     <HeaderContainer>
       <IconWrapper>
         <Image
-          src={config.icon}
-          alt={`${config.title} 아이콘`}
+          src={displayIcon}
+          alt={`${displayTitle} 아이콘`}
           width={40}
           height={40}
         />
       </IconWrapper>
-      <HeaderTitle>{config.title}</HeaderTitle>
+      <HeaderTitle>{displayTitle}</HeaderTitle>
     </HeaderContainer>
   );
 }
