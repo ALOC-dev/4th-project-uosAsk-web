@@ -4,7 +4,7 @@ import { ReactNode, useState } from 'react';
 import styled from '@emotion/styled';
 import { Sidebar } from './sidebar';
 import { Header } from './header';
-import { SettingsDropdown } from './settings-dropdown';
+import { Setting } from './setting';
 
 const LayoutContainer = styled.div`
   display: flex;
@@ -72,7 +72,7 @@ export function MainLayout({
       <Sidebar activeSection={activeSection} onNavigate={onNavigate} />
       <MainContent>
         <Header onNewChat={onNewChat} onSettingsClick={handleOpenSettings} />
-        <SettingsDropdown
+        <Setting
           open={isSettingsOpen}
           onClose={handleCloseSettings}
           onChange={handleChangeSettings}

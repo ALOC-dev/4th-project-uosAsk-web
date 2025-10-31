@@ -9,7 +9,7 @@ import {
   UserSettings,
 } from '@/utils/user-settings';
 
-interface SettingsDropdownProps {
+interface SettingProps {
   open: boolean;
   onClose: () => void;
   onChange?: (payload: UserSettings) => void;
@@ -72,11 +72,7 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
-export function SettingsDropdown({
-  open,
-  onClose,
-  onChange,
-}: SettingsDropdownProps) {
+export function Setting({ open, onClose, onChange }: SettingProps) {
   const universities = useMemo(
     () => universityData.map((u) => u.university),
     [],
@@ -119,6 +115,12 @@ export function SettingsDropdown({
   const handleSave = () => {
     const payload: UserSettings = { university, department };
     saveUserSettings(payload);
+
+    // 커스텀 이벤트 발생시켜 같은 탭에서 변경 감지
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('settingsChanged'));
+    }
+
     onChange?.(payload);
     onClose();
   };
@@ -167,4 +169,4 @@ export function SettingsDropdown({
   );
 }
 
-export default SettingsDropdown;
+export default Setting;

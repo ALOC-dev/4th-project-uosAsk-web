@@ -74,9 +74,33 @@ const SettingsHint = styled.div`
 
 export default function DepartmentPage() {
   const [hasSettings, setHasSettings] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
+    // 설정 상태 확인
     setHasSettings(hasUserSettings());
+
+    // 설정 변경 감지를 위한 storage 이벤트 리스너
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'uosask-settings') {
+        setHasSettings(hasUserSettings());
+        setRefreshKey((prev) => prev + 1); // 컨텐츠 새로고침
+      }
+    };
+
+    // 같은 탭에서의 변경 감지를 위한 커스텀 이벤트 리스너
+    const handleSettingsChange = () => {
+      setHasSettings(hasUserSettings());
+      setRefreshKey((prev) => prev + 1); // 컨텐츠 새로고침
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('settingsChanged', handleSettingsChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('settingsChanged', handleSettingsChange);
+    };
   }, []);
 
   const handleNoticeClick = (notice: Notice) => {
@@ -88,6 +112,7 @@ export default function DepartmentPage() {
     <NoticeLayout type='department'>
       {hasSettings ? (
         <AnimatedNoticeList
+          key={refreshKey}
           notices={departmentNotices}
           onNoticeClick={handleNoticeClick}
         />
