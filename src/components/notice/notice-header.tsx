@@ -100,12 +100,12 @@ const NOTICE_CONFIG = {
   },
   academic: {
     title: '학사공지',
-    icon: '/images/academic-icon.svg',
+    icon: '/images/department-icon.svg',
     description: '학사 관련 공지',
   },
   department: {
     title: '학과공지',
-    icon: '/images/department-icon.svg',
+    icon: '/images/academic-icon.svg',
     description: '학과별 공지사항',
   },
   search: {

@@ -298,7 +298,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
           >
             <NavIcon isActive={activeSection === 'academic'}>
               <Image
-                src='/images/academic-icon.svg'
+                src='/images/department-icon.svg'
                 alt='학사공지'
                 width={35}
                 height={35}
@@ -313,7 +313,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
           >
             <NavIcon isActive={activeSection === 'department'}>
               <Image
-                src='/images/department-icon.svg'
+                src='/images/academic-icon.svg'
                 alt='학과공지'
                 width={35}
                 height={35}
