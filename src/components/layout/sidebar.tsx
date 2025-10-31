@@ -80,17 +80,27 @@ const NavItem = styled.button<{ isActive?: boolean }>`
   }
 `;
 
-const NavIcon = styled.div`
+const NavIcon = styled.div<{ isActive?: boolean }>`
   width: 35px;
   height: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: ${({ theme }) => theme.colors.primary};
-  opacity: 1;
+  opacity: ${({ isActive }) => (isActive ? 1 : 0.5)};
+  filter: ${({ isActive }) =>
+    isActive ? 'saturate(1.5) brightness(1.1)' : 'saturate(1)'};
+  transition:
+    opacity 0.2s,
+    filter 0.2s;
 
   ${NavItem}:hover & {
     opacity: 1;
+    filter: saturate(1.3) brightness(1.05);
+  }
+
+  img {
+    transition: filter 0.2s;
   }
 `;
 
@@ -200,7 +210,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
             isActive={activeSection === 'chatbot'}
             onClick={() => handleNavClick('chatbot')}
           >
-            <NavIcon>
+            <NavIcon isActive={activeSection === 'chatbot'}>
               <Image
                 src='/images/chatBot-icon.svg'
                 alt='채팅봇'
@@ -215,7 +225,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
             isActive={activeSection === 'general'}
             onClick={() => handleNavClick('general')}
           >
-            <NavIcon>
+            <NavIcon isActive={activeSection === 'general'}>
               <Image
                 src='/images/general-icon.svg'
                 alt='일반공지'
@@ -230,7 +240,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
             isActive={activeSection === 'academic'}
             onClick={() => handleNavClick('academic')}
           >
-            <NavIcon>
+            <NavIcon isActive={activeSection === 'academic'}>
               <Image
                 src='/images/academic-icon.svg'
                 alt='학사공지'
@@ -245,7 +255,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
             isActive={activeSection === 'department'}
             onClick={() => handleNavClick('department')}
           >
-            <NavIcon>
+            <NavIcon isActive={activeSection === 'department'}>
               <Image
                 src='/images/department-icon.svg'
                 alt='학과공지'
@@ -262,7 +272,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
             isActive={activeSection === 'search'}
             onClick={() => handleNavClick('search')}
           >
-            <NavIcon>
+            <NavIcon isActive={activeSection === 'search'}>
               <Image
                 src='/images/search-icon.svg'
                 alt='공지검색'
