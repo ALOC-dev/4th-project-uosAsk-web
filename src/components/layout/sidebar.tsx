@@ -1,10 +1,12 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import styled from '@emotion/styled';
 import { theme } from '@/styles/theme';
 import SearchModal from '../modal/searchModal';
+import { recentHistoryData } from '@/data/recentHistory';
 
 const SidebarContainer = styled.aside`
   width: 275px;
@@ -128,7 +130,12 @@ const SectionTitle = styled.h3`
 const HistoryList = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0 ${({ theme }) => theme.spacing.lg};
+  padding: 0 ${({ theme }) => theme.spacing.md};
+`;
+
+const HistoryItemWrapper = styled.div`
+  position: relative;
+  padding: ${({ theme }) => theme.spacing.xs} 0;
 `;
 
 const HistoryItem = styled.div`
@@ -138,16 +145,40 @@ const HistoryItem = styled.div`
   color: ${({ theme }) => theme.colors.textSecondary};
   opacity: 0.5;
   letter-spacing: -0.08em;
-  line-height: 1.2;
+  line-height: 1.4;
   cursor: pointer;
-  padding: ${({ theme }) => theme.spacing.sm} 0;
-  white-space: nowrap;
+  position: relative;
+
+  /* 자동 truncate 처리 */
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  word-break: break-word;
+  max-width: 100%;
+  white-space: nowrap;
 
   &:hover {
     opacity: 1;
   }
+`;
+
+const HistoryItemExpanded = styled.div<{ isVisible: boolean }>`
+  position: fixed;
+  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-family: ${({ theme }) => theme.fonts.sans};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: 500;
+  letter-spacing: -0.08em;
+  line-height: 1.4;
+  white-space: nowrap;
+  z-index: 1000;
+  border-radius: ${({ theme }) => theme.radii.md};
+  pointer-events: none;
+  display: ${({ isVisible }) => (isVisible ? 'block' : 'none')};
+  padding-right: ${({ theme }) => theme.spacing.xs};
 `;
 
 const Divider = styled.div`
@@ -173,6 +204,8 @@ const ROUTE_MAP: Record<string, string> = {
 
 export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
   const router = useRouter();
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
 
   const handleNavClick = (section: string) => {
     // onNavigate 콜백이 있으면 호출 (하위 호환성)
@@ -185,6 +218,22 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
     if (route) {
       router.push(route);
     }
+  };
+
+  const handleMouseEnter = (
+    itemId: string,
+    event: React.MouseEvent<HTMLDivElement>,
+  ) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setTooltipPosition({
+      top: rect.top,
+      left: rect.left,
+    });
+    setHoveredItem(itemId);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredItem(null);
   };
 
   return (
@@ -289,9 +338,26 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
 
         <SectionTitle>최근 본 공지</SectionTitle>
         <HistoryList>
-          <HistoryItem>제 17회 공과대학 창의적 공학...</HistoryItem>
-          <HistoryItem>[박물관] 9/26(금) 100주년기념...</HistoryItem>
-          <HistoryItem>[교수학습개발센터] 2025학년...</HistoryItem>
+          {recentHistoryData.map((item) => (
+            <HistoryItemWrapper key={item.id}>
+              <HistoryItem
+                onClick={() => item.url && router.push(item.url)}
+                onMouseEnter={(e) => handleMouseEnter(item.id, e)}
+                onMouseLeave={handleMouseLeave}
+              >
+                {item.title}
+              </HistoryItem>
+              <HistoryItemExpanded
+                isVisible={hoveredItem === item.id}
+                style={{
+                  top: `${tooltipPosition.top}px`,
+                  left: `${tooltipPosition.left}px`,
+                }}
+              >
+                {item.title}
+              </HistoryItemExpanded>
+            </HistoryItemWrapper>
+          ))}
         </HistoryList>
       </SidebarContent>
     </SidebarContainer>
