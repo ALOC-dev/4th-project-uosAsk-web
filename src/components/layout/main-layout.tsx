@@ -4,7 +4,7 @@ import { ReactNode, useState } from 'react';
 import styled from '@emotion/styled';
 import { Sidebar } from './sidebar';
 import { Header } from './header';
-import { SettingsDropdown } from '@/components/ui/settings-dropdown';
+import { SettingsDropdown } from './settings-dropdown';
 
 const LayoutContainer = styled.div`
   display: flex;

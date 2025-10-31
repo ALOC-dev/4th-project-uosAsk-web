@@ -3,14 +3,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 import universityData from '@/constants/university.json';
+import {
+  getUserSettings,
+  saveUserSettings,
+  UserSettings,
+} from '@/utils/user-settings';
 
 interface SettingsDropdownProps {
   open: boolean;
   onClose: () => void;
-  onChange?: (payload: { university: string; department: string }) => void;
+  onChange?: (payload: UserSettings) => void;
 }
-
-const DROPDOWN_STORAGE_KEY = 'uosask-settings';
 
 const Container = styled.div`
   position: absolute;
@@ -89,24 +92,18 @@ export function SettingsDropdown({
 
   useEffect(() => {
     if (!open) return;
-    try {
-      const raw = localStorage.getItem(DROPDOWN_STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as {
-          university?: string;
-          department?: string;
-        };
-        if (parsed.university && universities.includes(parsed.university)) {
-          setUniversity(parsed.university);
-          const deps = departmentMap.get(parsed.university) ?? [];
-          if (parsed.department && deps.includes(parsed.department)) {
-            setDepartment(parsed.department);
-          } else {
-            setDepartment('');
-          }
+    const settings = getUserSettings();
+    if (settings) {
+      if (universities.includes(settings.university)) {
+        setUniversity(settings.university);
+        const deps = departmentMap.get(settings.university) ?? [];
+        if (deps.includes(settings.department)) {
+          setDepartment(settings.department);
+        } else {
+          setDepartment('');
         }
       }
-    } catch {}
+    }
   }, [open, universities, departmentMap]);
 
   useEffect(() => {
@@ -120,10 +117,8 @@ export function SettingsDropdown({
   if (!open) return null;
 
   const handleSave = () => {
-    const payload = { university, department };
-    try {
-      localStorage.setItem(DROPDOWN_STORAGE_KEY, JSON.stringify(payload));
-    } catch {}
+    const payload: UserSettings = { university, department };
+    saveUserSettings(payload);
     onChange?.(payload);
     onClose();
   };
