@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { NoticeLayout } from '@/components/notice/notice-layout';
 import { AnimatedNoticeList } from '@/components/notice/notice-list';
 import { departmentNotices } from '@/data/notices';
-import { Notice } from '@/types/notice';
 import { hasUserSettings } from '@/utils/user-settings';
 
 const EmptyStateContainer = styled.div`
@@ -103,19 +102,10 @@ export default function DepartmentPage() {
     };
   }, []);
 
-  const handleNoticeClick = (notice: Notice) => {
-    console.log('학과공지 클릭:', notice);
-    // 여기에 공지사항 상세 페이지로 이동하는 로직 추가 가능
-  };
-
   return (
     <NoticeLayout type='department'>
       {hasSettings ? (
-        <AnimatedNoticeList
-          key={refreshKey}
-          notices={departmentNotices}
-          onNoticeClick={handleNoticeClick}
-        />
+        <AnimatedNoticeList key={refreshKey} notices={departmentNotices} />
       ) : (
         <EmptyStateContainer>
           <IconWrapper>

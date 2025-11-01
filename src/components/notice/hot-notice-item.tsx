@@ -116,12 +116,17 @@ const NoticeClickCount = styled.span`
 
 interface HotNoticeItemProps {
   notice: Notice;
-  onClick?: (notice: Notice) => void;
 }
 
-export const HotNoticeItem = ({ notice, onClick }: HotNoticeItemProps) => {
+export const HotNoticeItem = ({ notice }: HotNoticeItemProps) => {
+  const handleClick = () => {
+    if (notice.link) {
+      window.open(notice.link, '_blank', 'noopener,noreferrer');
+    }
+  };
+
   return (
-    <HotNoticeCard onClick={() => onClick?.(notice)}>
+    <HotNoticeCard onClick={handleClick}>
       <HotBadge>HOT!</HotBadge>
       <NoticeTitle>{notice.title}</NoticeTitle>
       <NoticeInfo>

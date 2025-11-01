@@ -4,6 +4,7 @@ export interface Notice {
   department: string;
   date: string;
   clickCount: number;
+  link?: string;
   isImportant?: boolean;
 }
 

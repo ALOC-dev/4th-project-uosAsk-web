@@ -163,13 +163,11 @@ const EmptyText = styled.p`
 interface AnimatedNoticeListProps {
   notices?: Notice[]; // 레거시 지원
   noticeData?: NoticeApiResponse; // API 응답 구조
-  onNoticeClick?: (notice: Notice) => void;
 }
 
 export function AnimatedNoticeList({
   notices,
   noticeData,
-  onNoticeClick,
 }: AnimatedNoticeListProps) {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -184,8 +182,8 @@ export function AnimatedNoticeList({
   }, [hotNotices, contentNotices]);
 
   const handleNoticeClick = (notice: Notice) => {
-    if (onNoticeClick) {
-      onNoticeClick(notice);
+    if (notice.link) {
+      window.open(notice.link, '_blank', 'noopener,noreferrer');
     }
   };
 
@@ -208,11 +206,7 @@ export function AnimatedNoticeList({
     <NoticeListContainer>
       {/* Hot 공지사항 (카드 스타일) */}
       {hotNotices.map((notice) => (
-        <HotNoticeItem
-          key={notice.id}
-          notice={notice}
-          onClick={handleNoticeClick}
-        />
+        <HotNoticeItem key={notice.id} notice={notice} />
       ))}
 
       {/* 일반 공지사항 (리스트 스타일) */}
