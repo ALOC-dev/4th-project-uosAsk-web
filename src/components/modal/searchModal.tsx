@@ -53,7 +53,7 @@ const ModalContainer = styled.div`
 const SearchInputWrapper = styled.div`
   display: flex;
   align-items: center;
-  padding: ${({ theme }) => `${theme.spacing.lg} ${theme.spacing.lg}`};
+  padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing.lg}`};
   gap: ${({ theme }) => theme.spacing.md};
   background-color: ${({ theme }) => theme.colors.backgroundSecondary};
   border-radius: ${({ theme }) => theme.radii.md};
