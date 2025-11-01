@@ -1,11 +1,10 @@
 export interface Notice {
-  id: string;
   title: string;
+  postedDate: string;
   department: string;
-  date: string;
-  clickCount: number;
-  link?: string;
-  isImportant?: boolean;
+  link: string;
+  category: string;
+  viewCount: number;
 }
 
 // API 응답 구조

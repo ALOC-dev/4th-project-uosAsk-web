@@ -71,7 +71,7 @@ const NoticeItem = styled.div`
   }
 `;
 
-const NoticeTitle = styled.h3<{ isImportant?: boolean }>`
+const NoticeTitle = styled.h3`
   font-family: ${({ theme }) => theme.fonts.sans};
   font-size: ${({ theme }) => theme.fontSizes.base};
   color: ${({ theme }) => theme.colors.textSecondary};
@@ -205,20 +205,21 @@ export function AnimatedNoticeList({
   return (
     <NoticeListContainer>
       {/* Hot 공지사항 (카드 스타일) */}
-      {hotNotices.map((notice) => (
-        <HotNoticeItem key={notice.id} notice={notice} />
+      {hotNotices.map((notice, index) => (
+        <HotNoticeItem key={`hot-${notice.title}-${index}`} notice={notice} />
       ))}
 
       {/* 일반 공지사항 (리스트 스타일) */}
-      {contentNotices.map((notice) => (
-        <NoticeItem key={notice.id} onClick={() => handleNoticeClick(notice)}>
-          <NoticeTitle isImportant={notice.isImportant}>
-            {notice.title}
-          </NoticeTitle>
+      {contentNotices.map((notice, index) => (
+        <NoticeItem
+          key={`${notice.title}-${index}`}
+          onClick={() => handleNoticeClick(notice)}
+        >
+          <NoticeTitle>{notice.title}</NoticeTitle>
           <NoticeInfo>
             <NoticeDepartment>{notice.department}</NoticeDepartment>
-            <NoticeDate>{notice.date}</NoticeDate>
-            <NoticeClickCount>{notice.clickCount} 조회</NoticeClickCount>
+            <NoticeDate>{notice.postedDate}</NoticeDate>
+            <NoticeClickCount>{notice.viewCount} 조회</NoticeClickCount>
           </NoticeInfo>
         </NoticeItem>
       ))}

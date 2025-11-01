@@ -131,8 +131,8 @@ export const HotNoticeItem = ({ notice }: HotNoticeItemProps) => {
       <NoticeTitle>{notice.title}</NoticeTitle>
       <NoticeInfo>
         <NoticeDepartment>{notice.department}</NoticeDepartment>
-        <NoticeDate>{notice.date}</NoticeDate>
-        <NoticeClickCount>{notice.clickCount} 조회</NoticeClickCount>
+        <NoticeDate>{notice.postedDate}</NoticeDate>
+        <NoticeClickCount>{notice.viewCount} 조회</NoticeClickCount>
       </NoticeInfo>
     </HotNoticeCard>
   );
