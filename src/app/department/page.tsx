@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import Image from 'next/image';
 import { NoticeLayout } from '@/components/notice/notice-layout';
-import { AnimatedNoticeList } from '@/components/notice/animated-notice-list';
+import { AnimatedNoticeList } from '@/components/notice/notice-list';
 import { departmentNotices } from '@/data/notices';
 import { Notice } from '@/types/notice';
 import { hasUserSettings } from '@/utils/user-settings';

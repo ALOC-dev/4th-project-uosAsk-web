@@ -1,7 +1,7 @@
 'use client';
 
 import { NoticeLayout } from '@/components/notice/notice-layout';
-import { AnimatedNoticeList } from '@/components/notice/animated-notice-list';
+import { AnimatedNoticeList } from '@/components/notice/notice-list';
 import { generalNotices } from '@/data/notices';
 import { Notice } from '@/types/notice';
 

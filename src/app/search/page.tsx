@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import styled from '@emotion/styled';
 import { NoticeLayout } from '@/components/notice/notice-layout';
-import { AnimatedNoticeList } from '@/components/notice/animated-notice-list';
+import { AnimatedNoticeList } from '@/components/notice/notice-list';
 import {
   generalNotices,
   academicNotices,

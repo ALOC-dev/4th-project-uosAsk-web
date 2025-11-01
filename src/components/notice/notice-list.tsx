@@ -2,8 +2,9 @@
 
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
-import { Notice } from '@/types/notice';
+import { Notice, NoticeApiResponse } from '@/types/notice';
 import { useState, useEffect } from 'react';
+import { HotNoticeItem } from './hot-notice-item';
 
 const fadeInUp = keyframes`
   from {
@@ -42,17 +43,13 @@ const NoticeListContainer = styled.div`
   scrollbar-width: none;
 `;
 
-const NoticeItem = styled.div<{
-  isTopNotice: boolean;
-  rank?: number;
-}>`
+const NoticeItem = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: ${({ theme }) => theme.spacing.sm};
   padding: ${({ theme }) => `${theme.spacing.xs} ${theme.spacing.lg}`};
-  background-color: ${({ theme, isTopNotice }) =>
-    isTopNotice ? theme.colors.backgroundSecondary : 'transparent'};
+  background-color: transparent;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   cursor: pointer;
   min-height: 64.5px;
@@ -65,17 +62,9 @@ const NoticeItem = styled.div<{
 
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* 카드 스타일 (상위 3개) */
-  ${({ isTopNotice, theme, rank }) =>
-    isTopNotice &&
-    `
-    margin: ${theme.spacing.xs} ${theme.spacing.md};
-    border-radius: ${theme.radii.md};
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    background-color: ${theme.colors.backgroundButton};
-    padding-left: 60px; /* 불꽃 이모티콘 공간 확보 */
-    }
-  `}
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.backgroundSecondary};
+  }
 
   &:last-child {
     border-bottom: none;
@@ -140,22 +129,6 @@ const NoticeClickCount = styled.span`
   opacity: 0.7;
 `;
 
-const HotBadge = styled.span`
-  position: absolute;
-  left: ${({ theme }) => theme.spacing.md};
-  top: 50%;
-  transform: translateY(-50%);
-  font-family: ${({ theme }) => theme.fonts.sans};
-  font-size: ${({ theme }) => theme.fontSizes.xs};
-  font-weight: 700;
-  background: ${({ theme }) => theme.colors.primary};
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  letter-spacing: 0.5px;
-  z-index: 1;
-`;
-
 const EmptyState = styled.div`
   display: flex;
   flex-direction: column;
@@ -188,35 +161,27 @@ const EmptyText = styled.p`
 `;
 
 interface AnimatedNoticeListProps {
-  notices: Notice[];
+  notices?: Notice[]; // 레거시 지원
+  noticeData?: NoticeApiResponse; // API 응답 구조
   onNoticeClick?: (notice: Notice) => void;
 }
 
 export function AnimatedNoticeList({
   notices,
+  noticeData,
   onNoticeClick,
 }: AnimatedNoticeListProps) {
   const [isVisible, setIsVisible] = useState(false);
 
+  // API 응답 구조 또는 레거시 notices 배열 처리
+  const hotNotices = noticeData?.hot || [];
+  const contentNotices = noticeData?.content || notices || [];
+  const allNotices = [...hotNotices, ...contentNotices];
+
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
     return () => clearTimeout(timer);
-  }, [notices]);
-
-  // 조회수 기준으로 정렬하여 상위 3개 식별
-  const sortedNotices = [...notices].sort(
-    (a, b) => b.clickCount - a.clickCount,
-  );
-  const topNotices = sortedNotices.slice(0, 3);
-  const topNoticeIds = topNotices.map((notice) => notice.id);
-
-  // 상위 3개를 제외한 나머지 공지들 (기존 순서 유지)
-  const remainingNotices = notices.filter(
-    (notice) => !topNoticeIds.includes(notice.id),
-  );
-
-  // 최종 순서: 상위 3개 + 나머지 공지들
-  const reorderedNotices = [...topNotices, ...remainingNotices];
+  }, [hotNotices, contentNotices]);
 
   const handleNoticeClick = (notice: Notice) => {
     if (onNoticeClick) {
@@ -228,7 +193,7 @@ export function AnimatedNoticeList({
     return <NoticeListContainer />;
   }
 
-  if (notices.length === 0) {
+  if (allNotices.length === 0) {
     return (
       <NoticeListContainer>
         <EmptyState>
@@ -241,31 +206,28 @@ export function AnimatedNoticeList({
 
   return (
     <NoticeListContainer>
-      {reorderedNotices.map((notice, index) => {
-        const isTopNotice = topNoticeIds.includes(notice.id);
-        const rank = isTopNotice
-          ? topNoticeIds.indexOf(notice.id) + 1
-          : undefined;
+      {/* Hot 공지사항 (카드 스타일) */}
+      {hotNotices.map((notice) => (
+        <HotNoticeItem
+          key={notice.id}
+          notice={notice}
+          onClick={handleNoticeClick}
+        />
+      ))}
 
-        return (
-          <NoticeItem
-            key={notice.id}
-            isTopNotice={isTopNotice}
-            rank={rank}
-            onClick={() => handleNoticeClick(notice)}
-          >
-            {isTopNotice && <HotBadge>HOT!</HotBadge>}
-            <NoticeTitle isImportant={notice.isImportant}>
-              {notice.title}
-            </NoticeTitle>
-            <NoticeInfo>
-              <NoticeDepartment>{notice.department}</NoticeDepartment>
-              <NoticeDate>{notice.date}</NoticeDate>
-              <NoticeClickCount>{notice.clickCount} 조회</NoticeClickCount>
-            </NoticeInfo>
-          </NoticeItem>
-        );
-      })}
+      {/* 일반 공지사항 (리스트 스타일) */}
+      {contentNotices.map((notice) => (
+        <NoticeItem key={notice.id} onClick={() => handleNoticeClick(notice)}>
+          <NoticeTitle isImportant={notice.isImportant}>
+            {notice.title}
+          </NoticeTitle>
+          <NoticeInfo>
+            <NoticeDepartment>{notice.department}</NoticeDepartment>
+            <NoticeDate>{notice.date}</NoticeDate>
+            <NoticeClickCount>{notice.clickCount} 조회</NoticeClickCount>
+          </NoticeInfo>
+        </NoticeItem>
+      ))}
     </NoticeListContainer>
   );
 }
