@@ -5,12 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import styled from '@emotion/styled';
 import { NoticeLayout } from '@/components/notice/notice-layout';
 import { AnimatedNoticeList } from '@/components/notice/notice-list';
-import {
-  generalNoticeData,
-  academicNoticeData,
-  departmentNoticeData,
-} from '@/data/notices';
 import { NoticeApiResponse } from '@/types/notice';
+import { searchNotices } from '@/services/notice/searchNotices';
 
 const SearchResultContainer = styled.div`
   padding: ${({ theme }) => theme.spacing.lg};
@@ -53,8 +49,10 @@ function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
   const [searchResults, setSearchResults] = useState<NoticeApiResponse | null>(
-    null
+    null,
   );
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!query) {
@@ -62,32 +60,30 @@ function SearchContent() {
       return;
     }
 
-    // 모든 공지사항을 합침 (hot과 content 모두)
-    const allNotices = [
-      ...generalNoticeData.hot,
-      ...generalNoticeData.content,
-      ...academicNoticeData.hot,
-      ...academicNoticeData.content,
-      ...departmentNoticeData.hot,
-      ...departmentNoticeData.content,
-    ];
+    const fetchSearchResults = async () => {
+      setIsLoading(true);
+      setError(null);
 
-    // 검색어로 공지사항 필터링 (제목 기준)
-    const results = allNotices.filter((notice) =>
-      notice.title.toLowerCase().includes(query.toLowerCase())
-    );
+      try {
+        // 백엔드 API 호출 (keyword 파라미터로 검색어 전달)
+        const data = await searchNotices({
+          keyword: query,
+          page: 0,
+          size: 15,
+          exact: false, // 부분 검색
+        });
 
-    // NoticeApiResponse 형식으로 변환 (검색 결과는 hot 없이 content만)
-    setSearchResults({
-      hot: [],
-      content: results,
-      page: 0,
-      size: results.length,
-      totalElements: results.length,
-      totalPages: 1,
-      hasNext: false,
-      hasPrevious: false,
-    });
+        setSearchResults(data);
+      } catch (err) {
+        console.error('검색 실패:', err);
+        setError('검색 중 오류가 발생했습니다. 다시 시도해주세요.');
+        setSearchResults(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSearchResults();
   }, [query]);
 
   return (
@@ -97,12 +93,12 @@ function SearchContent() {
       title={query || '검색결과'}
     >
       <SearchResultContainer>
-        {query && searchResults && (
+        {query && searchResults && !isLoading && (
           <SearchInfo>
             <SearchKeyword>{query}</SearchKeyword>
             <SearchCount>
-              {searchResults.content.length > 0
-                ? `${searchResults.content.length}개의 공지사항을 찾았습니다`
+              {searchResults.totalElements > 0
+                ? `${searchResults.totalElements}개의 공지사항을 찾았습니다`
                 : '검색 결과가 없습니다'}
             </SearchCount>
           </SearchInfo>
@@ -114,6 +110,10 @@ function SearchContent() {
             <br />
             사이드바의 공지검색을 클릭하여 검색할 수 있습니다
           </NoResultsMessage>
+        ) : isLoading ? (
+          <NoResultsMessage>검색 중...</NoResultsMessage>
+        ) : error ? (
+          <NoResultsMessage>{error}</NoResultsMessage>
         ) : searchResults && searchResults.content.length > 0 ? (
           <AnimatedNoticeList noticeData={searchResults} />
         ) : (
@@ -132,7 +132,11 @@ export default function SearchPage() {
   return (
     <Suspense
       fallback={
-        <NoticeLayout type='search' icon='/images/search-icon.svg' title='검색결과'>
+        <NoticeLayout
+          type='search'
+          icon='/images/search-icon.svg'
+          title='검색결과'
+        >
           <SearchResultContainer>
             <NoResultsMessage>검색 중...</NoResultsMessage>
           </SearchResultContainer>
@@ -143,4 +147,3 @@ export default function SearchPage() {
     </Suspense>
   );
 }
-
