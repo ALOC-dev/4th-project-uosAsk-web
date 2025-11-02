@@ -49,6 +49,7 @@ const NoticeItem = styled.div`
   justify-content: center;
   gap: ${({ theme }) => theme.spacing.sm};
   padding: ${({ theme }) => `${theme.spacing.xs} ${theme.spacing.lg}`};
+  padding-left: 75px; /* HOT 공지사항과 텍스트 시작 위치 맞춤 */
   background-color: transparent;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   cursor: pointer;
