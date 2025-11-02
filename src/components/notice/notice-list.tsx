@@ -2,7 +2,7 @@
 
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
-import { Notice, NoticeApiResponse } from '@/types/notice';
+import { NoticeApiResponse } from '@/types/notice';
 import { useState, useEffect } from 'react';
 import { HotNoticeItem } from './hot-notice-item';
 
@@ -161,27 +161,23 @@ const EmptyText = styled.p`
 `;
 
 interface AnimatedNoticeListProps {
-  notices?: Notice[]; // 레거시 지원
-  noticeData?: NoticeApiResponse; // API 응답 구조
+  noticeData: NoticeApiResponse;
 }
 
-export function AnimatedNoticeList({
-  notices,
-  noticeData,
-}: AnimatedNoticeListProps) {
+export function AnimatedNoticeList({ noticeData }: AnimatedNoticeListProps) {
   const [isVisible, setIsVisible] = useState(false);
 
-  // API 응답 구조 또는 레거시 notices 배열 처리
+  // 백엔드 API 응답 구조에서 hot과 content 추출
   const hotNotices = noticeData?.hot || [];
-  const contentNotices = noticeData?.content || notices || [];
+  const contentNotices = noticeData?.content || [];
   const allNotices = [...hotNotices, ...contentNotices];
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
     return () => clearTimeout(timer);
-  }, [hotNotices, contentNotices]);
+  }, [noticeData]);
 
-  const handleNoticeClick = (notice: Notice) => {
+  const handleNoticeClick = (notice: NoticeApiResponse['hot'][0]) => {
     if (notice.link) {
       window.open(notice.link, '_blank', 'noopener,noreferrer');
     }

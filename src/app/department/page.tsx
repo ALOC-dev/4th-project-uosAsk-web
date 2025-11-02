@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import Image from 'next/image';
 import { NoticeLayout } from '@/components/notice/notice-layout';
 import { AnimatedNoticeList } from '@/components/notice/notice-list';
-import { departmentNotices } from '@/data/notices';
+import { departmentNoticeData } from '@/data/notices';
 import { hasUserSettings } from '@/utils/user-settings';
 
 const EmptyStateContainer = styled.div`
@@ -105,7 +105,7 @@ export default function DepartmentPage() {
   return (
     <NoticeLayout type='department'>
       {hasSettings ? (
-        <AnimatedNoticeList key={refreshKey} notices={departmentNotices} />
+        <AnimatedNoticeList key={refreshKey} noticeData={departmentNoticeData} />
       ) : (
         <EmptyStateContainer>
           <IconWrapper>
