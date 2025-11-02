@@ -5,8 +5,10 @@ import styled from '@emotion/styled';
 import Image from 'next/image';
 import { NoticeLayout } from '@/components/notice/notice-layout';
 import { AnimatedNoticeList } from '@/components/notice/notice-list';
-import { departmentNoticeData } from '@/data/notices';
-import { hasUserSettings } from '@/utils/user-settings';
+import { getUserSettings, hasUserSettings } from '@/app/data/user-settings';
+import { getNoticeList } from '@/services/notice/getNoticeList';
+import { NoticeApiResponse } from '@/types/notice';
+import type { Department } from '@/constants/department';
 
 const EmptyStateContainer = styled.div`
   display: flex;
@@ -74,22 +76,58 @@ const SettingsHint = styled.div`
 export default function DepartmentPage() {
   const [hasSettings, setHasSettings] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [noticeData, setNoticeData] = useState<NoticeApiResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // 공지사항 데이터 가져오기
+  useEffect(() => {
+    const fetchNotices = async () => {
+      const settings = getUserSettings();
+
+      if (!settings) {
+        setHasSettings(false);
+        return;
+      }
+
+      setHasSettings(true);
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        // localStorage에서 학과 정보 가져와서 API에 전달
+        const department = settings.department as Department;
+
+        const response = await getNoticeList({
+          department: [department], // Department[] 타입으로 전달 (학과명만 전달)
+          keyword: '',
+          category: 'GENERAL', // 학과 공지는 category 불필요하지만 필수 파라미터
+          page: 0,
+          exact: true,
+        });
+
+        setNoticeData(response.data);
+      } catch (err) {
+        console.error('공지사항 조회 실패:', err);
+        setError('공지사항을 불러오는 중 오류가 발생했습니다.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchNotices();
+  }, [refreshKey]); // refreshKey 변경 시 재호출
 
   useEffect(() => {
-    // 설정 상태 확인
-    setHasSettings(hasUserSettings());
-
     // 설정 변경 감지를 위한 storage 이벤트 리스너
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'uosask-settings') {
-        setHasSettings(hasUserSettings());
         setRefreshKey((prev) => prev + 1); // 컨텐츠 새로고침
       }
     };
 
     // 같은 탭에서의 변경 감지를 위한 커스텀 이벤트 리스너
     const handleSettingsChange = () => {
-      setHasSettings(hasUserSettings());
       setRefreshKey((prev) => prev + 1); // 컨텐츠 새로고침
     };
 
@@ -104,12 +142,7 @@ export default function DepartmentPage() {
 
   return (
     <NoticeLayout type='department'>
-      {hasSettings ? (
-        <AnimatedNoticeList
-          key={refreshKey}
-          noticeData={departmentNoticeData}
-        />
-      ) : (
+      {!hasSettings ? (
         <EmptyStateContainer>
           <IconWrapper>
             <Image
@@ -137,7 +170,17 @@ export default function DepartmentPage() {
             <span>우측 상단의 설정 아이콘을 클릭하여 설정할 수 있습니다</span>
           </SettingsHint>
         </EmptyStateContainer>
-      )}
+      ) : isLoading ? (
+        <EmptyStateContainer>
+          <MessageDescription>공지사항을 불러오는 중...</MessageDescription>
+        </EmptyStateContainer>
+      ) : error ? (
+        <EmptyStateContainer>
+          <MessageDescription>{error}</MessageDescription>
+        </EmptyStateContainer>
+      ) : noticeData ? (
+        <AnimatedNoticeList key={refreshKey} noticeData={noticeData} />
+      ) : null}
     </NoticeLayout>
   );
 }
