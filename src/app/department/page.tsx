@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import styled from '@emotion/styled';
 import Image from 'next/image';
 import { NoticeLayout } from '@/components/notice/notice-layout';
 import { AnimatedNoticeList } from '@/components/notice/notice-list';
-import { getUserSettings, hasUserSettings } from '@/data/user-settings';
+import { getUserSettings } from '@/data/user-settings';
 import { getNoticeList } from '@/services/notice/getNoticeList';
 import { NoticeApiResponse } from '@/types/notice';
 import type { Department } from '@/constants/department';
@@ -76,59 +76,171 @@ const SettingsHint = styled.div`
 export default function DepartmentPage() {
   const [hasSettings, setHasSettings] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
-  const [noticeData, setNoticeData] = useState<NoticeApiResponse | null>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [accumulatedNotices, setAccumulatedNotices] =
+    useState<NoticeApiResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const departmentRef = useRef<Department | null>(null);
+  const lastRequestTimeRef = useRef<number>(0);
 
   // 공지사항 데이터 가져오기
-  useEffect(() => {
-    const fetchNotices = async () => {
-      const settings = getUserSettings();
+  const fetchNotices = useCallback(
+    async (page: number) => {
+      if (isLoading || !departmentRef.current) return;
 
-      if (!settings) {
-        setHasSettings(false);
+      // 요청 간격 제한 (최소 500ms)
+      const now = Date.now();
+      const timeSinceLastRequest = now - lastRequestTimeRef.current;
+      if (timeSinceLastRequest < 500) {
+        console.log('⏱️ [학과공지] 요청 간격 제한 (500ms)');
         return;
       }
+      lastRequestTimeRef.current = now;
 
-      setHasSettings(true);
+      console.log(`📄 [학과공지] 페이지 ${page} 로드 시작...`);
       setIsLoading(true);
       setError(null);
 
       try {
-        // localStorage에서 학과 정보 가져와서 API에 전달
-        const department = settings.department as Department;
-
         const response = await getNoticeList({
-          department: [department], // Department[] 타입으로 전달 (학과명만 전달)
+          department: [departmentRef.current],
           keyword: '',
-          // category는 학과 공지 조회 시 불필요하므로 제외
-          page: 0,
+          page,
           exact: true,
         });
 
-        setNoticeData(response.data);
-      } catch (err) {
-        console.error('공지사항 조회 실패:', err);
-        setError('공지사항을 불러오는 중 오류가 발생했습니다.');
+        const newData = response.data;
+        console.log(`✅ [학과공지] 페이지 ${page} 로드 완료:`, {
+          hot: newData.hot.length,
+          content: newData.content.length,
+          totalPages: newData.totalPages,
+          hasNext: newData.hasNext,
+        });
+
+        setAccumulatedNotices((prev) => {
+          if (!prev) {
+            console.log('🎯 [학과공지] 첫 페이지 로드:', {
+              hot: newData.hot.length,
+              content: newData.content.length,
+            });
+            return newData;
+          } else {
+            const accumulated = {
+              ...newData,
+              hot: prev.hot,
+              content: [...prev.content, ...newData.content],
+            };
+            console.log('📚 [학과공지] 데이터 누적:', {
+              기존_content: prev.content.length,
+              새로운_content: newData.content.length,
+              총_content: accumulated.content.length,
+            });
+            return accumulated;
+          }
+        });
+
+        setHasMore(newData.hasNext);
+        if (!newData.hasNext) {
+          console.log('🏁 [학과공지] 마지막 페이지 도달');
+        }
+      } catch (err: any) {
+        console.error('❌ [학과공지] 공지사항 로드 실패:', err);
+        if (err.response?.status === 429) {
+          setError('요청이 너무 많습니다. 잠시 후 다시 시도해주세요.');
+        } else {
+          setError('공지사항을 불러오는 중 오류가 발생했습니다.');
+        }
       } finally {
         setIsLoading(false);
       }
-    };
+    },
+    [isLoading],
+  );
 
-    fetchNotices();
-  }, [refreshKey]); // refreshKey 변경 시 재호출
-
+  // 초기 로드 및 설정 변경 감지
   useEffect(() => {
-    // 설정 변경 감지를 위한 storage 이벤트 리스너
+    const settings = getUserSettings();
+
+    if (!settings) {
+      setHasSettings(false);
+      setAccumulatedNotices(null);
+      departmentRef.current = null;
+      return;
+    }
+
+    setHasSettings(true);
+    const department = settings.department as Department;
+
+    // 학과가 변경되지 않았으면 요청하지 않음
+    if (departmentRef.current === department && accumulatedNotices) {
+      return;
+    }
+
+    departmentRef.current = department;
+
+    // 설정이 변경되면 페이지를 초기화하고 다시 로드
+    setCurrentPage(0);
+    setAccumulatedNotices(null);
+    setHasMore(true);
+    fetchNotices(0);
+  }, [refreshKey]); // fetchNotices 제거
+
+  // 다음 페이지 로드
+  const loadMore = useCallback(() => {
+    if (!isLoading && hasMore) {
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      fetchNotices(nextPage);
+    }
+  }, [currentPage, isLoading, hasMore, fetchNotices]);
+
+  // Intersection Observer 설정
+  useEffect(() => {
+    if (!hasSettings || !accumulatedNotices) return;
+
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting && hasMore && !isLoading) {
+          loadMore();
+        }
+      },
+      {
+        root: null,
+        rootMargin: '100px',
+        threshold: 0.1,
+      },
+    );
+
+    if (loadMoreRef.current) {
+      observerRef.current.observe(loadMoreRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [loadMore, hasMore, isLoading, hasSettings, accumulatedNotices]);
+
+  // 설정 변경 감지
+  useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'uosask-settings') {
-        setRefreshKey((prev) => prev + 1); // 컨텐츠 새로고침
+        setRefreshKey((prev) => prev + 1);
       }
     };
 
-    // 같은 탭에서의 변경 감지를 위한 커스텀 이벤트 리스너
     const handleSettingsChange = () => {
-      setRefreshKey((prev) => prev + 1); // 컨텐츠 새로고침
+      setRefreshKey((prev) => prev + 1);
     };
 
     window.addEventListener('storage', handleStorageChange);
@@ -170,17 +282,21 @@ export default function DepartmentPage() {
             <span>우측 상단의 설정 아이콘을 클릭하여 설정할 수 있습니다</span>
           </SettingsHint>
         </EmptyStateContainer>
-      ) : isLoading ? (
-        <EmptyStateContainer>
-          <MessageDescription>공지사항을 불러오는 중...</MessageDescription>
-        </EmptyStateContainer>
       ) : error ? (
         <EmptyStateContainer>
           <MessageDescription>{error}</MessageDescription>
         </EmptyStateContainer>
-      ) : noticeData ? (
-        <AnimatedNoticeList key={refreshKey} noticeData={noticeData} />
-      ) : null}
+      ) : (
+        <>
+          {accumulatedNotices && (
+            <AnimatedNoticeList
+              key={refreshKey}
+              noticeData={accumulatedNotices}
+            />
+          )}
+          <div ref={loadMoreRef} />
+        </>
+      )}
     </NoticeLayout>
   );
 }
