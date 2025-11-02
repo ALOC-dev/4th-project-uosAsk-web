@@ -82,6 +82,8 @@ const ChatContainer = styled.div`
   /* 레이아웃 시프트 방지 */
   min-height: 0;
   contain: layout style;
+  /* 스크롤바 공간 항상 예약하여 레이아웃 시프트 방지 */
+  scrollbar-gutter: stable;
 
   /* 스크롤바 스타일링 - 트랙은 투명, thumb만 표시 */
   &::-webkit-scrollbar {
