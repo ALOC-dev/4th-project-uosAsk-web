@@ -161,7 +161,7 @@ const EmptyText = styled.p`
 `;
 
 interface AnimatedNoticeListProps {
-  noticeData: NoticeApiResponse;
+  noticeData?: NoticeApiResponse;
 }
 
 export function AnimatedNoticeList({ noticeData }: AnimatedNoticeListProps) {
