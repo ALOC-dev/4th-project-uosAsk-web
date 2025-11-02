@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import Image from 'next/image';
 import { NoticeLayout } from '@/components/notice/notice-layout';
 import { AnimatedNoticeList } from '@/components/notice/notice-list';
-import { getUserSettings, hasUserSettings } from '@/app/data/user-settings';
+import { getUserSettings, hasUserSettings } from '@/data/user-settings';
 import { getNoticeList } from '@/services/notice/getNoticeList';
 import { NoticeApiResponse } from '@/types/notice';
 import type { Department } from '@/constants/department';

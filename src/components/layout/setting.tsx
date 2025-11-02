@@ -7,7 +7,7 @@ import {
   getUserSettings,
   saveUserSettings,
   UserSettings,
-} from '@/app/data/user-settings';
+} from '@/data/user-settings';
 
 interface SettingProps {
   open: boolean;
