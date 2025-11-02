@@ -79,6 +79,9 @@ const ChatContainer = styled.div`
   overflow-x: hidden;
   padding: ${({ theme }) => theme.spacing.lg} 0;
   margin-bottom: ${({ theme }) => theme.spacing.lg};
+  /* 레이아웃 시프트 방지 */
+  min-height: 0;
+  contain: layout style;
 
   /* 스크롤바 스타일링 - 트랙은 투명, thumb만 표시 */
   &::-webkit-scrollbar {
@@ -330,12 +333,15 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
 
   /**
    * 채팅 컨테이너를 맨 아래로 스크롤
+   * requestAnimationFrame을 사용하여 DOM 업데이트 후 스크롤
    */
   const scrollToBottom = () => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop =
-        chatContainerRef.current.scrollHeight;
-    }
+    requestAnimationFrame(() => {
+      if (chatContainerRef.current) {
+        chatContainerRef.current.scrollTop =
+          chatContainerRef.current.scrollHeight;
+      }
+    });
   };
 
   /**
@@ -468,9 +474,15 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
 
   /**
    * 메시지 변경 시 스크롤
+   * 두 번의 requestAnimationFrame을 사용하여 레이아웃이 완전히 계산된 후 스크롤
    */
   useEffect(() => {
-    scrollToBottom();
+    // 레이아웃 계산이 완료된 후 스크롤
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        scrollToBottom();
+      });
+    });
   }, [messages, isLoading]);
 
   return (
