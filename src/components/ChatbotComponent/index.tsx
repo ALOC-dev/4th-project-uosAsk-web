@@ -73,11 +73,10 @@ const ChatContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 800px;
+  max-width: 1000px;
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: ${({ theme }) => theme.spacing.lg} 0;
   margin-bottom: ${({ theme }) => theme.spacing.lg};
   /* 레이아웃 시프트 방지 */
   min-height: 0;
@@ -85,26 +84,6 @@ const ChatContainer = styled.div`
   /* 스크롤바 공간 항상 예약하여 레이아웃 시프트 방지 */
   scrollbar-gutter: stable;
 
-  /* 스크롤바 스타일링 - 트랙은 투명, thumb만 표시 */
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: ${({ theme }) => theme.colors.border};
-    border-radius: 4px;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background-color: ${({ theme }) => theme.colors.textTertiary};
-  }
-
-  /* Firefox 스크롤바 스타일링 */
-  scrollbar-width: thin;
   scrollbar-color: ${({ theme }) => theme.colors.border} transparent;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
@@ -158,7 +137,7 @@ const TagboxContainer = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   width: 100%;
-  max-width: 800px;
+  max-width: 1000px;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     gap: 8px;
@@ -199,7 +178,7 @@ const ChatInputContainer = styled.div`
   border: 1px solid transparent;
   padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.md};
   width: 100%;
-  max-width: 800px;
+  max-width: 1000px;
   transition: all 0.3s ease;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
@@ -287,7 +266,7 @@ const MarginDiv = styled.div`
 
 const StyledForm = styled.form`
   width: 100%;
-  max-width: 800px;
+  max-width: 1000px;
   display: flex;
   justify-content: center;
 `;
@@ -298,7 +277,86 @@ const MessageWrapper = styled.div<{ delay: number }>`
 
 // 상수
 const MAX_CONVERSATION_HISTORY = 20;
-const ERROR_MESSAGE = '죄송합니다. 오류가 발생했습니다. 다시 시도해주세요.';
+const ERROR_MESSAGE = '오류가 발생했습니다, 다시 시도해주세요';
+
+// 에러 컴포넌트 스타일
+const ErrorContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  gap: ${({ theme }) => theme.spacing.md};
+  /* padding: ${({ theme }) => theme.spacing.lg}; */
+  margin-bottom: ${({ theme }) => theme.spacing['2xl']};
+  /* background-color: ${({ theme }) => theme.colors.background}; */
+  /* border: 1px solid ${({ theme }) => theme.colors.border}; */
+  border-radius: ${({ theme }) => theme.radii.md};
+  animation: ${fadeInUp} 0.4s ease-out;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    padding: ${({ theme }) => theme.spacing.md};
+    margin-bottom: ${({ theme }) => theme.spacing.lg};
+  }
+`;
+
+const ErrorMessage = styled.div`
+  color: ${({ theme }) => theme.colors.text};
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  /* text-align: center; */
+  line-height: 1.6;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    font-size: ${({ theme }) => theme.fontSizes.sm};
+  }
+`;
+
+const RetryButton = styled.button`
+  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.lg};
+  background-color: ${({ theme }) => theme.colors.primary};
+  color: #ffffff;
+  width: fit-content;
+  /* margin: 0 auto; */
+  border: none;
+  border-radius: ${({ theme }) => theme.radii.md};
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    padding: ${({ theme }) => `${theme.spacing.xs} ${theme.spacing.md}`};
+    font-size: ${({ theme }) => theme.fontSizes.sm};
+  }
+
+  &:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
+interface ErrorMessageProps {
+  onRetry: () => void;
+  isLoading: boolean;
+}
+
+function ErrorMessageComponent({ onRetry, isLoading }: ErrorMessageProps) {
+  return (
+    <ErrorContainer>
+      <ErrorMessage>{ERROR_MESSAGE}</ErrorMessage>
+      <RetryButton onClick={onRetry} disabled={isLoading}>
+        {isLoading ? '재시도 중...' : '다시 시도'}
+      </RetryButton>
+    </ErrorContainer>
+  );
+}
 
 export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
   const [chatMsg, setChatMsg] = useState('');
@@ -308,6 +366,10 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
   );
   const [isLoading, setIsLoading] = useState(false);
   const [isChatStarted, setIsChatStarted] = useState(false);
+  const [errorState, setErrorState] = useState<{
+    hasError: boolean;
+    lastQuery?: string;
+  }>({ hasError: false });
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -397,6 +459,8 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
    * API 호출 및 응답 처리
    */
   const handleApiRequest = async (query: string) => {
+    setErrorState({ hasError: false });
+
     const conversationHistory = buildConversationHistory(true).slice(
       -MAX_CONVERSATION_HISTORY,
     );
@@ -407,7 +471,7 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
     });
 
     if (!apiResponse) {
-      setMessages((prev) => [...prev, createErrorMessage()]);
+      setErrorState({ hasError: true, lastQuery: query });
       return;
     }
 
@@ -419,6 +483,25 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
       ...prev,
       [assistantMessage.id]: uiResponse,
     }));
+    setErrorState({ hasError: false });
+  };
+
+  /**
+   * 에러 발생 시 재시도 처리
+   */
+  const handleRetry = async () => {
+    if (!errorState.lastQuery) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await handleApiRequest(errorState.lastQuery);
+    } catch (error) {
+      // 재시도 실패는 이미 errorState에 저장됨
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   /**
@@ -445,7 +528,7 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
     try {
       await handleApiRequest(currentQuery);
     } catch (error) {
-      setMessages((prev) => [...prev, createErrorMessage()]);
+      setErrorState({ hasError: true, lastQuery: currentQuery });
     } finally {
       setIsLoading(false);
     }
@@ -507,7 +590,13 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
               </MessageWrapper>
             ),
           )}
-          {isLoading && <LoadingBubble />}
+          {errorState.hasError && (
+            <ErrorMessageComponent
+              onRetry={handleRetry}
+              isLoading={isLoading}
+            />
+          )}
+          {isLoading && !errorState.hasError && <LoadingBubble />}
         </ChatContainer>
       )}
 
