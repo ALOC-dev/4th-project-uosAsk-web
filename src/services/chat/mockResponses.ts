@@ -1,7 +1,7 @@
-import { ChatResponse } from '@/types/chat';
+import { UIChatResponse } from '@/types/chat';
 
 // 정해진 답변 매핑
-const mockResponses: Record<string, ChatResponse> = {
+const mockResponses: Record<string, UIChatResponse> = {
   수강신청: {
     message:
       '수강신청을 하기 위해서는 수강 신청 홈페이지 sugang.uos.ac.kr에 접속해서 로그인을 한 후에 수강신청 버튼을 누르면 됩니다. 수강신청 기간은 보통 학기 시작 전 2주 정도에 진행되며, 포털사이트를 통해 신청하실 수 있습니다.',
@@ -44,7 +44,7 @@ const mockResponses: Record<string, ChatResponse> = {
 };
 
 // 키워드 기반 답변 생성
-export function generateMockResponse(userMessage: string): ChatResponse {
+export function generateMockResponse(userMessage: string): UIChatResponse {
   const message = userMessage.toLowerCase();
 
   // 키워드 매칭

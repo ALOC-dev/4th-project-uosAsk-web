@@ -2,11 +2,9 @@ import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
 import chatTemplate from './chatTemplate';
 import { useRef, useState, useEffect } from 'react';
-import { ChatMessage, ChatResponse } from '@/types/chat';
-import {
-  generateMockResponse,
-  simulateApiDelay,
-} from '@/services/chat/mockResponses';
+import { ChatMessage, UIChatResponse } from '@/types/chat';
+import { requestChat } from '@/services/chat/requestChat';
+import { ConversationMessage, ChatResponse } from '@/services/chat/chat.types';
 import { UserMessage, BotResponse, LoadingBubble } from './ChatResponse';
 
 const fadeIn = keyframes`
@@ -63,6 +61,8 @@ const ChatbotSection = styled.div`
   justify-content: center;
   padding: ${({ theme }) => theme.spacing.xl};
   position: relative;
+  overflow-x: hidden;
+  width: 100%;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing.sm}`};
@@ -76,8 +76,31 @@ const ChatContainer = styled.div`
   max-width: 800px;
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: ${({ theme }) => theme.spacing.lg} 0;
   margin-bottom: ${({ theme }) => theme.spacing.lg};
+
+  /* 스크롤바 스타일링 - 트랙은 투명, thumb만 표시 */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ theme }) => theme.colors.border};
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: ${({ theme }) => theme.colors.textTertiary};
+  }
+
+  /* Firefox 스크롤바 스타일링 */
+  scrollbar-width: thin;
+  scrollbar-color: ${({ theme }) => theme.colors.border} transparent;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     padding: ${({ theme }) => theme.spacing.md} 0;
@@ -268,16 +291,46 @@ const MessageWrapper = styled.div<{ delay: number }>`
   animation: ${fadeInUp} 0.4s ease-out ${({ delay }) => delay}s both;
 `;
 
+// 상수
+const MAX_CONVERSATION_HISTORY = 20;
+const ERROR_MESSAGE = '죄송합니다. 오류가 발생했습니다. 다시 시도해주세요.';
+
 export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
   const [chatMsg, setChatMsg] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [responses, setResponses] = useState<Record<string, ChatResponse>>({});
+  const [responses, setResponses] = useState<Record<string, UIChatResponse>>(
+    {},
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [isChatStarted, setIsChatStarted] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // 스크롤을 맨 아래로 이동
+  /**
+   * 대화 기록을 ConversationMessage 형태로 변환
+   * @param excludeLastMessage 마지막 메시지를 제외할지 여부 (현재 사용자 메시지는 이미 query로 전송되므로)
+   */
+  const buildConversationHistory = (
+    excludeLastMessage = false,
+  ): ConversationMessage[] => {
+    let messageList = messages.filter(
+      (msg) => msg.sender === 'user' || msg.sender === 'bot',
+    );
+
+    if (excludeLastMessage && messageList.length > 0) {
+      messageList = messageList.slice(0, -1);
+    }
+
+    return messageList.map((msg) => ({
+      role: msg.sender === 'user' ? 'user' : 'assistant',
+      content: msg.content,
+      timestamp: msg.timestamp.toISOString(),
+    }));
+  };
+
+  /**
+   * 채팅 컨테이너를 맨 아래로 스크롤
+   */
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop =
@@ -285,60 +338,137 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
     }
   };
 
-  // 메시지 전송 처리
+  /**
+   * 사용자 메시지를 생성하고 추가
+   */
+  const createUserMessage = (content: string): ChatMessage => {
+    return {
+      id: Date.now().toString(),
+      content: content.trim(),
+      sender: 'user',
+      timestamp: new Date(),
+    };
+  };
+
+  /**
+   * API 응답을 ChatMessage로 변환
+   */
+  const createAssistantMessage = (content: string): ChatMessage => {
+    return {
+      id: (Date.now() + 1).toString(),
+      content,
+      sender: 'bot',
+      timestamp: new Date(),
+    };
+  };
+
+  /**
+   * API 응답을 UI 형태로 변환
+   */
+  const convertApiResponseToUI = (
+    apiResponse: ChatResponse,
+  ): UIChatResponse => {
+    const responseMessage = apiResponse.assistant || apiResponse.response || '';
+
+    return {
+      message: responseMessage,
+      recommendedNotice: apiResponse.recommended_notice
+        ? { ...apiResponse.recommended_notice }
+        : null,
+    };
+  };
+
+  /**
+   * 에러 메시지 생성
+   */
+  const createErrorMessage = (): ChatMessage => {
+    return createAssistantMessage(ERROR_MESSAGE);
+  };
+
+  /**
+   * API 호출 및 응답 처리
+   */
+  const handleApiRequest = async (query: string) => {
+    const conversationHistory = buildConversationHistory(true).slice(
+      -MAX_CONVERSATION_HISTORY,
+    );
+
+    const apiResponse = await requestChat({
+      query,
+      conversation_history: conversationHistory,
+    });
+
+    if (!apiResponse) {
+      setMessages((prev) => [...prev, createErrorMessage()]);
+      return;
+    }
+
+    const uiResponse = convertApiResponseToUI(apiResponse);
+    const assistantMessage = createAssistantMessage(uiResponse.message);
+
+    setMessages((prev) => [...prev, assistantMessage]);
+    setResponses((prev) => ({
+      ...prev,
+      [assistantMessage.id]: uiResponse,
+    }));
+  };
+
+  /**
+   * 메시지 전송 처리
+   */
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!chatMsg.trim() || isLoading) return;
 
-    // 첫 메시지인 경우 채팅 시작
+    if (!chatMsg.trim() || isLoading) {
+      return;
+    }
+
     if (!isChatStarted) {
       setIsChatStarted(true);
     }
 
-    const userMessage: ChatMessage = {
-      id: Date.now().toString(),
-      content: chatMsg.trim(),
-      sender: 'user',
-      timestamp: new Date(),
-    };
+    const userMessage = createUserMessage(chatMsg);
+    const currentQuery = chatMsg.trim();
 
     setMessages((prev) => [...prev, userMessage]);
     setChatMsg('');
     setIsLoading(true);
 
-    // API 지연 시뮬레이션
-    await simulateApiDelay(1500);
+    try {
+      await handleApiRequest(currentQuery);
+    } catch (error) {
+      setMessages((prev) => [...prev, createErrorMessage()]);
+    } finally {
+      setIsLoading(false);
+    }
 
-    // 봇 응답 생성
-    const botResponse = generateMockResponse(userMessage.content);
-    const botMessage: ChatMessage = {
-      id: (Date.now() + 1).toString(),
-      content: botResponse.message,
-      sender: 'bot',
-      timestamp: new Date(),
-    };
-
-    setMessages((prev) => [...prev, botMessage]);
-
-    // 응답 저장 (추천 질문용)
-    setResponses((prev) => ({
-      ...prev,
-      [botMessage.id]: botResponse,
-    }));
-
-    setIsLoading(false);
-
-    // 기존 onSubmit 콜백도 호출
     onSubmit?.(e);
   };
 
-  // 추천 질문 클릭 처리
-  const handleSuggestionClick = (suggestion: string) => {
-    setChatMsg(suggestion);
+  /**
+   * Enter 키 입력 처리
+   */
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      const form = e.currentTarget.form;
+      if (form) {
+        form.requestSubmit();
+      }
+    }
+  };
+
+  /**
+   * 추천 질문 클릭 처리
+   */
+  const handleTagClick = (template: string) => {
+    setChatMsg(template);
     inputRef.current?.focus();
   };
 
-  // 메시지가 추가될 때마다 스크롤
+  /**
+   * 메시지 변경 시 스크롤
+   */
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading]);
@@ -354,31 +484,22 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
         </>
       ) : (
         <ChatContainer ref={chatContainerRef}>
-          {messages.map((message, index) => (
-            <MessageWrapper key={message.id} delay={index * 0.1}>
-              {message.sender === 'user' ? (
-                <UserMessage message={message} />
-              ) : (
-                <BotResponse
-                  response={responses[message.id]}
-                  onSuggestionClick={handleSuggestionClick}
-                />
-              )}
-            </MessageWrapper>
-          ))}
+          {messages.map((message, index) =>
+            message.sender === 'user' ? (
+              <UserMessage key={message.id} message={message} />
+            ) : (
+              <MessageWrapper key={message.id} delay={index * 0.1}>
+                <BotResponse response={responses[message.id]} />
+              </MessageWrapper>
+            ),
+          )}
           {isLoading && <LoadingBubble />}
         </ChatContainer>
       )}
 
       <TagboxContainer>
         {chatTemplate.map(({ tag, template }, idx) => (
-          <Tagbox
-            key={idx}
-            onClick={() => {
-              setChatMsg(template);
-              inputRef.current?.focus();
-            }}
-          >
+          <Tagbox key={idx} onClick={() => handleTagClick(template)}>
             {tag}
           </Tagbox>
         ))}
@@ -389,6 +510,7 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
             placeholder='메세지를 입력하세요...'
             value={chatMsg}
             onChange={(e) => setChatMsg(e.target.value)}
+            onKeyDown={handleKeyDown}
             ref={inputRef}
             disabled={isLoading}
           />
