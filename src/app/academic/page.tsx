@@ -2,12 +2,12 @@
 
 import { NoticeLayout } from '@/components/notice/notice-layout';
 import { AnimatedNoticeList } from '@/components/notice/notice-list';
-import { academicNotices } from '@/data/notices';
+import { academicNoticeData } from '@/data/notices';
 
 export default function AcademicPage() {
   return (
     <NoticeLayout type='academic'>
-      <AnimatedNoticeList notices={academicNotices} />
+      <AnimatedNoticeList noticeData={academicNoticeData} />
     </NoticeLayout>
   );
 }

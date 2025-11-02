@@ -35,7 +35,7 @@ export default function GeneralPage() {
 
   return (
     <NoticeLayout type='general'>
-      <AnimatedNoticeList notices={notices} />
+      <AnimatedNoticeList noticeData={notices} />
     </NoticeLayout>
   );
 }
