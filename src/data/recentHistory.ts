@@ -23,10 +23,10 @@ export const recentHistoryData: RecentHistoryItem[] = [
   },
   {
     id: '3',
-    title: '[교수학습개발센터] 2025학년도 1학기 수강신청 안내 및 학점 이수 관련 공지사항',
+    title:
+      '[교수학습개발센터] 2025학년도 1학기 수강신청 안내 및 학점 이수 관련 공지사항',
     category: 'academic',
     date: '2024-10-23',
     url: '/academic',
   },
 ];
-

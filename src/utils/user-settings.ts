@@ -57,4 +57,3 @@ export function clearUserSettings(): void {
 export function hasUserSettings(): boolean {
   return getUserSettings() !== null;
 }
-

@@ -105,7 +105,10 @@ export default function DepartmentPage() {
   return (
     <NoticeLayout type='department'>
       {hasSettings ? (
-        <AnimatedNoticeList key={refreshKey} noticeData={departmentNoticeData} />
+        <AnimatedNoticeList
+          key={refreshKey}
+          noticeData={departmentNoticeData}
+        />
       ) : (
         <EmptyStateContainer>
           <IconWrapper>

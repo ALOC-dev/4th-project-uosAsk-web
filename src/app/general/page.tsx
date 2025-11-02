@@ -4,7 +4,7 @@ import { NoticeLayout } from '@/components/notice/notice-layout';
 import { AnimatedNoticeList } from '@/components/notice/notice-list';
 import { useEffect, useState } from 'react';
 import { getNoticeList } from '@/services/notice/getNoticeList';
-import { CATEGORIES, Category } from '@/constants';
+import { CATEGORIES } from '@/constants';
 import { NoticeApiResponse } from '@/types/notice';
 
 const params = {
@@ -13,7 +13,7 @@ const params = {
   category: CATEGORIES[0],
   page: 0,
   exact: false,
-}
+};
 
 export default function GeneralPage() {
   const [notices, setNotices] = useState<NoticeApiResponse | undefined>();

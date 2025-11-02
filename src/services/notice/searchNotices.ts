@@ -16,7 +16,7 @@ interface SearchNoticesParams {
  * @returns NoticeApiResponse - 검색 결과 (hot 배열은 비어있음)
  */
 export const searchNotices = async (
-  params: SearchNoticesParams
+  params: SearchNoticesParams,
 ): Promise<NoticeApiResponse> => {
   const queryParams = {
     keyword: params.keyword,
@@ -33,4 +33,3 @@ export const searchNotices = async (
 
   return response.data;
 };
-

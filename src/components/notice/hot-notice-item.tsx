@@ -137,4 +137,3 @@ export const HotNoticeItem = ({ notice }: HotNoticeItemProps) => {
     </HotNoticeCard>
   );
 };
-
