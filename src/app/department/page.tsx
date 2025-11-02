@@ -101,7 +101,7 @@ export default function DepartmentPage() {
         const response = await getNoticeList({
           department: [department], // Department[] 타입으로 전달 (학과명만 전달)
           keyword: '',
-          category: 'GENERAL', // 학과 공지는 category 불필요하지만 필수 파라미터
+          // category는 학과 공지 조회 시 불필요하므로 제외
           page: 0,
           exact: true,
         });
