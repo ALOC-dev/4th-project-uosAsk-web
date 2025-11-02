@@ -19,9 +19,10 @@ export const getNoticeList = async (params: GetNoticeListParams) => {
     size: 15, // size 고정
     department: params.department.join(','), // department에 overwrite하기
   };
-  const response = await apiClient.get('/notice/search', {
+  
+  const response = await apiClient.get('/notices/search', {
     params: queryParams,
   });
 
-  return response.data;
+  return response;
 };
