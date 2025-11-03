@@ -3,6 +3,7 @@
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
 import { Notice } from '@/types/notice';
+import { addRecentNotice } from '@/services/notice/recentNoticeQueue';
 
 const fadeInUp = keyframes`
   from {
@@ -121,6 +122,10 @@ interface HotNoticeItemProps {
 export const HotNoticeItem = ({ notice }: HotNoticeItemProps) => {
   const handleClick = () => {
     if (notice.link) {
+      addRecentNotice({
+        title: notice.title,
+        link: notice.link,
+      });
       window.open(notice.link, '_blank', 'noopener,noreferrer');
     }
   };

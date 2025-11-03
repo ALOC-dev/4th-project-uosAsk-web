@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 import { theme } from '@/styles/theme';
 import SearchModal from '../modal/searchModal';
 import { recentHistoryData } from '@/data/recentHistory';
+import { useRecentNotices } from '@/services/notice/useRecentNotices';
 
 const SidebarContainer = styled.aside`
   width: 275px;
@@ -208,6 +209,8 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
+  const { recent } = useRecentNotices();
+
   const handleNavClick = (section: string) => {
     // 검색 모달 처리
     if (section === 'search') {
@@ -345,28 +348,28 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
         <Divider />
 
         <SectionTitle>최근 본 공지</SectionTitle>
-        <HistoryList>
-          {recentHistoryData.map((item) => (
-            <HistoryItemWrapper key={item.id}>
-              <HistoryItem
-                onClick={() => item.url && router.push(item.url)}
-                onMouseEnter={(e) => handleMouseEnter(item.id, e)}
-                onMouseLeave={handleMouseLeave}
-              >
-                {item.title}
-              </HistoryItem>
-              <HistoryItemExpanded
-                isVisible={hoveredItem === item.id}
-                style={{
-                  top: `${tooltipPosition.top}px`,
-                  left: `${tooltipPosition.left}px`,
-                }}
-              >
-                {item.title}
-              </HistoryItemExpanded>
-            </HistoryItemWrapper>
-          ))}
-        </HistoryList>
+          <HistoryList>
+            {recent.map((item) => (
+              <HistoryItemWrapper key={item.link}>
+                <HistoryItem
+                  onClick={() => item.link && window.open(item.link, '_blank')}
+                  onMouseEnter={(e) => handleMouseEnter(item.link, e)}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  {item.title}
+                </HistoryItem>
+                <HistoryItemExpanded
+                  isVisible={hoveredItem === item.link}
+                  style={{
+                    top: `${tooltipPosition.top}px`,
+                    left: `${tooltipPosition.left}px`,
+                  }}
+                >
+                  {item.title}
+                </HistoryItemExpanded>
+              </HistoryItemWrapper>
+            ))}
+          </HistoryList>
       </SidebarContent>
     </SidebarContainer>
   );

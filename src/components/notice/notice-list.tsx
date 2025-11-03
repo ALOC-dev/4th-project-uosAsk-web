@@ -5,6 +5,7 @@ import { keyframes } from '@emotion/react';
 import { NoticeApiResponse } from '@/types/notice';
 import { useState, useEffect } from 'react';
 import { HotNoticeItem } from './hot-notice-item';
+import { addRecentNotice } from '@/services/notice/recentNoticeQueue';
 
 const fadeInUp = keyframes`
   from {
@@ -180,6 +181,10 @@ export function AnimatedNoticeList({ noticeData }: AnimatedNoticeListProps) {
 
   const handleNoticeClick = (notice: NoticeApiResponse['hot'][0]) => {
     if (notice.link) {
+      addRecentNotice({
+        title: notice.title,
+        link: notice.link,
+      });
       window.open(notice.link, '_blank', 'noopener,noreferrer');
     }
   };
