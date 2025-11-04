@@ -38,7 +38,7 @@ const ContentContainer = styled.div`
   width: 100%;
   max-width: 1262px;
   height: 100%;
-  background-color: ${({ theme }) => theme.colors.contentContainer};
+  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
   border-radius: ${({ theme }) => theme.radii.lg};
   box-sizing: border-box;
   overflow: hidden;

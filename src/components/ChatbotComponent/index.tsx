@@ -60,10 +60,10 @@ const ChatbotSection = styled.div`
 `;
 
 const ChatContainer = styled.div`
+  padding: 0 ${({ theme }) => theme.spacing.md};
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1000px;
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
@@ -73,12 +73,39 @@ const ChatContainer = styled.div`
   contain: layout style;
   /* 스크롤바 공간 항상 예약하여 레이아웃 시프트 방지 */
   scrollbar-gutter: stable;
-
   scrollbar-color: ${({ theme }) => theme.colors.border} transparent;
 
+  /* 스크롤바 스타일링 - Webkit (Chrome, Safari, Edge) */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ theme }) => theme.colors.border};
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: ${({ theme }) => theme.colors.textTertiary};
+  }
+
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    padding: ${({ theme }) => theme.spacing.md} 0;
     margin-bottom: ${({ theme }) => theme.spacing.md};
+  }
+`;
+
+const ChatContentWrapper = styled.div`
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    padding: ${({ theme }) => theme.spacing['2xl']} 0;
   }
 `;
 
@@ -162,7 +189,7 @@ const Tagbox = styled.button`
 `;
 
 const ChatInputContainer = styled.div`
-  background-color: #f0f1f5;
+  background-color: ${({ theme }) => theme.colors.background};
   display: flex;
   border-radius: ${({ theme }) => theme.radii.md};
   border: 1px solid transparent;
@@ -649,27 +676,29 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
         </>
       ) : (
         <ChatContainer ref={chatContainerRef}>
-          {messages.map((message, index) =>
-            message.sender === 'user' ? (
-              <UserMessage key={message.id} message={message} />
-            ) : (
-              <MessageWrapper key={message.id} delay={index * 0.1}>
-                <BotResponse
-                  response={responses[message.id]}
-                  isStreaming={streamingMessageId === message.id}
-                />
-              </MessageWrapper>
-            ),
-          )}
-          {errorState.hasError && (
-            <ErrorMessageComponent
-              onRetry={handleRetry}
-              isLoading={isLoading}
-            />
-          )}
-          {isLoading && !streamingMessageId && !errorState.hasError && (
-            <LoadingBubble />
-          )}
+          <ChatContentWrapper>
+            {messages.map((message, index) =>
+              message.sender === 'user' ? (
+                <UserMessage key={message.id} message={message} />
+              ) : (
+                <MessageWrapper key={message.id} delay={index * 0.1}>
+                  <BotResponse
+                    response={responses[message.id]}
+                    isStreaming={streamingMessageId === message.id}
+                  />
+                </MessageWrapper>
+              ),
+            )}
+            {errorState.hasError && (
+              <ErrorMessageComponent
+                onRetry={handleRetry}
+                isLoading={isLoading}
+              />
+            )}
+            {isLoading && !streamingMessageId && !errorState.hasError && (
+              <LoadingBubble />
+            )}
+          </ChatContentWrapper>
         </ChatContainer>
       )}
 
