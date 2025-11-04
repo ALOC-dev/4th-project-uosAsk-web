@@ -18,17 +18,6 @@ const fadeInUp = keyframes`
   }
 `;
 
-const slideIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translateX(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-`;
-
 const NoticeListContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -175,47 +164,6 @@ const EmptyText = styled.p`
   text-align: center;
 `;
 
-const LoadMoreContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: ${({ theme }) => `${theme.spacing.xl} ${theme.spacing.lg}`};
-  margin-top: ${({ theme }) => theme.spacing.lg};
-  border-top: 1px solid ${({ theme }) => theme.colors.border};
-  background-color: ${({ theme }) => theme.colors.background};
-`;
-
-const LoadMoreButton = styled.button<{ disabled?: boolean }>`
-  padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing['3xl']}`};
-  background-color: ${({ theme, disabled }) =>
-    disabled ? theme.colors.backgroundTertiary : theme.colors.primary};
-  color: ${({ theme, disabled }) =>
-    disabled ? theme.colors.textTertiary : '#FFFFFF'};
-  border: none;
-  border-radius: ${({ theme }) => theme.radii.md};
-  font-family: ${({ theme }) => theme.fonts.sans};
-  font-size: ${({ theme }) => theme.fontSizes.base};
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: ${({ disabled }) =>
-    disabled ? 'none' : '0 2px 8px rgba(64, 140, 255, 0.3)'};
-  min-width: 240px;
-  height: 48px;
-
-  &:hover:not(:disabled) {
-    background-color: #3576e0;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(64, 140, 255, 0.4);
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(64, 140, 255, 0.3);
-  }
-`;
-
 interface AnimatedNoticeListProps {
   noticeData?: NoticeApiResponse;
   onLoadMore?: () => void;
@@ -236,7 +184,6 @@ export function AnimatedNoticeList({
   // 백엔드 API 응답 구조에서 hot과 content 추출
   const hotNotices = noticeData?.hot || [];
   const contentNotices = noticeData?.content || [];
-  const allNotices = [...hotNotices, ...contentNotices];
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
@@ -282,7 +229,7 @@ export function AnimatedNoticeList({
     return <NoticeListContainer ref={scrollContainerRef} />;
   }
 
-  if (allNotices.length === 0) {
+  if (hotNotices.length === 0 && contentNotices.length === 0) {
     return (
       <NoticeListContainer ref={scrollContainerRef}>
         <EmptyState>
