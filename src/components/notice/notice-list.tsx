@@ -314,19 +314,6 @@ export function AnimatedNoticeList({
           </NoticeInfo>
         </NoticeItem>
       ))}
-
-      {/* 더보기 버튼 - onLoadMore가 전달된 경우에만 표시 */}
-      {onLoadMore && (
-        <LoadMoreContainer>
-          <LoadMoreButton onClick={onLoadMore} disabled={isLoading || !hasMore}>
-            {isLoading
-              ? '로딩 중...'
-              : hasMore
-                ? '더보기'
-                : '마지막 공지사항입니다'}
-          </LoadMoreButton>
-        </LoadMoreContainer>
-      )}
     </NoticeListContainer>
   );
 }
