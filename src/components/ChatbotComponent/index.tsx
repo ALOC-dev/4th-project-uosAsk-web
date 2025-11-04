@@ -620,6 +620,13 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
             <WelcomeTitle>어떤 공지사항이 궁금하신가요?</WelcomeTitle>
           </WelcomeContainer>
           <MarginDiv />
+          <TagboxContainer>
+            {chatTemplate.map(({ tag, template }, idx) => (
+              <Tagbox key={idx} onClick={() => handleTagClick(template)}>
+                {tag}
+              </Tagbox>
+            ))}
+          </TagboxContainer>
         </>
       ) : (
         <ChatContainer ref={chatContainerRef}>
@@ -647,13 +654,6 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
         </ChatContainer>
       )}
 
-      <TagboxContainer>
-        {chatTemplate.map(({ tag, template }, idx) => (
-          <Tagbox key={idx} onClick={() => handleTagClick(template)}>
-            {tag}
-          </Tagbox>
-        ))}
-      </TagboxContainer>
       <StyledForm onSubmit={handleSubmit}>
         <ChatInputContainer>
           <ChatInput
