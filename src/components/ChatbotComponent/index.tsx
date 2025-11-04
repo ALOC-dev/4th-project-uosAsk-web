@@ -48,7 +48,8 @@ const ChatbotSection = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing.xl};
+  padding: ${({ theme }) =>
+    `${theme.spacing.xl} ${theme.spacing.xl} ${theme.spacing.md}`};
   position: relative;
   overflow-x: hidden;
   width: 100%;
@@ -165,7 +166,8 @@ const ChatInputContainer = styled.div`
   display: flex;
   border-radius: ${({ theme }) => theme.radii.md};
   border: 1px solid transparent;
-  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.md};
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.xs}
+    ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.md};
   width: 100%;
   max-width: 1000px;
   transition: all 0.3s ease;
@@ -258,6 +260,22 @@ const StyledForm = styled.form`
   max-width: 1000px;
   display: flex;
   justify-content: center;
+`;
+
+const DisclaimerText = styled.p`
+  text-align: center;
+  font-size: ${({ theme }) => theme.fontSizes.xs};
+  color: ${({ theme }) => theme.colors.textTertiary};
+  margin-top: ${({ theme }) => theme.spacing.md};
+  margin-bottom: 0;
+  padding: 0 ${({ theme }) => theme.spacing.md};
+  max-width: 1000px;
+  line-height: 1.4;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    font-size: 0.7rem;
+    margin-top: ${({ theme }) => theme.spacing.sm};
+  }
 `;
 
 const MessageWrapper = styled.div<{ delay: number }>`
@@ -412,7 +430,6 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
     };
   };
 
-
   /**
    * API 호출 및 응답 처리 (스트리밍 방식)
    */
@@ -502,7 +519,9 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
 
           // 임시 메시지 제거 (생성되었을 경우에만)
           if (!isFirstToken) {
-            setMessages((prev) => prev.filter((msg) => msg.id !== tempMessageId));
+            setMessages((prev) =>
+              prev.filter((msg) => msg.id !== tempMessageId),
+            );
             setResponses((prev) => {
               const newResponses = { ...prev };
               delete newResponses[tempMessageId];
@@ -693,6 +712,9 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
           </SendButton>
         </ChatInputContainer>
       </StyledForm>
+      <DisclaimerText>
+        시누공은 실수를 할 수 있습니다. 중요한 정보는 재차 확인하세요.
+      </DisclaimerText>
     </ChatbotSection>
   );
 }
