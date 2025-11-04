@@ -23,7 +23,6 @@ const NoticeListContainer = styled.div`
   flex-direction: column;
   flex: 1;
   overflow-y: auto;
-  margin-top: ${({ theme }) => theme.spacing.sm};
   padding-bottom: ${({ theme }) => theme.spacing.md};
 
   /* 스크롤바 스타일링 - Webkit (Chrome, Safari, Edge) */

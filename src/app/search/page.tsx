@@ -8,15 +8,12 @@ import { AnimatedNoticeList } from '@/components/notice/notice-list';
 import { NoticeApiResponse } from '@/types/notice';
 import { getNoticeList } from '@/services/notice/getNoticeList';
 
-const SearchResultContainer = styled.div`
-  padding: ${({ theme }) => theme.spacing.lg};
-`;
+const SearchResultContainer = styled.div``;
 
 const SearchInfo = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
-  padding: ${({ theme }) => theme.spacing.md};
   background-color: ${({ theme }) => theme.colors.backgroundSecondary};
-  border-radius: ${({ theme }) => theme.radii.sm};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+  padding: ${({ theme }) => `${theme.spacing.md}`} 75px;
 `;
 
 const SearchKeyword = styled.span`
