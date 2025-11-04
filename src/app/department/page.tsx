@@ -82,24 +82,12 @@ export default function DepartmentPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const departmentRef = useRef<Department | null>(null);
-  const lastRequestTimeRef = useRef<number>(0);
 
   // 공지사항 데이터 가져오기
   const fetchNotices = useCallback(
     async (page: number) => {
       if (isLoading || !departmentRef.current) return;
-
-      // 요청 간격 제한 (최소 500ms)
-      const now = Date.now();
-      const timeSinceLastRequest = now - lastRequestTimeRef.current;
-      if (timeSinceLastRequest < 500) {
-        console.log('⏱️ [학과공지] 요청 간격 제한 (500ms)');
-        return;
-      }
-      lastRequestTimeRef.current = now;
 
       console.log(`📄 [학과공지] 페이지 ${page} 로드 시작...`);
       setIsLoading(true);
@@ -113,26 +101,32 @@ export default function DepartmentPage() {
           exact: true,
         });
 
-        const newData = response.data;
+        const newData = response.data ?? response;
         console.log(`✅ [학과공지] 페이지 ${page} 로드 완료:`, {
           hot: newData.hot.length,
           content: newData.content.length,
+          page: newData.page,
+          size: newData.size,
+          totalElements: newData.totalElements,
           totalPages: newData.totalPages,
           hasNext: newData.hasNext,
+          hasPrevious: newData.hasPrevious,
         });
 
         setAccumulatedNotices((prev) => {
           if (!prev) {
+            // 첫 페이지 (page=0): hot 3개 + content 15개
             console.log('🎯 [학과공지] 첫 페이지 로드:', {
               hot: newData.hot.length,
               content: newData.content.length,
             });
             return newData;
           } else {
+            // 이후 페이지: content만 누적 (hot은 비어있음)
             const accumulated = {
               ...newData,
-              hot: prev.hot,
-              content: [...prev.content, ...newData.content],
+              hot: prev.hot, // 첫 페이지의 HOT 공지 유지
+              content: [...prev.content, ...newData.content], // 기존 + 새 데이터
             };
             console.log('📚 [학과공지] 데이터 누적:', {
               기존_content: prev.content.length,
@@ -143,6 +137,7 @@ export default function DepartmentPage() {
           }
         });
 
+        // 더 이상 불러올 데이터가 없는지 확인
         setHasMore(newData.hasNext);
         if (!newData.hasNext) {
           console.log('🏁 [학과공지] 마지막 페이지 도달');
@@ -189,47 +184,14 @@ export default function DepartmentPage() {
     fetchNotices(0);
   }, [refreshKey]); // fetchNotices 제거
 
-  // 다음 페이지 로드
-  const loadMore = useCallback(() => {
+  // 다음 페이지 로드 핸들러
+  const handleLoadMore = useCallback(() => {
     if (!isLoading && hasMore) {
       const nextPage = currentPage + 1;
       setCurrentPage(nextPage);
       fetchNotices(nextPage);
     }
   }, [currentPage, isLoading, hasMore, fetchNotices]);
-
-  // Intersection Observer 설정
-  useEffect(() => {
-    if (!hasSettings || !accumulatedNotices) return;
-
-    if (observerRef.current) {
-      observerRef.current.disconnect();
-    }
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries;
-        if (entry.isIntersecting && hasMore && !isLoading) {
-          loadMore();
-        }
-      },
-      {
-        root: null,
-        rootMargin: '100px',
-        threshold: 0.1,
-      },
-    );
-
-    if (loadMoreRef.current) {
-      observerRef.current.observe(loadMoreRef.current);
-    }
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, [loadMore, hasMore, isLoading, hasSettings, accumulatedNotices]);
 
   // 설정 변경 감지
   useEffect(() => {
@@ -287,15 +249,15 @@ export default function DepartmentPage() {
           <MessageDescription>{error}</MessageDescription>
         </EmptyStateContainer>
       ) : (
-        <>
-          {accumulatedNotices && (
-            <AnimatedNoticeList
-              key={refreshKey}
-              noticeData={accumulatedNotices}
-            />
-          )}
-          <div ref={loadMoreRef} />
-        </>
+        accumulatedNotices && (
+          <AnimatedNoticeList
+            key={refreshKey}
+            noticeData={accumulatedNotices}
+            onLoadMore={handleLoadMore}
+            isLoading={isLoading}
+            hasMore={hasMore}
+          />
+        )
       )}
     </NoticeLayout>
   );
