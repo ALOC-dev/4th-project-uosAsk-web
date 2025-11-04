@@ -3,7 +3,7 @@
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
 import { NoticeApiResponse } from '@/types/notice';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { HotNoticeItem } from './hot-notice-item';
 import { addRecentNotice } from '@/services/notice/recentNoticeQueue';
 
@@ -230,6 +230,8 @@ export function AnimatedNoticeList({
   hasMore = false,
 }: AnimatedNoticeListProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const [isScrollEnd, setIsScrollEnd] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // 백엔드 API 응답 구조에서 hot과 content 추출
   const hotNotices = noticeData?.hot || [];
@@ -240,6 +242,31 @@ export function AnimatedNoticeList({
     const timer = setTimeout(() => setIsVisible(true), 100);
     return () => clearTimeout(timer);
   }, [noticeData]);
+
+  // 스크롤 끝 감지
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
+      const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10; // 10px 여유
+
+      if (isAtBottom && !isScrollEnd) {
+        setIsScrollEnd(true);
+        // 스크롤 끝에 도달하면 자동으로 다음 페이지 로드
+        if (onLoadMore && hasMore && !isLoading) {
+          onLoadMore();
+        }
+      } else if (!isAtBottom && isScrollEnd) {
+        // 스크롤을 다시 올렸을 때 상태 초기화
+        setIsScrollEnd(false);
+      }
+    };
+
+    scrollContainer.addEventListener('scroll', handleScroll);
+    return () => scrollContainer.removeEventListener('scroll', handleScroll);
+  }, [isScrollEnd, onLoadMore, hasMore, isLoading]);
 
   const handleNoticeClick = (notice: NoticeApiResponse['hot'][0]) => {
     if (notice.link) {
@@ -252,12 +279,12 @@ export function AnimatedNoticeList({
   };
 
   if (!isVisible) {
-    return <NoticeListContainer />;
+    return <NoticeListContainer ref={scrollContainerRef} />;
   }
 
   if (allNotices.length === 0) {
     return (
-      <NoticeListContainer>
+      <NoticeListContainer ref={scrollContainerRef}>
         <EmptyState>
           <EmptyIcon>📋</EmptyIcon>
           <EmptyText>등록된 공지사항이 없습니다.</EmptyText>
@@ -267,7 +294,7 @@ export function AnimatedNoticeList({
   }
 
   return (
-    <NoticeListContainer>
+    <NoticeListContainer ref={scrollContainerRef}>
       {/* Hot 공지사항 (카드 스타일) */}
       {hotNotices.map((notice, index) => (
         <HotNoticeItem key={`hot-${notice.title}-${index}`} notice={notice} />
