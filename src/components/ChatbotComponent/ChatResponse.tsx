@@ -84,65 +84,6 @@ const ResponseText = styled.div`
   }
 `;
 
-const ImagePlaceholder = styled.div`
-  width: 100%;
-  height: 200px;
-  background-color: ${({ theme }) => theme.colors.backgroundTertiary};
-  border-radius: ${({ theme }) => theme.radii.md};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: ${({ theme }) => theme.colors.textTertiary};
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    height: 150px;
-    font-size: ${({ theme }) => theme.fontSizes.xs};
-  }
-`;
-
-const SuggestionsContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing.md};
-`;
-
-const SuggestionTitle = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.textSecondary};
-  margin-bottom: ${({ theme }) => theme.spacing.sm};
-`;
-
-const SuggestionsList = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing.sm};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    gap: ${({ theme }) => theme.spacing.xs};
-  }
-`;
-
-const SuggestionTag = styled.button`
-  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
-  background-color: ${({ theme }) => theme.colors.background};
-  color: ${({ theme }) => theme.colors.text};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.radii.md};
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    font-size: ${({ theme }) => theme.fontSizes.xs};
-    padding: ${({ theme }) => theme.spacing.xs};
-  }
-
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.backgroundTertiary};
-    border-color: ${({ theme }) => theme.colors.primary};
-  }
-`;
-
 const LoadingDots = styled.div`
   display: flex;
   align-items: center;
@@ -284,7 +225,6 @@ export function UserMessage({ message }: UserMessageProps) {
 
 interface BotResponseProps {
   response?: UIChatResponse;
-  onSuggestionClick?: (suggestion: string) => void;
   isStreaming?: boolean;
 }
 
@@ -311,7 +251,6 @@ const TypingCursor = styled.span`
 
 export function BotResponse({
   response,
-  onSuggestionClick,
   isStreaming = false,
 }: BotResponseProps) {
   if (!response) {

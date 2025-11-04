@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import styled from '@emotion/styled';
 import { theme } from '@/styles/theme';
 import SearchModal from '../modal/searchModal';
-import { recentHistoryData } from '@/data/recentHistory';
 import { useRecentNotices } from '@/services/notice/useRecentNotices';
 
 const SidebarContainer = styled.aside`
