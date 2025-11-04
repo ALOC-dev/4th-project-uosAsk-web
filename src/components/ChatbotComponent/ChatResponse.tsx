@@ -27,10 +27,16 @@ const fadeIn = keyframes`
 const UserMessageContainer = styled.div`
   display: flex;
   justify-content: flex-end;
+  margin-top: ${({ theme }) => theme.spacing['2xl']};
   margin-bottom: ${({ theme }) => theme.spacing['2xl']};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    margin-top: ${({ theme }) => theme.spacing.lg};
     margin-bottom: ${({ theme }) => theme.spacing.lg};
+  }
+
+  &:first-of-type {
+    margin-top: 0;
   }
 `;
 
@@ -62,12 +68,7 @@ const UserMessageBubble = styled.div`
 const BotResponseContainer = styled.div`
   width: 100%;
   max-width: 100%;
-  margin-bottom: ${({ theme }) => theme.spacing['2xl']};
   animation: ${fadeInUp} 0.4s ease-out;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    margin-bottom: ${({ theme }) => theme.spacing.lg};
-  }
 `;
 
 const ResponseText = styled.div`
