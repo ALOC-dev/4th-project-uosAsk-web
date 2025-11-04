@@ -285,16 +285,45 @@ export function UserMessage({ message }: UserMessageProps) {
 interface BotResponseProps {
   response?: UIChatResponse;
   onSuggestionClick?: (suggestion: string) => void;
+  isStreaming?: boolean;
 }
 
-export function BotResponse({ response, onSuggestionClick }: BotResponseProps) {
+const TypingCursor = styled.span`
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background-color: ${({ theme }) => theme.colors.primary};
+  margin-left: 2px;
+  animation: blink 1s infinite;
+  vertical-align: text-bottom;
+
+  @keyframes blink {
+    0%,
+    50% {
+      opacity: 1;
+    }
+    51%,
+    100% {
+      opacity: 0;
+    }
+  }
+`;
+
+export function BotResponse({
+  response,
+  onSuggestionClick,
+  isStreaming = false,
+}: BotResponseProps) {
   if (!response) {
     return null;
   }
 
   return (
     <BotResponseContainer>
-      <ResponseText>{response.message}</ResponseText>
+      <ResponseText>
+        {response.message}
+        {isStreaming && <TypingCursor />}
+      </ResponseText>
 
       {response.recommendedNotice && (
         <NoticeCard>

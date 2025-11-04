@@ -3,8 +3,8 @@ import { keyframes } from '@emotion/react';
 import chatTemplate from './chatTemplate';
 import { useRef, useState, useEffect } from 'react';
 import { ChatMessage, UIChatResponse } from '@/types/chat';
-import { requestChat } from '@/services/chat/requestChat';
-import { ConversationMessage, ChatResponse } from '@/services/chat/chat.types';
+import { requestChatStream } from '@/services/chat/requestChat';
+import { ConversationMessage } from '@/services/chat/chat.types';
 import { UserMessage, BotResponse, LoadingBubble } from './ChatResponse';
 
 const fadeIn = keyframes`
@@ -370,6 +370,9 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
     hasError: boolean;
     lastQuery?: string;
   }>({ hasError: false });
+  const [streamingMessageId, setStreamingMessageId] = useState<string | null>(
+    null,
+  );
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -420,43 +423,9 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
     };
   };
 
-  /**
-   * API 응답을 ChatMessage로 변환
-   */
-  const createAssistantMessage = (content: string): ChatMessage => {
-    return {
-      id: (Date.now() + 1).toString(),
-      content,
-      sender: 'bot',
-      timestamp: new Date(),
-    };
-  };
 
   /**
-   * API 응답을 UI 형태로 변환
-   */
-  const convertApiResponseToUI = (
-    apiResponse: ChatResponse,
-  ): UIChatResponse => {
-    const responseMessage = apiResponse.assistant || apiResponse.response || '';
-
-    return {
-      message: responseMessage,
-      recommendedNotice: apiResponse.recommended_notice
-        ? { ...apiResponse.recommended_notice }
-        : null,
-    };
-  };
-
-  /**
-   * 에러 메시지 생성
-   */
-  const createErrorMessage = (): ChatMessage => {
-    return createAssistantMessage(ERROR_MESSAGE);
-  };
-
-  /**
-   * API 호출 및 응답 처리
+   * API 호출 및 응답 처리 (스트리밍 방식)
    */
   const handleApiRequest = async (query: string) => {
     setErrorState({ hasError: false });
@@ -465,25 +434,109 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
       -MAX_CONVERSATION_HISTORY,
     );
 
-    const apiResponse = await requestChat({
-      query,
-      conversation_history: conversationHistory,
-    });
+    // 스트리밍 메시지 ID (첫 토큰이 도착할 때 생성됨)
+    const tempMessageId = (Date.now() + 1).toString();
+    let accumulatedText = '';
+    let isFirstToken = true;
 
-    if (!apiResponse) {
+    try {
+      await requestChatStream(
+        {
+          query,
+          conversation_history: conversationHistory,
+        },
+        // onToken: 토큰이 올 때마다 호출
+        (token: string) => {
+          accumulatedText += token;
+
+          // 첫 토큰이 도착했을 때 메시지 생성
+          if (isFirstToken) {
+            isFirstToken = false;
+            const tempMessage: ChatMessage = {
+              id: tempMessageId,
+              content: '',
+              sender: 'bot',
+              timestamp: new Date(),
+            };
+
+            setMessages((prev) => [...prev, tempMessage]);
+            setResponses((prev) => ({
+              ...prev,
+              [tempMessageId]: { message: '', recommendedNotice: null },
+            }));
+            setStreamingMessageId(tempMessageId);
+          }
+
+          // 응답 업데이트
+          setResponses((prev) => ({
+            ...prev,
+            [tempMessageId]: {
+              ...prev[tempMessageId],
+              message: accumulatedText,
+            },
+          }));
+        },
+        // onStatus: 상태 업데이트
+        (status: string) => {
+          console.log('🔍 [채팅] 상태:', status);
+        },
+        // onDone: 완료 시 호출
+        (turn: number, notice: any) => {
+          console.log('✅ [채팅] 완료:', { turn, notice });
+          setStreamingMessageId(null);
+
+          // 공지사항 정보 추가
+          if (notice) {
+            setResponses((prev) => ({
+              ...prev,
+              [tempMessageId]: {
+                ...prev[tempMessageId],
+                recommendedNotice: notice,
+              },
+            }));
+          }
+
+          // 최종 메시지 업데이트
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === tempMessageId
+                ? { ...msg, content: accumulatedText }
+                : msg,
+            ),
+          );
+        },
+        // onError: 에러 발생 시 호출
+        (error: string) => {
+          console.error('❌ [채팅] 에러:', error);
+          setStreamingMessageId(null);
+          setErrorState({ hasError: true, lastQuery: query });
+
+          // 임시 메시지 제거 (생성되었을 경우에만)
+          if (!isFirstToken) {
+            setMessages((prev) => prev.filter((msg) => msg.id !== tempMessageId));
+            setResponses((prev) => {
+              const newResponses = { ...prev };
+              delete newResponses[tempMessageId];
+              return newResponses;
+            });
+          }
+        },
+      );
+    } catch (error) {
+      console.error('❌ [채팅] 요청 실패:', error);
+      setStreamingMessageId(null);
       setErrorState({ hasError: true, lastQuery: query });
-      return;
+
+      // 임시 메시지 제거 (생성되었을 경우에만)
+      if (!isFirstToken) {
+        setMessages((prev) => prev.filter((msg) => msg.id !== tempMessageId));
+        setResponses((prev) => {
+          const newResponses = { ...prev };
+          delete newResponses[tempMessageId];
+          return newResponses;
+        });
+      }
     }
-
-    const uiResponse = convertApiResponseToUI(apiResponse);
-    const assistantMessage = createAssistantMessage(uiResponse.message);
-
-    setMessages((prev) => [...prev, assistantMessage]);
-    setResponses((prev) => ({
-      ...prev,
-      [assistantMessage.id]: uiResponse,
-    }));
-    setErrorState({ hasError: false });
   };
 
   /**
@@ -568,7 +621,7 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
         scrollToBottom();
       });
     });
-  }, [messages, isLoading]);
+  }, [messages, isLoading, responses]);
 
   return (
     <ChatbotSection>
@@ -586,7 +639,10 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
               <UserMessage key={message.id} message={message} />
             ) : (
               <MessageWrapper key={message.id} delay={index * 0.1}>
-                <BotResponse response={responses[message.id]} />
+                <BotResponse
+                  response={responses[message.id]}
+                  isStreaming={streamingMessageId === message.id}
+                />
               </MessageWrapper>
             ),
           )}
@@ -596,7 +652,9 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
               isLoading={isLoading}
             />
           )}
-          {isLoading && !errorState.hasError && <LoadingBubble />}
+          {isLoading && !streamingMessageId && !errorState.hasError && (
+            <LoadingBubble />
+          )}
         </ChatContainer>
       )}
 
