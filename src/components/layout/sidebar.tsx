@@ -16,7 +16,7 @@ const SidebarContainer = styled.aside`
   position: fixed;
   left: 0;
   top: 0;
-  overflow-y: auto;
+  overflow: hidden;
   padding: 0;
   z-index: 1000;
 `;
