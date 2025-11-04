@@ -35,6 +35,7 @@ const NoticeListContainer = styled.div`
   flex: 1;
   overflow-y: auto;
   margin-top: ${({ theme }) => theme.spacing.sm};
+  padding-bottom: ${({ theme }) => theme.spacing.md};
   /* 스크롤바 숨기기 */
   &::-webkit-scrollbar {
     display: none;
@@ -66,10 +67,6 @@ const NoticeItem = styled.div`
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.backgroundSecondary};
-  }
-
-  &:last-child {
-    border-bottom: none;
   }
 `;
 
@@ -162,11 +159,60 @@ const EmptyText = styled.p`
   text-align: center;
 `;
 
+const LoadMoreContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: ${({ theme }) => `${theme.spacing.xl} ${theme.spacing.lg}`};
+  margin-top: ${({ theme }) => theme.spacing.lg};
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
+  background-color: ${({ theme }) => theme.colors.background};
+`;
+
+const LoadMoreButton = styled.button<{ disabled?: boolean }>`
+  padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing['3xl']}`};
+  background-color: ${({ theme, disabled }) =>
+    disabled ? theme.colors.backgroundTertiary : theme.colors.primary};
+  color: ${({ theme, disabled }) =>
+    disabled ? theme.colors.textTertiary : '#FFFFFF'};
+  border: none;
+  border-radius: ${({ theme }) => theme.radii.md};
+  font-family: ${({ theme }) => theme.fonts.sans};
+  font-size: ${({ theme }) => theme.fontSizes.base};
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: ${({ disabled }) =>
+    disabled ? 'none' : '0 2px 8px rgba(64, 140, 255, 0.3)'};
+  min-width: 240px;
+  height: 48px;
+
+  &:hover:not(:disabled) {
+    background-color: #3576e0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(64, 140, 255, 0.4);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(64, 140, 255, 0.3);
+  }
+`;
+
 interface AnimatedNoticeListProps {
   noticeData?: NoticeApiResponse;
+  onLoadMore?: () => void;
+  isLoading?: boolean;
+  hasMore?: boolean;
 }
 
-export function AnimatedNoticeList({ noticeData }: AnimatedNoticeListProps) {
+export function AnimatedNoticeList({
+  noticeData,
+  onLoadMore,
+  isLoading = false,
+  hasMore = false,
+}: AnimatedNoticeListProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   // 백엔드 API 응답 구조에서 hot과 content 추출
@@ -225,6 +271,18 @@ export function AnimatedNoticeList({ noticeData }: AnimatedNoticeListProps) {
           </NoticeInfo>
         </NoticeItem>
       ))}
+
+      {/* 더보기 버튼 - 공지사항 목록 바로 아래 */}
+
+      <LoadMoreContainer>
+        <LoadMoreButton onClick={onLoadMore} disabled={isLoading || !hasMore}>
+          {isLoading
+            ? '로딩 중...'
+            : hasMore
+              ? '더보기'
+              : '마지막 공지사항입니다'}
+        </LoadMoreButton>
+      </LoadMoreContainer>
     </NoticeListContainer>
   );
 }

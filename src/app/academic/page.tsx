@@ -4,8 +4,8 @@ import { NoticeLayout } from '@/components/notice/notice-layout';
 import { AnimatedNoticeList } from '@/components/notice/notice-list';
 import { CATEGORIES } from '@/constants';
 import { getNoticeList } from '@/services/notice/getNoticeList';
-import { NoticeApiResponse, Notice } from '@/types/notice';
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { NoticeApiResponse } from '@/types/notice';
+import { useEffect, useState, useCallback } from 'react';
 
 export default function AcademicPage() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -13,23 +13,11 @@ export default function AcademicPage() {
     useState<NoticeApiResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
-  const lastRequestTimeRef = useRef<number>(0);
 
   // 공지사항 데이터 가져오기
   const fetchNotices = useCallback(
     async (page: number) => {
       if (isLoading) return;
-
-      // 요청 간격 제한 (최소 500ms)
-      const now = Date.now();
-      const timeSinceLastRequest = now - lastRequestTimeRef.current;
-      if (timeSinceLastRequest < 500) {
-        console.log('⏱️ [학사공지] 요청 간격 제한 (500ms)');
-        return;
-      }
-      lastRequestTimeRef.current = now;
 
       console.log(`📄 [학사공지] 페이지 ${page} 로드 시작...`);
       setIsLoading(true);
@@ -38,16 +26,21 @@ export default function AcademicPage() {
           category: CATEGORIES[1],
           keyword: '',
           page,
-          exact: false,
+          exact: true,
         });
 
         const newData = response.data ?? response;
         console.log(`✅ [학사공지] 페이지 ${page} 로드 완료:`, {
           hot: newData.hot.length,
           content: newData.content.length,
+          page: newData.page,
+          size: newData.size,
+          totalElements: newData.totalElements,
           totalPages: newData.totalPages,
           hasNext: newData.hasNext,
+          hasPrevious: newData.hasPrevious,
         });
+        console.log('📦 [학사공지] 전체 응답 데이터:', newData);
 
         setAccumulatedNotices((prev) => {
           if (!prev) {
@@ -95,8 +88,8 @@ export default function AcademicPage() {
     fetchNotices(0);
   }, []);
 
-  // 다음 페이지 로드
-  const loadMore = useCallback(() => {
+  // 다음 페이지 로드 핸들러
+  const handleLoadMore = useCallback(() => {
     if (!isLoading && hasMore) {
       const nextPage = currentPage + 1;
       setCurrentPage(nextPage);
@@ -104,43 +97,16 @@ export default function AcademicPage() {
     }
   }, [currentPage, isLoading, hasMore, fetchNotices]);
 
-  // Intersection Observer 설정
-  useEffect(() => {
-    if (observerRef.current) {
-      observerRef.current.disconnect();
-    }
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries;
-        if (entry.isIntersecting && hasMore && !isLoading) {
-          loadMore();
-        }
-      },
-      {
-        root: null,
-        rootMargin: '100px', // 100px 전에 미리 로드
-        threshold: 0.1,
-      },
-    );
-
-    if (loadMoreRef.current) {
-      observerRef.current.observe(loadMoreRef.current);
-    }
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, [loadMore, hasMore, isLoading]);
-
   return (
     <NoticeLayout type='academic'>
       {accumulatedNotices && (
-        <AnimatedNoticeList noticeData={accumulatedNotices} />
+        <AnimatedNoticeList
+          noticeData={accumulatedNotices}
+          onLoadMore={handleLoadMore}
+          isLoading={isLoading}
+          hasMore={hasMore}
+        />
       )}
-      <div ref={loadMoreRef} />
     </NoticeLayout>
   );
 }
