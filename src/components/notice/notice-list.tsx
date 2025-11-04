@@ -36,13 +36,29 @@ const NoticeListContainer = styled.div`
   overflow-y: auto;
   margin-top: ${({ theme }) => theme.spacing.sm};
   padding-bottom: ${({ theme }) => theme.spacing.md};
-  /* 스크롤바 숨기기 */
+
+  /* 스크롤바 스타일링 - Webkit (Chrome, Safari, Edge) */
   &::-webkit-scrollbar {
-    display: none;
+    width: 8px;
   }
 
-  /* Firefox 스크롤바 숨기기 */
-  scrollbar-width: none;
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ theme }) => theme.colors.border};
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: ${({ theme }) => theme.colors.textTertiary};
+  }
+
+  /* Firefox 스크롤바 스타일링 */
+  scrollbar-width: thin;
+  scrollbar-color: ${({ theme }) => theme.colors.border} transparent;
 `;
 
 const NoticeItem = styled.div`
@@ -272,17 +288,18 @@ export function AnimatedNoticeList({
         </NoticeItem>
       ))}
 
-      {/* 더보기 버튼 - 공지사항 목록 바로 아래 */}
-
-      <LoadMoreContainer>
-        <LoadMoreButton onClick={onLoadMore} disabled={isLoading || !hasMore}>
-          {isLoading
-            ? '로딩 중...'
-            : hasMore
-              ? '더보기'
-              : '마지막 공지사항입니다'}
-        </LoadMoreButton>
-      </LoadMoreContainer>
+      {/* 더보기 버튼 - onLoadMore가 전달된 경우에만 표시 */}
+      {onLoadMore && (
+        <LoadMoreContainer>
+          <LoadMoreButton onClick={onLoadMore} disabled={isLoading || !hasMore}>
+            {isLoading
+              ? '로딩 중...'
+              : hasMore
+                ? '더보기'
+                : '마지막 공지사항입니다'}
+          </LoadMoreButton>
+        </LoadMoreContainer>
+      )}
     </NoticeListContainer>
   );
 }
