@@ -1,4 +1,4 @@
-# uosAsk - 서울시립대 학습 커뮤니티
+# uosAsk - 서울시립대 공지 검색 플랫폼
 
 ![Next.js](https://img.shields.io/badge/Next.js-15.5.3-black?logo=next.js)
 ![React](https://img.shields.io/badge/React-19.1.0-61DAFB?logo=react)
