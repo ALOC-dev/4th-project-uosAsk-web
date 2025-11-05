@@ -12,11 +12,11 @@ const notoSansKR = Noto_Sans_KR({
 });
 
 export const metadata: Metadata = {
-  title: '시누공 - 서울시립대 공지사항',
+  title: '시립대 누가 공지해주나?',
   description: '서울시립대 학생을 위한 통합 공지사항 서비스',
   metadataBase: new URL('https://uosask.example.com'),
   openGraph: {
-    title: '시누공 - 서울시립대 공지사항',
+    title: '시립대 누가 공지해주나?',
     description: '서울시립대 학생을 위한 통합 공지사항 서비스',
     type: 'website',
     locale: 'ko_KR',
