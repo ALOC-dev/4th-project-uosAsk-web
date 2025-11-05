@@ -220,6 +220,7 @@ const ChatInput = styled.input`
   border: none;
   outline: none;
   font-size: ${({ theme }) => theme.fontSizes.lg};
+  color: ${({ theme }) => theme.colors.text};
   background-color: transparent;
   flex: 1;
   min-width: 0;

@@ -286,9 +286,6 @@ export function BotResponse({
               <NoticeMetaItem>
                 {response.recommendedNotice.posted_date}
               </NoticeMetaItem>
-              <NoticeMetaItem>
-                관련도: {(response.recommendedNotice.score * 100).toFixed(0)}%
-              </NoticeMetaItem>
             </NoticeMeta>
             <NoticeExcerpt>{response.recommendedNotice.content}</NoticeExcerpt>
           </NoticeCardContent>
