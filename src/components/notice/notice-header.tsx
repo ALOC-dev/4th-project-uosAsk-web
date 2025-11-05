@@ -131,14 +131,25 @@ export function NoticeHeader({ type, icon, title }: NoticeHeaderProps) {
   return (
     <>
       <HeaderContainer>
-        <IconWrapper onClick={handleIconClick}>
-          <Image
-            src={displayIcon}
-            alt={`${displayTitle} 아이콘`}
-            width={40}
-            height={40}
-          />
-        </IconWrapper>
+        {(config.title === '검색결과') ?
+          <IconWrapper onClick={handleIconClick}>
+            <Image
+              src={displayIcon}
+              alt={`${displayTitle} 아이콘`}
+              width={40}
+              height={40}
+            />
+          </IconWrapper>
+          :
+          <IconWrapper>
+            <Image
+              src={displayIcon}
+              alt={`${displayTitle} 아이콘`}
+              width={40}
+              height={40}
+            />
+          </IconWrapper>
+        }
         <HeaderTitle>{displayTitle}</HeaderTitle>
       </HeaderContainer>
       <SearchModal
