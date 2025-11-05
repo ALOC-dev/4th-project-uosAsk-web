@@ -49,11 +49,11 @@ pnpm lint
 
 ```
 src/
-├── app/                    # App Router 페이지
-│   ├── layout.tsx         # 루트 레이아웃
-│   ├── page.tsx           # 홈 페이지
-│   └── globals.css        # 전역 스타일
-├── components/            # React 컴포넌트
+├── app/                  # App Router 페이지
+│   ├── layout.tsx        # 루트 레이아웃
+│   ├── page.tsx          # 홈 페이지
+│   └── globals.css       # 전역 스타일
+├── components/           # React 컴포넌트
 │   ├── ui/               # 순수 UI 컴포넌트 (도메인 무관)
 │   ├── layout/           # 레이아웃 컴포넌트
 │   ├── providers/        # Provider 컴포넌트
