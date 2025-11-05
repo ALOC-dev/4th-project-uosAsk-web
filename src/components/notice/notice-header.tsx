@@ -3,7 +3,9 @@
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
 import Image from 'next/image';
+import { useState } from 'react';
 import { NoticeType } from '@/types/notice';
+import SearchModal from '../modal/searchModal';
 
 const slideInDown = keyframes`
   from {
@@ -58,6 +60,7 @@ const IconWrapper = styled.div`
   justify-content: center;
   border-radius: ${({ theme }) => theme.radii.sm};
   background-color: ${({ theme }) => theme.colors.backgroundSecondary};
+  cursor: pointer;
 
   animation: ${fadeInScale} 0.7s ease-out forwards;
   animation-delay: 0.2s;
@@ -116,21 +119,32 @@ const NOTICE_CONFIG = {
 } as const;
 
 export function NoticeHeader({ type, icon, title }: NoticeHeaderProps) {
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const config = NOTICE_CONFIG[type];
   const displayIcon = icon || config.icon;
   const displayTitle = title || config.title;
 
+  const handleIconClick = () => {
+    setIsSearchModalOpen(true);
+  };
+
   return (
-    <HeaderContainer>
-      <IconWrapper>
-        <Image
-          src={displayIcon}
-          alt={`${displayTitle} 아이콘`}
-          width={40}
-          height={40}
-        />
-      </IconWrapper>
-      <HeaderTitle>{displayTitle}</HeaderTitle>
-    </HeaderContainer>
+    <>
+      <HeaderContainer>
+        <IconWrapper onClick={handleIconClick}>
+          <Image
+            src={displayIcon}
+            alt={`${displayTitle} 아이콘`}
+            width={40}
+            height={40}
+          />
+        </IconWrapper>
+        <HeaderTitle>{displayTitle}</HeaderTitle>
+      </HeaderContainer>
+      <SearchModal
+        isOpen={isSearchModalOpen}
+        onClose={() => setIsSearchModalOpen(false)}
+      />
+    </>
   );
 }
