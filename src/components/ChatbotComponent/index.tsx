@@ -512,11 +512,10 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
         },
         // onStatus: 상태 업데이트
         (status: string) => {
-          console.log('🔍 [채팅] 상태:', status);
+          // 상태 업데이트
         },
         // onDone: 완료 시 호출
         (turn: number, notice: any) => {
-          console.log('✅ [채팅] 완료:', { turn, notice });
           setStreamingMessageId(null);
 
           // 공지사항 정보 추가

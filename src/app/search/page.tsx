@@ -57,7 +57,6 @@ function SearchContent() {
     async (page: number) => {
       if (isLoading || !query || !query.trim()) return;
 
-      console.log(`🔍 [검색] 페이지 ${page} 로드 시작...`);
       setIsLoading(true);
       setError(null);
 
@@ -69,24 +68,10 @@ function SearchContent() {
         });
 
         const newData = response.data ?? response;
-        console.log(`✅ [검색] 페이지 ${page} 로드 완료:`, {
-          hot: newData.hot.length,
-          content: newData.content.length,
-          page: newData.page,
-          size: newData.size,
-          totalElements: newData.totalElements,
-          totalPages: newData.totalPages,
-          hasNext: newData.hasNext,
-          hasPrevious: newData.hasPrevious,
-        });
 
         setAccumulatedNotices((prev) => {
           if (!prev) {
             // 첫 페이지 (page=0): hot 3개 + content 15개
-            console.log('🎯 [검색] 첫 페이지 로드:', {
-              hot: newData.hot.length,
-              content: newData.content.length,
-            });
             return newData;
           } else {
             // 이후 페이지: content만 누적 (hot은 비어있음)
@@ -95,20 +80,12 @@ function SearchContent() {
               hot: prev.hot, // 첫 페이지의 HOT 공지 유지
               content: [...prev.content, ...newData.content], // 기존 + 새 데이터
             };
-            console.log('📚 [검색] 데이터 누적:', {
-              기존_content: prev.content.length,
-              새로운_content: newData.content.length,
-              총_content: accumulated.content.length,
-            });
             return accumulated;
           }
         });
 
         // 더 이상 불러올 데이터가 없는지 확인
         setHasMore(newData.hasNext);
-        if (!newData.hasNext) {
-          console.log('🏁 [검색] 마지막 페이지 도달');
-        }
       } catch (e: any) {
         console.error('❌ [검색] 공지사항 로드 실패:', e);
         if (e.response?.status === 429) {
