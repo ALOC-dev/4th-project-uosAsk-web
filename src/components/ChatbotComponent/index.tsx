@@ -476,8 +476,8 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
     try {
       await requestChatStream(
         {
-          query,
-          conversation_history: conversationHistory,
+      query,
+      conversation_history: conversationHistory,
         },
         // onToken: 토큰이 올 때마다 호출
         (token: string) => {
@@ -678,24 +678,24 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
       ) : (
         <ChatContainer ref={chatContainerRef}>
           <ChatContentWrapper>
-            {messages.map((message, index) =>
-              message.sender === 'user' ? (
-                <UserMessage key={message.id} message={message} />
-              ) : (
-                <MessageWrapper key={message.id} delay={index * 0.1}>
+          {messages.map((message, index) =>
+            message.sender === 'user' ? (
+              <UserMessage key={message.id} message={message} />
+            ) : (
+              <MessageWrapper key={message.id} delay={index * 0.1}>
                   <BotResponse
                     response={responses[message.id]}
                     isStreaming={streamingMessageId === message.id}
                   />
-                </MessageWrapper>
-              ),
-            )}
-            {errorState.hasError && (
-              <ErrorMessageComponent
-                onRetry={handleRetry}
-                isLoading={isLoading}
-              />
-            )}
+              </MessageWrapper>
+            ),
+          )}
+          {errorState.hasError && (
+            <ErrorMessageComponent
+              onRetry={handleRetry}
+              isLoading={isLoading}
+            />
+          )}
             {isLoading && !streamingMessageId && !errorState.hasError && (
               <LoadingBubble />
             )}
