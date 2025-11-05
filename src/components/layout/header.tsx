@@ -94,7 +94,7 @@ const HelpButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 70px;
+  width: 48px;
   height: 48px;
   background-color: ${({ theme }) => theme.colors.backgroundButton};
   border: 0.5px solid ${({ theme }) => theme.colors.borderLight};
@@ -116,7 +116,7 @@ const HelpButton = styled.button`
 const HelpTooltip = styled.div<{ isVisible: boolean }>`
   position: absolute;
   top: calc(100% + 12px);
-  left: 50%;
+  left: -500%;
   transform: translateX(-50%);
   background-color: ${({ theme }) => theme.colors.backgroundButton};
   color: ${({ theme }) => theme.colors.text};
@@ -128,19 +128,19 @@ const HelpTooltip = styled.div<{ isVisible: boolean }>`
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   white-space: normal;
   z-index: 1001;
-  width: 600px;
+  width: 700px;
   line-height: 1.5;
   text-align: left;
   display: ${({ isVisible }) => (isVisible ? 'block' : 'none')};
   opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
   transition: opacity 0.2s ease;
 
-  /* 말풍선 꼬리 */
+  /* 말풍선 꼬리 (버튼 중앙에 고정) */
   &::before {
     content: '';
     position: absolute;
     bottom: 100%;
-    left: 50%;
+    left: 614px; /* 툴팁 이동 보정(-240px - 350px) + 버튼 중앙(24px) = 614px */
     transform: translateX(-50%);
     width: 0;
     height: 0;
@@ -153,7 +153,7 @@ const HelpTooltip = styled.div<{ isVisible: boolean }>`
     content: '';
     position: absolute;
     bottom: 100%;
-    left: 50%;
+    left: 614px; /* 툴팁 이동 보정(-240px - 350px) + 버튼 중앙(24px) = 614px */
     transform: translateX(-50%);
     width: 0;
     height: 0;
@@ -196,13 +196,24 @@ export function Header({ onNewChat, onSettingsClick }: HeaderProps) {
           onMouseLeave={handleMouseLeave}
         >
           <HelpButton>
-            <ButtonText>도움말</ButtonText>
+            <Image
+              src='/images/question-icon.svg'
+              alt='도움말'
+              width={28}
+              height={28}
+            />
           </HelpButton>
           <HelpTooltip isVisible={isHelpTooltipOpen}>
             시누공은 공지사항에 대해 QnA를 할 수 있는 채팅 기능이 있어요.
-            {'\n'}
-            대화 중 이전 대화와 다른 주제로 질문하거나 질문의 답변이 부정확한
-            경우 새 채팅을 눌러서 다시 질문해주세요.
+            <br />
+            대화 중{' '}
+            <span style={{ fontWeight: 700 }}>
+              이전 대화와 다른 주제로 질문
+            </span>
+            하거나{' '}
+            <span style={{ fontWeight: 700 }}>질문의 답변이 부정확한</span> 경우{' '}
+            <span style={{ fontWeight: 700 }}>새 채팅</span>을 눌러서 다시
+            질문해주세요.
           </HelpTooltip>
         </HelpButtonContainer>
 
