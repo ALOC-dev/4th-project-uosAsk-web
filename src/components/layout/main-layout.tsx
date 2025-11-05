@@ -1,9 +1,10 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import styled from '@emotion/styled';
 import { Sidebar } from './sidebar';
 import { Header } from './header';
+import { Setting } from './setting';
 
 const LayoutContainer = styled.div`
   display: flex;
@@ -37,9 +38,8 @@ const ContentContainer = styled.div`
   width: 100%;
   max-width: 1262px;
   height: 100%;
-  background-color: ${({ theme }) => theme.colors.contentContainer};
+  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
   border-radius: ${({ theme }) => theme.radii.lg};
-  padding: ${({ theme }) => theme.spacing['2xl']};
   box-sizing: border-box;
   overflow: hidden;
 `;
@@ -57,11 +57,26 @@ export function MainLayout({
   onNavigate,
   onNewChat,
 }: MainLayoutProps) {
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const handleOpenSettings = () => setIsSettingsOpen((prev) => !prev);
+  const handleCloseSettings = () => setIsSettingsOpen(false);
+  const handleChangeSettings = (_payload: {
+    university: string;
+    department: string;
+  }) => {
+    // Reserved for propagating selection to app state if needed later
+  };
   return (
     <LayoutContainer>
       <Sidebar activeSection={activeSection} onNavigate={onNavigate} />
       <MainContent>
-        <Header onNewChat={onNewChat} />
+        <Header onNewChat={onNewChat} onSettingsClick={handleOpenSettings} />
+        <Setting
+          open={isSettingsOpen}
+          onClose={handleCloseSettings}
+          onChange={handleChangeSettings}
+        />
         <ContentArea>
           <ContentContainer>{children}</ContentContainer>
         </ContentArea>

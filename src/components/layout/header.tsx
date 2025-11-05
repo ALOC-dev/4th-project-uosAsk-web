@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import styled from '@emotion/styled';
 import { useTheme } from '@/components/providers/theme-provider';
+import { useState } from 'react';
 
 const HeaderContainer = styled.header`
   width: 100%;
@@ -85,6 +86,91 @@ const ThemeButton = styled.button`
   }
 `;
 
+const HelpButtonContainer = styled.div`
+  position: relative;
+`;
+
+const HelpButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 48px;
+  background-color: ${({ theme }) => theme.colors.backgroundButton};
+  border: 0.5px solid ${({ theme }) => theme.colors.borderLight};
+  border-radius: ${({ theme }) => theme.radii.sm};
+  box-shadow: ${({ theme }) => theme.shadows.md};
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    box-shadow: ${({ theme }) => theme.shadows.lg};
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+`;
+
+const HelpTooltip = styled.div<{ isVisible: boolean }>`
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: ${({ theme }) => theme.colors.backgroundButton};
+  color: ${({ theme }) => theme.colors.text};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radii.md};
+  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  white-space: normal;
+  z-index: 1001;
+  width: 600px;
+  line-height: 1.5;
+  text-align: left;
+  display: ${({ isVisible }) => (isVisible ? 'block' : 'none')};
+  opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
+  transition: opacity 0.2s ease;
+
+  /* 말풍선 꼬리 */
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid ${({ theme }) => theme.colors.border};
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid ${({ theme }) => theme.colors.backgroundButton};
+    margin-bottom: -1px;
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    width: 320px;
+    font-size: ${({ theme }) => theme.fontSizes.xs};
+    padding: ${({ theme }) => theme.spacing.sm}
+      ${({ theme }) => theme.spacing.md};
+  }
+`;
+
 interface HeaderProps {
   onNewChat?: () => void;
   onSettingsClick?: () => void;
@@ -92,14 +178,38 @@ interface HeaderProps {
 
 export function Header({ onNewChat, onSettingsClick }: HeaderProps) {
   const { themeMode, toggleTheme } = useTheme();
+  const [isHelpTooltipOpen, setIsHelpTooltipOpen] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHelpTooltipOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHelpTooltipOpen(false);
+  };
 
   return (
     <HeaderContainer>
       <HeaderActions>
+        <HelpButtonContainer
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          <HelpButton>
+            <ButtonText>도움말</ButtonText>
+          </HelpButton>
+          <HelpTooltip isVisible={isHelpTooltipOpen}>
+            시누공은 공지사항에 대해 QnA를 할 수 있는 채팅 기능이 있어요.
+            {'\n'}
+            대화 중 이전 대화와 다른 주제로 질문하거나 질문의 답변이 부정확한
+            경우 새 채팅을 눌러서 다시 질문해주세요.
+          </HelpTooltip>
+        </HelpButtonContainer>
+
         <NewChatButton onClick={onNewChat}>
           <SettingButton>
             <Image
-              src='/images/newChat-icon.png'
+              src='/images/newChat-icon.svg'
               alt='새 채팅'
               width={28}
               height={28}
@@ -110,7 +220,7 @@ export function Header({ onNewChat, onSettingsClick }: HeaderProps) {
 
         <ThemeButton onClick={onSettingsClick} aria-label='설정'>
           <Image
-            src='/images/setting-icon.png'
+            src='/images/setting-icon.svg'
             alt='설정'
             width={28}
             height={28}
@@ -121,8 +231,8 @@ export function Header({ onNewChat, onSettingsClick }: HeaderProps) {
           <Image
             src={
               themeMode === 'night'
-                ? '/images/night-icon.png'
-                : '/images/day-icon.png'
+                ? '/images/night-icon.svg'
+                : '/images/day-icon.svg'
             }
             alt='테마 전환'
             width={28}

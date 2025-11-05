@@ -1,8 +1,12 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import styled from '@emotion/styled';
+import { theme } from '@/styles/theme';
+import SearchModal from '../modal/searchModal';
+import { useRecentNotices } from '@/services/notice/useRecentNotices';
 
 const SidebarContainer = styled.aside`
   width: 275px;
@@ -11,8 +15,9 @@ const SidebarContainer = styled.aside`
   position: fixed;
   left: 0;
   top: 0;
-  overflow-y: auto;
+  overflow: hidden;
   padding: 0;
+  z-index: 1000;
 `;
 
 const SidebarContent = styled.div`
@@ -78,17 +83,27 @@ const NavItem = styled.button<{ isActive?: boolean }>`
   }
 `;
 
-const NavIcon = styled.div`
+const NavIcon = styled.div<{ isActive?: boolean }>`
   width: 35px;
   height: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: ${({ theme }) => theme.colors.primary};
-  opacity: 1;
+  opacity: ${({ isActive }) => (isActive ? 1 : 0.5)};
+  filter: ${({ isActive }) =>
+    isActive ? 'saturate(1.5) brightness(1.1)' : 'saturate(1)'};
+  transition:
+    opacity 0.2s,
+    filter 0.2s;
 
   ${NavItem}:hover & {
     opacity: 1;
+    filter: saturate(1.3) brightness(1.05);
+  }
+
+  img {
+    transition: filter 0.2s;
   }
 `;
 
@@ -116,7 +131,12 @@ const SectionTitle = styled.h3`
 const HistoryList = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0 ${({ theme }) => theme.spacing.lg};
+  padding: 0 ${({ theme }) => theme.spacing.md};
+`;
+
+const HistoryItemWrapper = styled.div`
+  position: relative;
+  padding: ${({ theme }) => theme.spacing.xs} 0;
 `;
 
 const HistoryItem = styled.div`
@@ -126,16 +146,40 @@ const HistoryItem = styled.div`
   color: ${({ theme }) => theme.colors.textSecondary};
   opacity: 0.5;
   letter-spacing: -0.08em;
-  line-height: 1.2;
+  line-height: 1.4;
   cursor: pointer;
-  padding: ${({ theme }) => theme.spacing.sm} 0;
-  white-space: nowrap;
+  position: relative;
+
+  /* 자동 truncate 처리 */
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  word-break: break-word;
+  max-width: 100%;
+  white-space: nowrap;
 
   &:hover {
     opacity: 1;
   }
+`;
+
+const HistoryItemExpanded = styled.div<{ isVisible: boolean }>`
+  position: fixed;
+  background-color: ${({ theme }) => theme.colors.backgroundButton};
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-family: ${({ theme }) => theme.fonts.sans};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: 500;
+  letter-spacing: -0.08em;
+  line-height: 1.4;
+  white-space: nowrap;
+  z-index: 1001;
+  border-radius: ${({ theme }) => theme.radii.md};
+  pointer-events: none;
+  display: ${({ isVisible }) => (isVisible ? 'block' : 'none')};
+  padding-right: ${({ theme }) => theme.spacing.xs};
 `;
 
 const Divider = styled.div`
@@ -161,8 +205,19 @@ const ROUTE_MAP: Record<string, string> = {
 
 export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
   const router = useRouter();
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+
+  const { recent } = useRecentNotices();
 
   const handleNavClick = (section: string) => {
+    // 검색 모달 처리
+    if (section === 'search') {
+      setIsSearchModalOpen(true);
+      return;
+    }
+
     // onNavigate 콜백이 있으면 호출 (하위 호환성)
     if (onNavigate) {
       onNavigate(section);
@@ -175,13 +230,29 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
     }
   };
 
+  const handleMouseEnter = (
+    itemId: string,
+    event: React.MouseEvent<HTMLDivElement>,
+  ) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setTooltipPosition({
+      top: rect.top,
+      left: rect.left,
+    });
+    setHoveredItem(itemId);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredItem(null);
+  };
+
   return (
     <SidebarContainer>
       <SidebarContent>
         <LogoSection>
           <LogoIcon>
             <Image
-              src='/images/mainLogo.png'
+              src='/images/main-logo.svg'
               alt='시누공 로고'
               width={53}
               height={53}
@@ -198,9 +269,9 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
             isActive={activeSection === 'chatbot'}
             onClick={() => handleNavClick('chatbot')}
           >
-            <NavIcon>
+            <NavIcon isActive={activeSection === 'chatbot'}>
               <Image
-                src='/images/chatBot-icon.png'
+                src='/images/chatBot-icon.svg'
                 alt='채팅봇'
                 width={30}
                 height={30}
@@ -213,9 +284,9 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
             isActive={activeSection === 'general'}
             onClick={() => handleNavClick('general')}
           >
-            <NavIcon>
+            <NavIcon isActive={activeSection === 'general'}>
               <Image
-                src='/images/general-icon.png'
+                src='/images/general-icon.svg'
                 alt='일반공지'
                 width={35}
                 height={35}
@@ -228,9 +299,9 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
             isActive={activeSection === 'academic'}
             onClick={() => handleNavClick('academic')}
           >
-            <NavIcon>
+            <NavIcon isActive={activeSection === 'academic'}>
               <Image
-                src='/images/academic-icon.png'
+                src='/images/department-icon.svg'
                 alt='학사공지'
                 width={35}
                 height={35}
@@ -243,9 +314,9 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
             isActive={activeSection === 'department'}
             onClick={() => handleNavClick('department')}
           >
-            <NavIcon>
+            <NavIcon isActive={activeSection === 'department'}>
               <Image
-                src='/images/department-icon.png'
+                src='/images/academic-icon.svg'
                 alt='학과공지'
                 width={35}
                 height={35}
@@ -256,29 +327,48 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
             </NavText>
           </NavItem>
 
-          <NavItem
-            isActive={activeSection === 'search'}
-            onClick={() => handleNavClick('search')}
-          >
+          <NavItem onClick={() => handleNavClick('search')}>
             <NavIcon>
               <Image
-                src='/images/search-icon.png'
+                src='/images/search-icon.svg'
                 alt='공지검색'
                 width={22}
                 height={22}
               />
             </NavIcon>
-            <NavText isActive={activeSection === 'search'}>공지검색</NavText>
+            <NavText>공지검색</NavText>
           </NavItem>
         </NavSection>
+
+        <SearchModal
+          isOpen={isSearchModalOpen}
+          onClose={() => setIsSearchModalOpen(false)}
+        />
 
         <Divider />
 
         <SectionTitle>최근 본 공지</SectionTitle>
         <HistoryList>
-          <HistoryItem>제 17회 공과대학 창의적 공학...</HistoryItem>
-          <HistoryItem>[박물관] 9/26(금) 100주년기념...</HistoryItem>
-          <HistoryItem>[교수학습개발센터] 2025학년...</HistoryItem>
+          {recent.map((item) => (
+            <HistoryItemWrapper key={item.link}>
+              <HistoryItem
+                onClick={() => item.link && window.open(item.link, '_blank')}
+                onMouseEnter={(e) => handleMouseEnter(item.link, e)}
+                onMouseLeave={handleMouseLeave}
+              >
+                {item.title}
+              </HistoryItem>
+              <HistoryItemExpanded
+                isVisible={hoveredItem === item.link}
+                style={{
+                  top: `${tooltipPosition.top}px`,
+                  left: `${tooltipPosition.left}px`,
+                }}
+              >
+                {item.title}
+              </HistoryItemExpanded>
+            </HistoryItemWrapper>
+          ))}
         </HistoryList>
       </SidebarContent>
     </SidebarContainer>

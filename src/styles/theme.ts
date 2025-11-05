@@ -11,7 +11,7 @@ export const lightTheme: Theme = {
     backgroundSecondary: '#F0F1F5',
     backgroundTertiary: '#E5E6EC',
     backgroundButton: '#FFFFFF',
-    contentContainer: '#D9D9D9',
+    contentContainer: '#E5E6EC',
 
     // Text Colors
     foreground: '#000000',
