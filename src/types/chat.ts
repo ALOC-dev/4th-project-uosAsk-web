@@ -6,18 +6,20 @@ export interface ChatMessage {
   timestamp: Date;
 }
 
+export interface RecommendedNotice {
+  content: string;
+  score: number;
+  title: string;
+  link: string;
+  posted_date: string;
+  department: string;
+  category: string;
+  doc_id: string;
+}
+
 // API 응답을 UI에서 사용하는 형태로 변환한 타입
 export interface UIChatResponse {
   message: string;
-  recommendedNotice?: {
-    content: string;
-    score: number;
-    title: string;
-    link: string;
-    posted_date: string;
-    department: string;
-    category: string;
-    doc_id: string;
-  } | null;
+  recommendedNotice?: RecommendedNotice | null;
 }
 

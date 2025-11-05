@@ -2,7 +2,8 @@
 
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
-import { ChatMessage, UIChatResponse } from '@/types/chat';
+import { ChatMessage, RecommendedNotice, UIChatResponse } from '@/types/chat';
+import { addRecentNotice } from '@/services/notice/recentNoticeQueue';
 
 const fadeInUp = keyframes`
   from {
@@ -258,6 +259,15 @@ export function BotResponse({
     return null;
   }
 
+  const handleClick = (notice?: RecommendedNotice | null) => {
+    if(!notice?.link) return;
+
+    addRecentNotice({
+      title: notice.title,
+      link: notice.link,
+    })
+  };
+
   return (
     <BotResponseContainer>
       <ResponseText>
@@ -273,6 +283,7 @@ export function BotResponse({
               href={response.recommendedNotice.link}
               target='_blank'
               rel='noopener noreferrer'
+              onClick={() => handleClick(response.recommendedNotice)}
             >
               {response.recommendedNotice.title}
             </NoticeTitle>
