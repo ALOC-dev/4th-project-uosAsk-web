@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "node scripts/lint.js",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix --format=stylish",
+    "format:check:src": "prettier --check \"src/**/*.{js,ts,jsx,tsx}\"",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
