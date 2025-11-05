@@ -540,7 +540,6 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
         },
         // onError: 에러 발생 시 호출
         (error: string) => {
-          console.error('❌ [채팅] 에러:', error);
           setStreamingMessageId(null);
           setErrorState({ hasError: true, lastQuery: query });
 
@@ -558,7 +557,6 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
         },
       );
     } catch (error) {
-      console.error('❌ [채팅] 요청 실패:', error);
       setStreamingMessageId(null);
       setErrorState({ hasError: true, lastQuery: query });
 
