@@ -78,6 +78,7 @@ const ResponseText = styled.div`
   line-height: 1.6;
   margin-bottom: ${({ theme }) => theme.spacing.md};
   animation: ${fadeIn} 0.5s ease-out;
+  whiteSpace: pre-wrap;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     font-size: ${({ theme }) => theme.fontSizes.sm};
