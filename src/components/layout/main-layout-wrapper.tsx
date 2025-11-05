@@ -24,7 +24,8 @@ export function MainLayoutWrapper({ children }: MainLayoutWrapperProps) {
 
   const handleNewChat = () => {
     if (pathname === '/') {
-      window.location.reload();
+      // 페이지 새로고침 대신 이벤트로 채팅 초기화
+      window.dispatchEvent(new Event('resetChat'));
     } else {
       router.push('/');
     }

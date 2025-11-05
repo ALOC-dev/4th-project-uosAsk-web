@@ -476,8 +476,8 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
     try {
       await requestChatStream(
         {
-      query,
-      conversation_history: conversationHistory,
+          query,
+          conversation_history: conversationHistory,
         },
         // onToken: 토큰이 올 때마다 호출
         (token: string) => {
@@ -659,6 +659,25 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
     });
   }, [messages, isLoading, responses]);
 
+  /**
+   * 새 채팅 시작 이벤트 리스너
+   * 페이지 새로고침 없이 채팅 상태만 초기화
+   */
+  useEffect(() => {
+    const handleResetChat = () => {
+      setChatMsg('');
+      setMessages([]);
+      setResponses({});
+      setIsLoading(false);
+      setIsChatStarted(false);
+      setErrorState({ hasError: false });
+      setStreamingMessageId(null);
+    };
+
+    window.addEventListener('resetChat', handleResetChat);
+    return () => window.removeEventListener('resetChat', handleResetChat);
+  }, []);
+
   return (
     <ChatbotSection>
       {!isChatStarted ? (
@@ -678,24 +697,24 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
       ) : (
         <ChatContainer ref={chatContainerRef}>
           <ChatContentWrapper>
-          {messages.map((message, index) =>
-            message.sender === 'user' ? (
-              <UserMessage key={message.id} message={message} />
-            ) : (
-              <MessageWrapper key={message.id} delay={index * 0.1}>
+            {messages.map((message, index) =>
+              message.sender === 'user' ? (
+                <UserMessage key={message.id} message={message} />
+              ) : (
+                <MessageWrapper key={message.id} delay={index * 0.1}>
                   <BotResponse
                     response={responses[message.id]}
                     isStreaming={streamingMessageId === message.id}
                   />
-              </MessageWrapper>
-            ),
-          )}
-          {errorState.hasError && (
-            <ErrorMessageComponent
-              onRetry={handleRetry}
-              isLoading={isLoading}
-            />
-          )}
+                </MessageWrapper>
+              ),
+            )}
+            {errorState.hasError && (
+              <ErrorMessageComponent
+                onRetry={handleRetry}
+                isLoading={isLoading}
+              />
+            )}
             {isLoading && !streamingMessageId && !errorState.hasError && (
               <LoadingBubble />
             )}
