@@ -165,7 +165,7 @@ const TagboxContainer = styled.div`
 
 const Tagbox = styled.button`
   color: ${({ theme }) => theme.colors.text};
-  background-color: ${({ theme }) => theme.colors.background};
+  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
   border-radius: 1rem;
   border: none;
   padding: ${({ theme }) => theme.spacing.xs} 10px;
@@ -189,7 +189,7 @@ const Tagbox = styled.button`
 `;
 
 const ChatInputContainer = styled.div`
-  background-color: ${({ theme }) => theme.colors.background};
+  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
   display: flex;
   border-radius: ${({ theme }) => theme.radii.md};
   border: 1px solid transparent;

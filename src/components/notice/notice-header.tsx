@@ -45,7 +45,7 @@ const HeaderContainer = styled.div`
   align-items: center;
   gap: ${({ theme }) => theme.spacing.md};
   padding: ${({ theme }) => `${theme.spacing.lg} ${theme.spacing.lg}`};
-  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
+  background-color: ${({ theme }) => theme.colors.background};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
 
   animation: ${slideInDown} 0.6s ease-out forwards;
@@ -59,7 +59,7 @@ const IconWrapper = styled.div`
   align-items: center;
   justify-content: center;
   border-radius: ${({ theme }) => theme.radii.sm};
-  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
+  background-color: ${({ theme }) => theme.colors.background};
   cursor: pointer;
 
   animation: ${fadeInScale} 0.7s ease-out forwards;
@@ -131,7 +131,7 @@ export function NoticeHeader({ type, icon, title }: NoticeHeaderProps) {
   return (
     <>
       <HeaderContainer>
-        {(config.title === '검색결과') ?
+        {config.title === '검색결과' ? (
           <IconWrapper onClick={handleIconClick}>
             <Image
               src={displayIcon}
@@ -140,7 +140,7 @@ export function NoticeHeader({ type, icon, title }: NoticeHeaderProps) {
               height={40}
             />
           </IconWrapper>
-          :
+        ) : (
           <IconWrapper>
             <Image
               src={displayIcon}
@@ -149,7 +149,7 @@ export function NoticeHeader({ type, icon, title }: NoticeHeaderProps) {
               height={40}
             />
           </IconWrapper>
-        }
+        )}
         <HeaderTitle>{displayTitle}</HeaderTitle>
       </HeaderContainer>
       <SearchModal

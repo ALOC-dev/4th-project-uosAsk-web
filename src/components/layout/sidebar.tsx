@@ -11,7 +11,7 @@ import { useRecentNotices } from '@/services/notice/useRecentNotices';
 const SidebarContainer = styled.aside`
   width: 275px;
   height: 100vh;
-  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
+  background-color: ${({ theme }) => theme.colors.background};
   position: fixed;
   left: 0;
   top: 0;

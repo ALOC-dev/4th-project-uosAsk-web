@@ -85,12 +85,7 @@ const NoticeTitle = styled.h3`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
-
-  ${NoticeItem}:hover & {
-    opacity: 1;
-  }
+  opacity: 1;
 `;
 
 const NoticeInfo = styled.div`
@@ -98,12 +93,7 @@ const NoticeInfo = styled.div`
   align-items: flex-end;
   gap: ${({ theme }) => theme.spacing.md};
   min-width: 0;
-  opacity: 0.5;
-  transition: opacity 0.2s ease;
-
-  ${NoticeItem}:hover & {
-    opacity: 1;
-  }
+  opacity: 1;
 `;
 
 const NoticeDepartment = styled.span`
@@ -117,7 +107,6 @@ const NoticeDepartment = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   flex-shrink: 1;
-  transition: color 0.2s ease;
 `;
 
 const NoticeDate = styled.span`
@@ -129,7 +118,6 @@ const NoticeDate = styled.span`
   line-height: 1.2;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: color 0.2s ease;
 `;
 
 const NoticeClickCount = styled.span`
@@ -141,8 +129,7 @@ const NoticeClickCount = styled.span`
   line-height: 1.2;
   white-space: nowrap;
   flex-shrink: 0;
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
+  opacity: 1;
 `;
 
 const EmptyState = styled.div`

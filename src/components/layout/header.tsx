@@ -8,7 +8,7 @@ import { useState } from 'react';
 const HeaderContainer = styled.header`
   width: 100%;
   height: 90px;
-  background-color: ${({ theme }) => theme.colors.background};
+  background-color: ${({ theme }) => theme.colors.backgroundTertiary};
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -28,7 +28,7 @@ const NewChatButton = styled.button`
   justify-content: center;
   width: 100px;
   height: 48px;
-  background-color: ${({ theme }) => theme.colors.backgroundButton};
+  background-color: ${({ theme }) => theme.colors.background};
   border: 0.5px solid ${({ theme }) => theme.colors.borderLight};
   border-radius: ${({ theme }) => theme.radii.sm};
   box-shadow: ${({ theme }) => theme.shadows.md};

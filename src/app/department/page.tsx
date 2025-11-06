@@ -227,13 +227,13 @@ export default function DepartmentPage() {
         </EmptyStateContainer>
       ) : (
         accumulatedNotices && (
-            <AnimatedNoticeList
-              key={refreshKey}
-              noticeData={accumulatedNotices}
+          <AnimatedNoticeList
+            key={refreshKey}
+            noticeData={accumulatedNotices}
             onLoadMore={handleLoadMore}
             isLoading={isLoading}
             hasMore={hasMore}
-            />
+          />
         )
       )}
     </NoticeLayout>
