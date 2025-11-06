@@ -78,7 +78,7 @@ const ResponseText = styled.div`
   line-height: 1.6;
   margin-bottom: ${({ theme }) => theme.spacing.md};
   animation: ${fadeIn} 0.5s ease-out;
-  whiteSpace: pre-wrap;
+  whitespace: pre-wrap;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     font-size: ${({ theme }) => theme.fontSizes.sm};
@@ -244,7 +244,7 @@ const TypingCursor = styled.span`
     0%,
     50% {
       opacity: 1;
-}
+    }
     51%,
     100% {
       opacity: 0;
@@ -261,12 +261,12 @@ export function BotResponse({
   }
 
   const handleClick = (notice?: RecommendedNotice | null) => {
-    if(!notice?.link) return;
+    if (!notice?.link) return;
 
     addRecentNotice({
       title: notice.title,
       link: notice.link,
-    })
+    });
   };
 
   return (

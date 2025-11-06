@@ -17,44 +17,44 @@ export default function GeneralPage() {
   // 공지사항 데이터 가져오기
   const fetchNotices = useCallback(
     async (page: number) => {
-    if (isLoading) return;
+      if (isLoading) return;
 
-    setIsLoading(true);
-    try {
-      const response = await getNoticeList({
-        category: CATEGORIES[0],
-        keyword: '',
-        page,
-        exact: false,
-      });
+      setIsLoading(true);
+      try {
+        const response = await getNoticeList({
+          category: CATEGORIES[0],
+          keyword: '',
+          page,
+          exact: false,
+        });
 
-      const newData = response.data ?? response;
+        const newData = response.data ?? response;
 
-      setAccumulatedNotices((prev) => {
-        if (!prev) {
-          // 첫 페이지 (page=0): hot 3개 + content 15개
-          return newData;
-        } else {
-          // 이후 페이지: content만 누적 (hot은 비어있음)
-          const accumulated = {
-            ...newData,
-            hot: prev.hot, // 첫 페이지의 HOT 공지 유지
-            content: [...prev.content, ...newData.content], // 기존 + 새 데이터
-          };
-          return accumulated;
+        setAccumulatedNotices((prev) => {
+          if (!prev) {
+            // 첫 페이지 (page=0): hot 3개 + content 15개
+            return newData;
+          } else {
+            // 이후 페이지: content만 누적 (hot은 비어있음)
+            const accumulated = {
+              ...newData,
+              hot: prev.hot, // 첫 페이지의 HOT 공지 유지
+              content: [...prev.content, ...newData.content], // 기존 + 새 데이터
+            };
+            return accumulated;
+          }
+        });
+
+        // 더 이상 불러올 데이터가 없는지 확인
+        setHasMore(newData.hasNext);
+      } catch (e: any) {
+        console.error('❌ [일반공지] 공지사항 로드 실패:', e);
+        if (e.response?.status === 429) {
+          console.error('⚠️ 요청이 너무 많습니다. 잠시 후 다시 시도해주세요.');
         }
-      });
-
-      // 더 이상 불러올 데이터가 없는지 확인
-      setHasMore(newData.hasNext);
-    } catch (e: any) {
-      console.error('❌ [일반공지] 공지사항 로드 실패:', e);
-      if (e.response?.status === 429) {
-        console.error('⚠️ 요청이 너무 많습니다. 잠시 후 다시 시도해주세요.');
+      } finally {
+        setIsLoading(false);
       }
-    } finally {
-      setIsLoading(false);
-    }
     },
     [isLoading],
   );

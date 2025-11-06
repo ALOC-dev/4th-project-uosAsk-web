@@ -22,4 +22,3 @@ export interface UIChatResponse {
   message: string;
   recommendedNotice?: RecommendedNotice | null;
 }
-
