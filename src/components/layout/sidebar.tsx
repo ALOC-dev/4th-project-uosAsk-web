@@ -9,7 +9,7 @@ import SearchModal from '../modal/searchModal';
 import { useRecentNotices } from '@/services/notice/useRecentNotices';
 
 const SidebarContainer = styled.aside`
-  width: 275px;
+  width: 225px;
   height: 100vh;
   background-color: ${({ theme }) => theme.colors.background};
   position: fixed;

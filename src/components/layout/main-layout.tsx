@@ -15,7 +15,7 @@ const LayoutContainer = styled.div`
 
 const MainContent = styled.main`
   flex: 1;
-  margin-left: 275px;
+  margin-left: 225px;
   display: flex;
   flex-direction: column;
   height: 100vh;
