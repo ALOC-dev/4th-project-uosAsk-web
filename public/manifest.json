@@ -1,0 +1,12 @@
+{
+    "name": "시립대 누가 공지해주나?",
+    "short_name": "시누공",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff",
+    "icons": [
+        {},
+        {}
+    ]
+}
