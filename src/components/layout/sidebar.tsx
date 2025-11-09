@@ -32,6 +32,10 @@ const LogoSection = styled.div`
   align-items: center;
   gap: ${({ theme }) => `${theme.spacing.xs} -${theme.spacing.md}`};
   padding: ${({ theme }) => `0 ${theme.spacing.md}`};
+  cursor: pointer;
+  &:hover {
+    opacity: 0.8;
+  }
 `;
 
 const LogoIcon = styled.div`
@@ -246,10 +250,14 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
     setHoveredItem(null);
   };
 
+  const logoClickEvent = () => {
+    router.push('/');
+  }
+
   return (
     <SidebarContainer>
       <SidebarContent>
-        <LogoSection>
+        <LogoSection onClick={logoClickEvent}>
           <LogoIcon>
             <Image
               src='/images/main-logo.svg'

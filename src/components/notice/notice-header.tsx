@@ -67,6 +67,8 @@ const IconWrapper = styled.div`
   opacity: 0;
   transition: transform 0.3s ease;
 
+  cursor: pointer;
+
   &:hover {
     transform: scale(1.1);
   }
@@ -87,6 +89,8 @@ const HeaderTitle = styled.h2`
   animation: ${slideInLeft} 0.8s ease-out forwards;
   animation-delay: 0.4s;
   opacity: 0;
+
+  cursor: pointer;
 `;
 
 interface NoticeHeaderProps {
