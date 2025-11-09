@@ -150,9 +150,12 @@ export function NoticeHeader({ type, icon, title }: NoticeHeaderProps) {
             />
           </IconWrapper>
         )}
-        <HeaderTitle>{displayTitle}</HeaderTitle>
+        <HeaderTitle onClick={handleIconClick}>
+          {displayTitle}
+        </HeaderTitle>
       </HeaderContainer>
       <SearchModal
+        keyword={displayTitle}
         isOpen={isSearchModalOpen}
         onClose={() => setIsSearchModalOpen(false)}
       />

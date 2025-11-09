@@ -51,6 +51,7 @@ function SearchContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
   // 공지사항 데이터 가져오기
   const fetchNotices = useCallback(

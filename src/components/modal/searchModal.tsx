@@ -95,11 +95,12 @@ const SearchInput = styled.input`
 `;
 
 interface SearchModalProps {
+  keyword?: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
+export default function SearchModal({ keyword, isOpen, onClose }: SearchModalProps) {
   const [portalElement, setPortalElement] = useState<HTMLElement | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
@@ -128,7 +129,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
 
   useEffect(() => {
     if (isOpen) {
-      setSearchQuery('');
+      setSearchQuery(keyword || '');
     }
   }, [isOpen]);
 
