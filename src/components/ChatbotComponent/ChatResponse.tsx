@@ -2,7 +2,8 @@
 
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
-import { ChatMessage, UIChatResponse } from '@/types/chat';
+import { ChatMessage, RecommendedNotice, UIChatResponse } from '@/types/chat';
+import { addRecentNotice } from '@/services/notice/recentNoticeQueue';
 
 const fadeInUp = keyframes`
   from {
@@ -27,10 +28,16 @@ const fadeIn = keyframes`
 const UserMessageContainer = styled.div`
   display: flex;
   justify-content: flex-end;
+  margin-top: ${({ theme }) => theme.spacing['2xl']};
   margin-bottom: ${({ theme }) => theme.spacing['2xl']};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    margin-top: ${({ theme }) => theme.spacing.lg};
     margin-bottom: ${({ theme }) => theme.spacing.lg};
+  }
+
+  &:first-of-type {
+    margin-top: 0;
   }
 `;
 
@@ -62,12 +69,7 @@ const UserMessageBubble = styled.div`
 const BotResponseContainer = styled.div`
   width: 100%;
   max-width: 100%;
-  margin-bottom: ${({ theme }) => theme.spacing['2xl']};
   animation: ${fadeInUp} 0.4s ease-out;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    margin-bottom: ${({ theme }) => theme.spacing.lg};
-  }
 `;
 
 const ResponseText = styled.div`
@@ -76,70 +78,12 @@ const ResponseText = styled.div`
   line-height: 1.6;
   margin-bottom: ${({ theme }) => theme.spacing.md};
   animation: ${fadeIn} 0.5s ease-out;
+  whitespace: pre-wrap;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     font-size: ${({ theme }) => theme.fontSizes.sm};
     margin-bottom: ${({ theme }) => theme.spacing.sm};
     line-height: 1.5;
-  }
-`;
-
-const ImagePlaceholder = styled.div`
-  width: 100%;
-  height: 200px;
-  background-color: ${({ theme }) => theme.colors.backgroundTertiary};
-  border-radius: ${({ theme }) => theme.radii.md};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: ${({ theme }) => theme.colors.textTertiary};
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    height: 150px;
-    font-size: ${({ theme }) => theme.fontSizes.xs};
-  }
-`;
-
-const SuggestionsContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing.md};
-`;
-
-const SuggestionTitle = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.textSecondary};
-  margin-bottom: ${({ theme }) => theme.spacing.sm};
-`;
-
-const SuggestionsList = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing.sm};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    gap: ${({ theme }) => theme.spacing.xs};
-  }
-`;
-
-const SuggestionTag = styled.button`
-  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
-  background-color: ${({ theme }) => theme.colors.background};
-  color: ${({ theme }) => theme.colors.text};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.radii.md};
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    font-size: ${({ theme }) => theme.fontSizes.xs};
-    padding: ${({ theme }) => theme.spacing.xs};
-  }
-
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.backgroundTertiary};
-    border-color: ${({ theme }) => theme.colors.primary};
   }
 `;
 
@@ -284,17 +228,53 @@ export function UserMessage({ message }: UserMessageProps) {
 
 interface BotResponseProps {
   response?: UIChatResponse;
-  onSuggestionClick?: (suggestion: string) => void;
+  isStreaming?: boolean;
 }
 
-export function BotResponse({ response, onSuggestionClick }: BotResponseProps) {
+const TypingCursor = styled.span`
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background-color: ${({ theme }) => theme.colors.primary};
+  margin-left: 2px;
+  animation: blink 1s infinite;
+  vertical-align: text-bottom;
+
+  @keyframes blink {
+    0%,
+    50% {
+      opacity: 1;
+    }
+    51%,
+    100% {
+      opacity: 0;
+    }
+  }
+`;
+
+export function BotResponse({
+  response,
+  isStreaming = false,
+}: BotResponseProps) {
   if (!response) {
     return null;
   }
 
+  const handleClick = (notice?: RecommendedNotice | null) => {
+    if (!notice?.link) return;
+
+    addRecentNotice({
+      title: notice.title,
+      link: notice.link,
+    });
+  };
+
   return (
     <BotResponseContainer>
-      <ResponseText>{response.message}</ResponseText>
+      <ResponseText>
+        {response.message}
+        {isStreaming && <TypingCursor />}
+      </ResponseText>
 
       {response.recommendedNotice && (
         <NoticeCard>
@@ -304,6 +284,7 @@ export function BotResponse({ response, onSuggestionClick }: BotResponseProps) {
               href={response.recommendedNotice.link}
               target='_blank'
               rel='noopener noreferrer'
+              onClick={() => handleClick(response.recommendedNotice)}
             >
               {response.recommendedNotice.title}
             </NoticeTitle>
@@ -316,9 +297,6 @@ export function BotResponse({ response, onSuggestionClick }: BotResponseProps) {
               </NoticeMetaItem>
               <NoticeMetaItem>
                 {response.recommendedNotice.posted_date}
-              </NoticeMetaItem>
-              <NoticeMetaItem>
-                관련도: {(response.recommendedNotice.score * 100).toFixed(0)}%
               </NoticeMetaItem>
             </NoticeMeta>
             <NoticeExcerpt>{response.recommendedNotice.content}</NoticeExcerpt>

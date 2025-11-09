@@ -3,8 +3,8 @@ import { keyframes } from '@emotion/react';
 import chatTemplate from './chatTemplate';
 import { useRef, useState, useEffect } from 'react';
 import { ChatMessage, UIChatResponse } from '@/types/chat';
-import { requestChat } from '@/services/chat/requestChat';
-import { ConversationMessage, ChatResponse } from '@/services/chat/chat.types';
+import { requestChatStream } from '@/services/chat/requestChat';
+import { ConversationMessage } from '@/services/chat/chat.types';
 import { UserMessage, BotResponse, LoadingBubble } from './ChatResponse';
 
 const fadeIn = keyframes`
@@ -38,17 +38,6 @@ const slideUp = keyframes`
   }
 `;
 
-const scaleIn = keyframes`
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-`;
-
 type ChatbotComponentProps = {
   onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
 };
@@ -59,7 +48,8 @@ const ChatbotSection = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing.xl};
+  padding: ${({ theme }) =>
+    `${theme.spacing.xl} ${theme.spacing.xl} ${theme.spacing.md}`};
   position: relative;
   overflow-x: hidden;
   width: 100%;
@@ -70,10 +60,10 @@ const ChatbotSection = styled.div`
 `;
 
 const ChatContainer = styled.div`
+  padding: 0 ${({ theme }) => theme.spacing.md};
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1000px;
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
@@ -83,12 +73,39 @@ const ChatContainer = styled.div`
   contain: layout style;
   /* 스크롤바 공간 항상 예약하여 레이아웃 시프트 방지 */
   scrollbar-gutter: stable;
-
   scrollbar-color: ${({ theme }) => theme.colors.border} transparent;
 
+  /* 스크롤바 스타일링 - Webkit (Chrome, Safari, Edge) */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ theme }) => theme.colors.border};
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: ${({ theme }) => theme.colors.textTertiary};
+  }
+
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    padding: ${({ theme }) => theme.spacing.md} 0;
     margin-bottom: ${({ theme }) => theme.spacing.md};
+  }
+`;
+
+const ChatContentWrapper = styled.div`
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    padding: ${({ theme }) => theme.spacing['2xl']} 0;
   }
 `;
 
@@ -148,7 +165,7 @@ const TagboxContainer = styled.div`
 
 const Tagbox = styled.button`
   color: ${({ theme }) => theme.colors.text};
-  background-color: ${({ theme }) => theme.colors.background};
+  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
   border-radius: 1rem;
   border: none;
   padding: ${({ theme }) => theme.spacing.xs} 10px;
@@ -172,11 +189,12 @@ const Tagbox = styled.button`
 `;
 
 const ChatInputContainer = styled.div`
-  background-color: #f0f1f5;
+  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
   display: flex;
   border-radius: ${({ theme }) => theme.radii.md};
   border: 1px solid transparent;
-  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.md};
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.xs}
+    ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.md};
   width: 100%;
   max-width: 1000px;
   transition: all 0.3s ease;
@@ -202,6 +220,7 @@ const ChatInput = styled.input`
   border: none;
   outline: none;
   font-size: ${({ theme }) => theme.fontSizes.lg};
+  color: ${({ theme }) => theme.colors.text};
   background-color: transparent;
   flex: 1;
   min-width: 0;
@@ -269,6 +288,22 @@ const StyledForm = styled.form`
   max-width: 1000px;
   display: flex;
   justify-content: center;
+`;
+
+const DisclaimerText = styled.p`
+  text-align: center;
+  font-size: ${({ theme }) => theme.fontSizes.xs};
+  color: ${({ theme }) => theme.colors.textTertiary};
+  margin-top: ${({ theme }) => theme.spacing.md};
+  margin-bottom: 0;
+  padding: 0 ${({ theme }) => theme.spacing.md};
+  max-width: 1000px;
+  line-height: 1.4;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    font-size: 0.7rem;
+    margin-top: ${({ theme }) => theme.spacing.sm};
+  }
 `;
 
 const MessageWrapper = styled.div<{ delay: number }>`
@@ -370,6 +405,9 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
     hasError: boolean;
     lastQuery?: string;
   }>({ hasError: false });
+  const [streamingMessageId, setStreamingMessageId] = useState<string | null>(
+    null,
+  );
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -421,42 +459,7 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
   };
 
   /**
-   * API 응답을 ChatMessage로 변환
-   */
-  const createAssistantMessage = (content: string): ChatMessage => {
-    return {
-      id: (Date.now() + 1).toString(),
-      content,
-      sender: 'bot',
-      timestamp: new Date(),
-    };
-  };
-
-  /**
-   * API 응답을 UI 형태로 변환
-   */
-  const convertApiResponseToUI = (
-    apiResponse: ChatResponse,
-  ): UIChatResponse => {
-    const responseMessage = apiResponse.assistant || apiResponse.response || '';
-
-    return {
-      message: responseMessage,
-      recommendedNotice: apiResponse.recommended_notice
-        ? { ...apiResponse.recommended_notice }
-        : null,
-    };
-  };
-
-  /**
-   * 에러 메시지 생성
-   */
-  const createErrorMessage = (): ChatMessage => {
-    return createAssistantMessage(ERROR_MESSAGE);
-  };
-
-  /**
-   * API 호출 및 응답 처리
+   * API 호출 및 응답 처리 (스트리밍 방식)
    */
   const handleApiRequest = async (query: string) => {
     setErrorState({ hasError: false });
@@ -465,25 +468,108 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
       -MAX_CONVERSATION_HISTORY,
     );
 
-    const apiResponse = await requestChat({
-      query,
-      conversation_history: conversationHistory,
-    });
+    // 스트리밍 메시지 ID (첫 토큰이 도착할 때 생성됨)
+    const tempMessageId = (Date.now() + 1).toString();
+    let accumulatedText = '';
+    let isFirstToken = true;
 
-    if (!apiResponse) {
+    try {
+      await requestChatStream(
+        {
+          query,
+          conversation_history: conversationHistory,
+        },
+        // onToken: 토큰이 올 때마다 호출
+        (token: string) => {
+          accumulatedText += token;
+
+          // 첫 토큰이 도착했을 때 메시지 생성
+          if (isFirstToken) {
+            isFirstToken = false;
+            const tempMessage: ChatMessage = {
+              id: tempMessageId,
+              content: '',
+              sender: 'bot',
+              timestamp: new Date(),
+            };
+
+            setMessages((prev) => [...prev, tempMessage]);
+            setResponses((prev) => ({
+              ...prev,
+              [tempMessageId]: { message: '', recommendedNotice: null },
+            }));
+            setStreamingMessageId(tempMessageId);
+          }
+
+          // 응답 업데이트
+          setResponses((prev) => ({
+            ...prev,
+            [tempMessageId]: {
+              ...prev[tempMessageId],
+              message: accumulatedText,
+            },
+          }));
+        },
+        // onStatus: 상태 업데이트
+        (status: string) => {
+          // 상태 업데이트
+        },
+        // onDone: 완료 시 호출
+        (turn: number, notice: any) => {
+          setStreamingMessageId(null);
+
+          // 공지사항 정보 추가
+          if (notice) {
+            setResponses((prev) => ({
+              ...prev,
+              [tempMessageId]: {
+                ...prev[tempMessageId],
+                recommendedNotice: notice,
+              },
+            }));
+          }
+
+          // 최종 메시지 업데이트
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === tempMessageId
+                ? { ...msg, content: accumulatedText }
+                : msg,
+            ),
+          );
+        },
+        // onError: 에러 발생 시 호출
+        (error: string) => {
+          setStreamingMessageId(null);
+          setErrorState({ hasError: true, lastQuery: query });
+
+          // 임시 메시지 제거 (생성되었을 경우에만)
+          if (!isFirstToken) {
+            setMessages((prev) =>
+              prev.filter((msg) => msg.id !== tempMessageId),
+            );
+            setResponses((prev) => {
+              const newResponses = { ...prev };
+              delete newResponses[tempMessageId];
+              return newResponses;
+            });
+          }
+        },
+      );
+    } catch (error) {
+      setStreamingMessageId(null);
       setErrorState({ hasError: true, lastQuery: query });
-      return;
+
+      // 임시 메시지 제거 (생성되었을 경우에만)
+      if (!isFirstToken) {
+        setMessages((prev) => prev.filter((msg) => msg.id !== tempMessageId));
+        setResponses((prev) => {
+          const newResponses = { ...prev };
+          delete newResponses[tempMessageId];
+          return newResponses;
+        });
+      }
     }
-
-    const uiResponse = convertApiResponseToUI(apiResponse);
-    const assistantMessage = createAssistantMessage(uiResponse.message);
-
-    setMessages((prev) => [...prev, assistantMessage]);
-    setResponses((prev) => ({
-      ...prev,
-      [assistantMessage.id]: uiResponse,
-    }));
-    setErrorState({ hasError: false });
   };
 
   /**
@@ -568,7 +654,26 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
         scrollToBottom();
       });
     });
-  }, [messages, isLoading]);
+  }, [messages, isLoading, responses]);
+
+  /**
+   * 새 채팅 시작 이벤트 리스너
+   * 페이지 새로고침 없이 채팅 상태만 초기화
+   */
+  useEffect(() => {
+    const handleResetChat = () => {
+      setChatMsg('');
+      setMessages([]);
+      setResponses({});
+      setIsLoading(false);
+      setIsChatStarted(false);
+      setErrorState({ hasError: false });
+      setStreamingMessageId(null);
+    };
+
+    window.addEventListener('resetChat', handleResetChat);
+    return () => window.removeEventListener('resetChat', handleResetChat);
+  }, []);
 
   return (
     <ChatbotSection>
@@ -578,35 +683,42 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
             <WelcomeTitle>어떤 공지사항이 궁금하신가요?</WelcomeTitle>
           </WelcomeContainer>
           <MarginDiv />
+          <TagboxContainer>
+            {chatTemplate.map(({ tag, template }, idx) => (
+              <Tagbox key={idx} onClick={() => handleTagClick(template)}>
+                {tag}
+              </Tagbox>
+            ))}
+          </TagboxContainer>
         </>
       ) : (
         <ChatContainer ref={chatContainerRef}>
-          {messages.map((message, index) =>
-            message.sender === 'user' ? (
-              <UserMessage key={message.id} message={message} />
-            ) : (
-              <MessageWrapper key={message.id} delay={index * 0.1}>
-                <BotResponse response={responses[message.id]} />
-              </MessageWrapper>
-            ),
-          )}
-          {errorState.hasError && (
-            <ErrorMessageComponent
-              onRetry={handleRetry}
-              isLoading={isLoading}
-            />
-          )}
-          {isLoading && !errorState.hasError && <LoadingBubble />}
+          <ChatContentWrapper>
+            {messages.map((message, index) =>
+              message.sender === 'user' ? (
+                <UserMessage key={message.id} message={message} />
+              ) : (
+                <MessageWrapper key={message.id} delay={index * 0.1}>
+                  <BotResponse
+                    response={responses[message.id]}
+                    isStreaming={streamingMessageId === message.id}
+                  />
+                </MessageWrapper>
+              ),
+            )}
+            {errorState.hasError && (
+              <ErrorMessageComponent
+                onRetry={handleRetry}
+                isLoading={isLoading}
+              />
+            )}
+            {isLoading && !streamingMessageId && !errorState.hasError && (
+              <LoadingBubble />
+            )}
+          </ChatContentWrapper>
         </ChatContainer>
       )}
 
-      <TagboxContainer>
-        {chatTemplate.map(({ tag, template }, idx) => (
-          <Tagbox key={idx} onClick={() => handleTagClick(template)}>
-            {tag}
-          </Tagbox>
-        ))}
-      </TagboxContainer>
       <StyledForm onSubmit={handleSubmit}>
         <ChatInputContainer>
           <ChatInput
@@ -646,6 +758,9 @@ export default function ChatbotComponent({ onSubmit }: ChatbotComponentProps) {
           </SendButton>
         </ChatInputContainer>
       </StyledForm>
+      <DisclaimerText>
+        시누공은 실수를 할 수 있습니다. 중요한 정보는 재차 확인하세요.
+      </DisclaimerText>
     </ChatbotSection>
   );
 }

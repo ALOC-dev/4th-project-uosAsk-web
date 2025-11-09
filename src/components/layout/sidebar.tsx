@@ -6,17 +6,18 @@ import { useRouter } from 'next/navigation';
 import styled from '@emotion/styled';
 import { theme } from '@/styles/theme';
 import SearchModal from '../modal/searchModal';
-import { recentHistoryData } from '@/data/recentHistory';
+import { useRecentNotices } from '@/services/notice/useRecentNotices';
 
 const SidebarContainer = styled.aside`
-  width: 275px;
+  width: 225px;
   height: 100vh;
-  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
+  background-color: ${({ theme }) => theme.colors.background};
   position: fixed;
   left: 0;
   top: 0;
-  overflow-y: auto;
+  overflow: hidden;
   padding: 0;
+  z-index: 1000;
 `;
 
 const SidebarContent = styled.div`
@@ -166,7 +167,7 @@ const HistoryItem = styled.div`
 
 const HistoryItemExpanded = styled.div<{ isVisible: boolean }>`
   position: fixed;
-  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
+  background-color: ${({ theme }) => theme.colors.backgroundButton};
   color: ${({ theme }) => theme.colors.textSecondary};
   font-family: ${({ theme }) => theme.fonts.sans};
   font-size: ${({ theme }) => theme.fontSizes.sm};
@@ -174,7 +175,7 @@ const HistoryItemExpanded = styled.div<{ isVisible: boolean }>`
   letter-spacing: -0.08em;
   line-height: 1.4;
   white-space: nowrap;
-  z-index: 1000;
+  z-index: 1001;
   border-radius: ${({ theme }) => theme.radii.md};
   pointer-events: none;
   display: ${({ isVisible }) => (isVisible ? 'block' : 'none')};
@@ -207,6 +208,8 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+
+  const { recent } = useRecentNotices();
 
   const handleNavClick = (section: string) => {
     // 검색 모달 처리
@@ -346,17 +349,17 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
 
         <SectionTitle>최근 본 공지</SectionTitle>
         <HistoryList>
-          {recentHistoryData.map((item) => (
-            <HistoryItemWrapper key={item.id}>
+          {recent.map((item) => (
+            <HistoryItemWrapper key={item.link}>
               <HistoryItem
-                onClick={() => item.url && router.push(item.url)}
-                onMouseEnter={(e) => handleMouseEnter(item.id, e)}
+                onClick={() => item.link && window.open(item.link, '_blank')}
+                onMouseEnter={(e) => handleMouseEnter(item.link, e)}
                 onMouseLeave={handleMouseLeave}
               >
                 {item.title}
               </HistoryItem>
               <HistoryItemExpanded
-                isVisible={hoveredItem === item.id}
+                isVisible={hoveredItem === item.link}
                 style={{
                   top: `${tooltipPosition.top}px`,
                   left: `${tooltipPosition.left}px`,

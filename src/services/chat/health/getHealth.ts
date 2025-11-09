@@ -1,11 +1,11 @@
-import { aiClient } from "../../api/client";
+import { aiClient } from '../../api/client';
 
 interface HealthBase {
-    status: string;
+  status: string;
 }
 
 export const getHealth = async () => {
-    const response = await aiClient.get('health');
+  const response = await aiClient.get('health');
 
-    return response.data;
-}
+  return response.data;
+};

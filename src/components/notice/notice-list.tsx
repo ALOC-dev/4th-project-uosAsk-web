@@ -3,8 +3,9 @@
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
 import { NoticeApiResponse } from '@/types/notice';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { HotNoticeItem } from './hot-notice-item';
+import { addRecentNotice } from '@/services/notice/recentNoticeQueue';
 
 const fadeInUp = keyframes`
   from {
@@ -17,30 +18,35 @@ const fadeInUp = keyframes`
   }
 `;
 
-const slideIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translateX(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-`;
-
 const NoticeListContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
   overflow-y: auto;
-  margin-top: ${({ theme }) => theme.spacing.sm};
-  /* 스크롤바 숨기기 */
+  padding-bottom: ${({ theme }) => theme.spacing.md};
+
+  /* 스크롤바 스타일링 - Webkit (Chrome, Safari, Edge) */
   &::-webkit-scrollbar {
-    display: none;
+    width: 8px;
   }
 
-  /* Firefox 스크롤바 숨기기 */
-  scrollbar-width: none;
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ theme }) => theme.colors.border};
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: ${({ theme }) => theme.colors.textTertiary};
+  }
+
+  /* Firefox 스크롤바 스타일링 */
+  scrollbar-width: thin;
+  scrollbar-color: ${({ theme }) => theme.colors.border} transparent;
 `;
 
 const NoticeItem = styled.div`
@@ -65,10 +71,6 @@ const NoticeItem = styled.div`
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.backgroundSecondary};
-  }
-
-  &:last-child {
-    border-bottom: none;
   }
 `;
 
@@ -127,7 +129,7 @@ const NoticeClickCount = styled.span`
   line-height: 1.2;
   white-space: nowrap;
   flex-shrink: 0;
-  opacity: 0.7;
+  opacity: 1;
 `;
 
 const EmptyState = styled.div`
@@ -163,34 +165,72 @@ const EmptyText = styled.p`
 
 interface AnimatedNoticeListProps {
   noticeData?: NoticeApiResponse;
+  onLoadMore?: () => void;
+  isLoading?: boolean;
+  hasMore?: boolean;
 }
 
-export function AnimatedNoticeList({ noticeData }: AnimatedNoticeListProps) {
+export function AnimatedNoticeList({
+  noticeData,
+  onLoadMore,
+  isLoading = false,
+  hasMore = false,
+}: AnimatedNoticeListProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const [isScrollEnd, setIsScrollEnd] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // 백엔드 API 응답 구조에서 hot과 content 추출
   const hotNotices = noticeData?.hot || [];
   const contentNotices = noticeData?.content || [];
-  const allNotices = [...hotNotices, ...contentNotices];
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
     return () => clearTimeout(timer);
   }, [noticeData]);
 
+  // 스크롤 끝 감지
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
+      const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10; // 10px 여유
+
+      if (isAtBottom && !isScrollEnd) {
+        setIsScrollEnd(true);
+        // 스크롤 끝에 도달하면 자동으로 다음 페이지 로드
+        if (onLoadMore && hasMore && !isLoading) {
+          onLoadMore();
+        }
+      } else if (!isAtBottom && isScrollEnd) {
+        // 스크롤을 다시 올렸을 때 상태 초기화
+        setIsScrollEnd(false);
+      }
+    };
+
+    scrollContainer.addEventListener('scroll', handleScroll);
+    return () => scrollContainer.removeEventListener('scroll', handleScroll);
+  }, [isScrollEnd, onLoadMore, hasMore, isLoading]);
+
   const handleNoticeClick = (notice: NoticeApiResponse['hot'][0]) => {
     if (notice.link) {
+      addRecentNotice({
+        title: notice.title,
+        link: notice.link,
+      });
       window.open(notice.link, '_blank', 'noopener,noreferrer');
     }
   };
 
   if (!isVisible) {
-    return <NoticeListContainer />;
+    return <NoticeListContainer ref={scrollContainerRef} />;
   }
 
-  if (allNotices.length === 0) {
+  if (hotNotices.length === 0 && contentNotices.length === 0) {
     return (
-      <NoticeListContainer>
+      <NoticeListContainer ref={scrollContainerRef}>
         <EmptyState>
           <EmptyIcon>📋</EmptyIcon>
           <EmptyText>등록된 공지사항이 없습니다.</EmptyText>
@@ -200,7 +240,7 @@ export function AnimatedNoticeList({ noticeData }: AnimatedNoticeListProps) {
   }
 
   return (
-    <NoticeListContainer>
+    <NoticeListContainer ref={scrollContainerRef}>
       {/* Hot 공지사항 (카드 스타일) */}
       {hotNotices.map((notice, index) => (
         <HotNoticeItem key={`hot-${notice.title}-${index}`} notice={notice} />

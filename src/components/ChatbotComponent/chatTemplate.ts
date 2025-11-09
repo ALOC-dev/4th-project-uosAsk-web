@@ -16,7 +16,7 @@ function getSugangSeasonFromMonth() {
     case 10:
     case 11:
     case 12:
-      return '계절학기';
+      return '겨울계절';
   }
 }
 

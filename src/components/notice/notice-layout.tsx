@@ -10,7 +10,7 @@ const NoticeContainer = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
+  background-color: ${({ theme }) => theme.colors.background};
   border-radius: ${({ theme }) => theme.radii.md};
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -25,7 +25,7 @@ const NoticeContent = styled.div`
 
 const NoticeFooter = styled.div`
   height: 18px; /* notice-header와 동일한 높이 (padding 포함) */
-  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
+  background-color: ${({ theme }) => theme.colors.background};
   flex-shrink: 0;
 `;
 

@@ -9,13 +9,13 @@ import { Setting } from './setting';
 const LayoutContainer = styled.div`
   display: flex;
   height: 100vh;
-  background-color: ${({ theme }) => theme.colors.background};
+  background-color: ${({ theme }) => theme.colors.backgroundTertiary};
   overflow: hidden;
 `;
 
 const MainContent = styled.main`
   flex: 1;
-  margin-left: 275px;
+  margin-left: 225px;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -38,7 +38,7 @@ const ContentContainer = styled.div`
   width: 100%;
   max-width: 1262px;
   height: 100%;
-  background-color: ${({ theme }) => theme.colors.contentContainer};
+  background-color: ${({ theme }) => theme.colors.background};
   border-radius: ${({ theme }) => theme.radii.lg};
   box-sizing: border-box;
   overflow: hidden;
