@@ -154,9 +154,7 @@ export function NoticeHeader({ type, icon, title }: NoticeHeaderProps) {
             />
           </IconWrapper>
         )}
-        <HeaderTitle onClick={handleIconClick}>
-          {displayTitle}
-        </HeaderTitle>
+        <HeaderTitle onClick={handleIconClick}>{displayTitle}</HeaderTitle>
       </HeaderContainer>
       <SearchModal
         keyword={displayTitle}

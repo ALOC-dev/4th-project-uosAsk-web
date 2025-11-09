@@ -252,7 +252,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
 
   const logoClickEvent = () => {
     router.push('/');
-  }
+  };
 
   return (
     <SidebarContainer>

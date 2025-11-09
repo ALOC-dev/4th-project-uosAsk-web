@@ -100,7 +100,11 @@ interface SearchModalProps {
   onClose: () => void;
 }
 
-export default function SearchModal({ keyword, isOpen, onClose }: SearchModalProps) {
+export default function SearchModal({
+  keyword,
+  isOpen,
+  onClose,
+}: SearchModalProps) {
   const [portalElement, setPortalElement] = useState<HTMLElement | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
