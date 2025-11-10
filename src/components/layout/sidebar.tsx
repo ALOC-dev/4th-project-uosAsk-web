@@ -8,16 +8,17 @@ import { theme } from '@/styles/theme';
 import SearchModal from '../modal/searchModal';
 import { useRecentNotices } from '@/services/notice/useRecentNotices';
 
-const SidebarContainer = styled.aside`
+const SidebarContainer = styled.aside<{ isVisible: boolean }>`
   width: 225px;
   height: 100vh;
   background-color: ${({ theme }) => theme.colors.background};
   position: fixed;
-  left: 0;
+  left: ${({ isVisible }) => (isVisible ? '0' : '-225px')};
   top: 0;
   overflow: hidden;
   padding: 0;
   z-index: 1000;
+  transition: left 0.3s ease;
 `;
 
 const SidebarContent = styled.div`
@@ -30,10 +31,40 @@ const SidebarContent = styled.div`
 const LogoSection = styled.div`
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: ${({ theme }) => `0 ${theme.spacing.sm}`};
+  gap: ${({ theme }) => theme.spacing.sm};
+`;
+
+const LogoWrapper = styled.div`
+  display: flex;
+  align-items: center;
   cursor: pointer;
   &:hover {
     opacity: 0.8;
+  }
+`;
+
+const ToggleButton = styled.button`
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  border-radius: ${({ theme }) => theme.radii.sm};
+  cursor: pointer;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.backgroundSecondary};
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
   }
 `;
 
@@ -196,6 +227,8 @@ const Divider = styled.div`
 interface SidebarProps {
   activeSection?: string;
   onNavigate?: (section: string) => void;
+  isVisible?: boolean;
+  onToggle?: () => void;
 }
 
 // 섹션별 라우트 매핑
@@ -207,7 +240,12 @@ const ROUTE_MAP: Record<string, string> = {
   search: '/search',
 };
 
-export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
+export function Sidebar({
+  activeSection,
+  onNavigate,
+  isVisible = true,
+  onToggle,
+}: SidebarProps) {
   const router = useRouter();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
@@ -255,19 +293,34 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
   };
 
   return (
-    <SidebarContainer>
+    <SidebarContainer isVisible={isVisible}>
       <SidebarContent>
-        <LogoSection onClick={logoClickEvent}>
-          <LogoIcon>
-            <Image
-              src='/images/main-logo.svg'
-              alt='시누공 로고'
-              width={53}
-              height={53}
-              priority
-            />
-          </LogoIcon>
-          <LogoText>시누공</LogoText>
+        <LogoSection>
+          <LogoWrapper onClick={logoClickEvent}>
+            <LogoIcon>
+              <Image
+                src='/images/main-logo.svg'
+                alt='시누공 로고'
+                width={53}
+                height={53}
+                priority
+              />
+            </LogoIcon>
+            <LogoText>시누공</LogoText>
+          </LogoWrapper>
+          <ToggleButton onClick={onToggle} aria-label='사이드바 토글'>
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              viewBox='0 0 24 24'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+            >
+              <path d='M15 18l-6-6 6-6' />
+            </svg>
+          </ToggleButton>
         </LogoSection>
 
         <Divider />
