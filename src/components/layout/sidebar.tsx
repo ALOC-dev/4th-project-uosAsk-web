@@ -24,14 +24,13 @@ const SidebarContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.md};
-  padding: ${({ theme }) => theme.spacing.lg} 0;
+  padding: ${({ theme }) => theme.spacing.md} 0;
 `;
 
 const LogoSection = styled.div`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => `${theme.spacing.xs} -${theme.spacing.md}`};
-  padding: ${({ theme }) => `0 ${theme.spacing.md}`};
+  padding: ${({ theme }) => `0 ${theme.spacing.sm}`};
   cursor: pointer;
   &:hover {
     opacity: 0.8;
@@ -189,8 +188,9 @@ const HistoryItemExpanded = styled.div<{ isVisible: boolean }>`
 const Divider = styled.div`
   width: calc(100% - ${({ theme }) => theme.spacing.xl});
   height: 2px;
+  align-self: center;
   background-color: ${({ theme }) => theme.colors.border};
-  margin: ${({ theme }) => theme.spacing.sm} auto;
+  margin: 0 ${({ theme }) => theme.spacing.md};
 `;
 
 interface SidebarProps {
