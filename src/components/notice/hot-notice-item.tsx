@@ -38,6 +38,7 @@ const HotNoticeCard = styled.div`
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
+    background-color: ${({ theme }) => theme.colors.backgroundSecondary};
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   }
