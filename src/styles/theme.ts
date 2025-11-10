@@ -51,6 +51,7 @@ export const lightTheme: Theme = {
   fonts: {
     sans: "'Noto Sans KR', ui-sans-serif, system-ui, sans-serif",
     mono: 'var(--font-geist-mono), monospace',
+    cafe24: "'Cafe24 Surround', 'Noto Sans KR', sans-serif",
   },
   fontSizes: {
     xs: '0.75rem',

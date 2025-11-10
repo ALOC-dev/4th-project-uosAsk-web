@@ -53,7 +53,7 @@ const LogoIcon = styled.div`
 `;
 
 const LogoText = styled.span`
-  font-family: ${({ theme }) => theme.fonts.sans};
+  font-family: ${({ theme }) => theme.fonts.cafe24};
   font-size: ${({ theme }) => theme.fontSizes['2xl']};
   font-weight: 700;
   color: ${({ theme }) => theme.colors.textSecondary};

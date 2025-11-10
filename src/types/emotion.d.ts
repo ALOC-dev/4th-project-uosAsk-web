@@ -43,6 +43,7 @@ declare module '@emotion/react' {
     fonts: {
       sans: string;
       mono: string;
+      cafe24: string;
     };
     fontSizes: {
       xs: string;
