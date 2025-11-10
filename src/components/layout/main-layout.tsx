@@ -36,32 +36,32 @@ const ContentArea = styled.div`
   position: relative;
 `;
 
-const OpenSidebarButton = styled.button<{ isVisible: boolean }>`
-  position: fixed;
-  left: ${({ isVisible }) => (isVisible ? '-50px' : '16px')};
-  top: 16px;
-  width: 40px;
-  height: 40px;
+export const OpenSidebarButton = styled.button`
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme }) => theme.colors.background};
-  border: 1px solid ${({ theme }) => theme.colors.border};
+  background-color: ${({ theme }) => theme.colors.backgroundButton};
+  border: 0.5px solid ${({ theme }) => theme.colors.borderLight};
   border-radius: ${({ theme }) => theme.radii.sm};
+  box-shadow: ${({ theme }) => theme.shadows.md};
   cursor: pointer;
-  color: ${({ theme }) => theme.colors.textSecondary};
-  z-index: 999;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s;
 
   &:hover {
-    background-color: ${({ theme }) => theme.colors.backgroundSecondary};
-    transform: scale(1.05);
+    box-shadow: ${({ theme }) => theme.shadows.lg};
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 
   svg {
     width: 20px;
     height: 20px;
+    color: ${({ theme }) => theme.colors.textSecondary};
   }
 `;
 
@@ -109,25 +109,13 @@ export function MainLayout({
         isVisible={isSidebarVisible}
         onToggle={handleToggleSidebar}
       />
-      <OpenSidebarButton
-        isVisible={isSidebarVisible}
-        onClick={handleToggleSidebar}
-        aria-label='사이드바 열기'
-      >
-        <svg
-          xmlns='http://www.w3.org/2000/svg'
-          viewBox='0 0 24 24'
-          fill='none'
-          stroke='currentColor'
-          strokeWidth='2'
-          strokeLinecap='round'
-          strokeLinejoin='round'
-        >
-          <path d='M9 18l6-6-6-6' />
-        </svg>
-      </OpenSidebarButton>
       <MainContent isSidebarVisible={isSidebarVisible}>
-        <Header onNewChat={onNewChat} onSettingsClick={handleOpenSettings} />
+        <Header
+          onNewChat={onNewChat}
+          onSettingsClick={handleOpenSettings}
+          isSidebarVisible={isSidebarVisible}
+          onOpenSidebar={handleToggleSidebar}
+        />
         <Setting
           open={isSettingsOpen}
           onClose={handleCloseSettings}

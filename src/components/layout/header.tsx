@@ -4,6 +4,7 @@ import Image from 'next/image';
 import styled from '@emotion/styled';
 import { useTheme } from '@/components/providers/theme-provider';
 import { useState } from 'react';
+import { OpenSidebarButton } from './main-layout';
 
 const HeaderContainer = styled.header`
   width: 100%;
@@ -11,7 +12,7 @@ const HeaderContainer = styled.header`
   background-color: ${({ theme }) => theme.colors.backgroundTertiary};
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   padding: 0 ${({ theme }) => theme.spacing['2xl']};
   position: relative;
 `;
@@ -174,9 +175,16 @@ const HelpTooltip = styled.div<{ isVisible: boolean }>`
 interface HeaderProps {
   onNewChat?: () => void;
   onSettingsClick?: () => void;
+  isSidebarVisible?: boolean;
+  onOpenSidebar?: () => void;
 }
 
-export function Header({ onNewChat, onSettingsClick }: HeaderProps) {
+export function Header({
+  onNewChat,
+  onSettingsClick,
+  isSidebarVisible = true,
+  onOpenSidebar,
+}: HeaderProps) {
   const { themeMode, toggleTheme } = useTheme();
   const [isHelpTooltipOpen, setIsHelpTooltipOpen] = useState(false);
 
@@ -190,6 +198,23 @@ export function Header({ onNewChat, onSettingsClick }: HeaderProps) {
 
   return (
     <HeaderContainer>
+      <div>
+        {!isSidebarVisible && onOpenSidebar && (
+          <OpenSidebarButton onClick={onOpenSidebar} aria-label='사이드바 열기'>
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              viewBox='0 0 24 24'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+            >
+              <path d='M9 18l6-6-6-6' />
+            </svg>
+          </OpenSidebarButton>
+        )}
+      </div>
       <HeaderActions>
         <HelpButtonContainer
           onMouseEnter={handleMouseEnter}

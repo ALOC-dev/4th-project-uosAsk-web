@@ -45,7 +45,7 @@ const LogoWrapper = styled.div`
   }
 `;
 
-const ToggleButton = styled.button`
+const CloseSidebarButton = styled.button`
   width: 32px;
   height: 32px;
   display: flex;
@@ -308,7 +308,7 @@ export function Sidebar({
             </LogoIcon>
             <LogoText>시누공</LogoText>
           </LogoWrapper>
-          <ToggleButton onClick={onToggle} aria-label='사이드바 토글'>
+          <CloseSidebarButton onClick={onToggle} aria-label='사이드바 닫기'>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               viewBox='0 0 24 24'
@@ -320,7 +320,7 @@ export function Sidebar({
             >
               <path d='M15 18l-6-6 6-6' />
             </svg>
-          </ToggleButton>
+          </CloseSidebarButton>
         </LogoSection>
 
         <Divider />
