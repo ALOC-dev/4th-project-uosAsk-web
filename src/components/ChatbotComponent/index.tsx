@@ -126,12 +126,12 @@ const WelcomeTitle = styled.h1`
   animation: ${slideUp} 0.8s ease-out;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
-    font-size: 2rem;
+    font-size: 1.9rem;
     margin-bottom: ${({ theme }) => theme.spacing.md};
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
 `;
 

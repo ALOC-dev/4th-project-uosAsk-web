@@ -49,7 +49,9 @@ const UserMessageBubble = styled.div`
   color: #ffffff;
   font-size: ${({ theme }) => theme.fontSizes.base};
   line-height: 1.6;
+  white-space: pre-wrap;
   word-wrap: break-word;
+  overflow-wrap: break-word;
   box-shadow: 0 2px 8px rgba(64, 140, 255, 0.2);
   transition:
     transform 0.2s ease,
@@ -78,7 +80,9 @@ const ResponseText = styled.div`
   line-height: 1.6;
   margin-bottom: ${({ theme }) => theme.spacing.md};
   animation: ${fadeIn} 0.5s ease-out;
-  whitespace: pre-wrap;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     font-size: ${({ theme }) => theme.fontSizes.sm};
