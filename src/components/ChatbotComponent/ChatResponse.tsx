@@ -256,6 +256,35 @@ const TypingCursor = styled.span`
   }
 `;
 
+/**
+ * **텍스트** 형식을 <strong>태그로 변환하는 함수
+ */
+function parseBoldText(text: string): React.ReactNode[] {
+  const parts: React.ReactNode[] = [];
+  const regex = /\*\*(.*?)\*\*/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = regex.exec(text)) !== null) {
+    // ** 이전의 일반 텍스트 추가
+    if (match.index > lastIndex) {
+      parts.push(text.substring(lastIndex, match.index));
+    }
+    
+    // 볼드 텍스트 추가 (** 제거)
+    parts.push(<strong key={match.index}>{match[1]}</strong>);
+    
+    lastIndex = regex.lastIndex;
+  }
+
+  // 마지막 남은 텍스트 추가
+  if (lastIndex < text.length) {
+    parts.push(text.substring(lastIndex));
+  }
+
+  return parts.length > 0 ? parts : [text];
+}
+
 export function BotResponse({
   response,
   isStreaming = false,
@@ -276,7 +305,7 @@ export function BotResponse({
   return (
     <BotResponseContainer>
       <ResponseText>
-        {response.message}
+        {parseBoldText(response.message)}
         {isStreaming && <TypingCursor />}
       </ResponseText>
 
