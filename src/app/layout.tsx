@@ -15,6 +15,9 @@ export const metadata: Metadata = {
   title: '시립대 누가 공지해주나?',
   description: '서울시립대 학생을 위한 통합 공지사항 서비스',
   metadataBase: new URL('https://uosask.example.com'),
+  icons: {
+    icon: '/images/main-logo.svg',
+  },
   openGraph: {
     title: '시립대 누가 공지해주나?',
     description: '서울시립대 학생을 위한 통합 공지사항 서비스',
