@@ -270,10 +270,10 @@ function parseBoldText(text: string): React.ReactNode[] {
     if (match.index > lastIndex) {
       parts.push(text.substring(lastIndex, match.index));
     }
-    
+
     // 볼드 텍스트 추가 (** 제거)
     parts.push(<strong key={match.index}>{match[1]}</strong>);
-    
+
     lastIndex = regex.lastIndex;
   }
 
