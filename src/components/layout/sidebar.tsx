@@ -224,6 +224,22 @@ const Divider = styled.div`
   margin: 0 ${({ theme }) => theme.spacing.md};
 `;
 
+const Backdrop = styled.div<{ isVisible: boolean }>`
+  display: none;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    display: ${({ isVisible }) => (isVisible ? 'block' : 'none')};
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(3px);
+    z-index: 999;
+  }
+`;
+
 interface SidebarProps {
   activeSection?: string;
   onNavigate?: (section: string) => void;
@@ -293,145 +309,150 @@ export function Sidebar({
   };
 
   return (
-    <SidebarContainer isVisible={isVisible}>
-      <SidebarContent>
-        <LogoSection>
-          <LogoWrapper onClick={logoClickEvent}>
-            <LogoIcon>
-              <Image
-                src='/images/main-logo.svg'
-                alt='시누공 로고'
-                width={53}
-                height={53}
-                priority
-              />
-            </LogoIcon>
-            <LogoText>시누공</LogoText>
-          </LogoWrapper>
-          <CloseSidebarButton onClick={onToggle} aria-label='사이드바 닫기'>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              viewBox='0 0 24 24'
-              fill='none'
-              stroke='currentColor'
-              strokeWidth='2'
-              strokeLinecap='round'
-              strokeLinejoin='round'
+    <>
+      <Backdrop isVisible={isVisible} onClick={onToggle} />
+      <SidebarContainer isVisible={isVisible}>
+        <SidebarContent>
+          <LogoSection>
+            <LogoWrapper onClick={logoClickEvent}>
+              <LogoIcon>
+                <Image
+                  src='/images/main-logo.svg'
+                  alt='시누공 로고'
+                  width={53}
+                  height={53}
+                  priority
+                />
+              </LogoIcon>
+              <LogoText>시누공</LogoText>
+            </LogoWrapper>
+            <CloseSidebarButton onClick={onToggle} aria-label='사이드바 닫기'>
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+              >
+                <path d='M15 18l-6-6 6-6' />
+              </svg>
+            </CloseSidebarButton>
+          </LogoSection>
+
+          <Divider />
+
+          <NavSection>
+            <NavItem
+              isActive={activeSection === 'chatbot'}
+              onClick={() => handleNavClick('chatbot')}
             >
-              <path d='M15 18l-6-6 6-6' />
-            </svg>
-          </CloseSidebarButton>
-        </LogoSection>
+              <NavIcon isActive={activeSection === 'chatbot'}>
+                <Image
+                  src='/images/chatBot-icon.svg'
+                  alt='채팅봇'
+                  width={30}
+                  height={30}
+                />
+              </NavIcon>
+              <NavText isActive={activeSection === 'chatbot'}>채팅봇</NavText>
+            </NavItem>
 
-        <Divider />
+            <NavItem
+              isActive={activeSection === 'general'}
+              onClick={() => handleNavClick('general')}
+            >
+              <NavIcon isActive={activeSection === 'general'}>
+                <Image
+                  src='/images/general-icon.svg'
+                  alt='일반공지'
+                  width={35}
+                  height={35}
+                />
+              </NavIcon>
+              <NavText isActive={activeSection === 'general'}>일반공지</NavText>
+            </NavItem>
 
-        <NavSection>
-          <NavItem
-            isActive={activeSection === 'chatbot'}
-            onClick={() => handleNavClick('chatbot')}
-          >
-            <NavIcon isActive={activeSection === 'chatbot'}>
-              <Image
-                src='/images/chatBot-icon.svg'
-                alt='채팅봇'
-                width={30}
-                height={30}
-              />
-            </NavIcon>
-            <NavText isActive={activeSection === 'chatbot'}>채팅봇</NavText>
-          </NavItem>
+            <NavItem
+              isActive={activeSection === 'academic'}
+              onClick={() => handleNavClick('academic')}
+            >
+              <NavIcon isActive={activeSection === 'academic'}>
+                <Image
+                  src='/images/department-icon.svg'
+                  alt='학사공지'
+                  width={35}
+                  height={35}
+                />
+              </NavIcon>
+              <NavText isActive={activeSection === 'academic'}>
+                학사공지
+              </NavText>
+            </NavItem>
 
-          <NavItem
-            isActive={activeSection === 'general'}
-            onClick={() => handleNavClick('general')}
-          >
-            <NavIcon isActive={activeSection === 'general'}>
-              <Image
-                src='/images/general-icon.svg'
-                alt='일반공지'
-                width={35}
-                height={35}
-              />
-            </NavIcon>
-            <NavText isActive={activeSection === 'general'}>일반공지</NavText>
-          </NavItem>
+            <NavItem
+              isActive={activeSection === 'department'}
+              onClick={() => handleNavClick('department')}
+            >
+              <NavIcon isActive={activeSection === 'department'}>
+                <Image
+                  src='/images/academic-icon.svg'
+                  alt='학과공지'
+                  width={35}
+                  height={35}
+                />
+              </NavIcon>
+              <NavText isActive={activeSection === 'department'}>
+                학과공지
+              </NavText>
+            </NavItem>
 
-          <NavItem
-            isActive={activeSection === 'academic'}
-            onClick={() => handleNavClick('academic')}
-          >
-            <NavIcon isActive={activeSection === 'academic'}>
-              <Image
-                src='/images/department-icon.svg'
-                alt='학사공지'
-                width={35}
-                height={35}
-              />
-            </NavIcon>
-            <NavText isActive={activeSection === 'academic'}>학사공지</NavText>
-          </NavItem>
+            <NavItem onClick={() => handleNavClick('search')}>
+              <NavIcon>
+                <Image
+                  src='/images/search-icon.svg'
+                  alt='공지검색'
+                  width={22}
+                  height={22}
+                />
+              </NavIcon>
+              <NavText>공지검색</NavText>
+            </NavItem>
+          </NavSection>
 
-          <NavItem
-            isActive={activeSection === 'department'}
-            onClick={() => handleNavClick('department')}
-          >
-            <NavIcon isActive={activeSection === 'department'}>
-              <Image
-                src='/images/academic-icon.svg'
-                alt='학과공지'
-                width={35}
-                height={35}
-              />
-            </NavIcon>
-            <NavText isActive={activeSection === 'department'}>
-              학과공지
-            </NavText>
-          </NavItem>
+          <SearchModal
+            isOpen={isSearchModalOpen}
+            onClose={() => setIsSearchModalOpen(false)}
+          />
 
-          <NavItem onClick={() => handleNavClick('search')}>
-            <NavIcon>
-              <Image
-                src='/images/search-icon.svg'
-                alt='공지검색'
-                width={22}
-                height={22}
-              />
-            </NavIcon>
-            <NavText>공지검색</NavText>
-          </NavItem>
-        </NavSection>
+          <Divider />
 
-        <SearchModal
-          isOpen={isSearchModalOpen}
-          onClose={() => setIsSearchModalOpen(false)}
-        />
-
-        <Divider />
-
-        <SectionTitle>최근 본 공지</SectionTitle>
-        <HistoryList>
-          {recent.map((item) => (
-            <HistoryItemWrapper key={item.link}>
-              <HistoryItem
-                onClick={() => item.link && window.open(item.link, '_blank')}
-                onMouseEnter={(e) => handleMouseEnter(item.link, e)}
-                onMouseLeave={handleMouseLeave}
-              >
-                {item.title}
-              </HistoryItem>
-              <HistoryItemExpanded
-                isVisible={hoveredItem === item.link}
-                style={{
-                  top: `${tooltipPosition.top}px`,
-                  left: `${tooltipPosition.left}px`,
-                }}
-              >
-                {item.title}
-              </HistoryItemExpanded>
-            </HistoryItemWrapper>
-          ))}
-        </HistoryList>
-      </SidebarContent>
-    </SidebarContainer>
+          <SectionTitle>최근 본 공지</SectionTitle>
+          <HistoryList>
+            {recent.map((item) => (
+              <HistoryItemWrapper key={item.link}>
+                <HistoryItem
+                  onClick={() => item.link && window.open(item.link, '_blank')}
+                  onMouseEnter={(e) => handleMouseEnter(item.link, e)}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  {item.title}
+                </HistoryItem>
+                <HistoryItemExpanded
+                  isVisible={hoveredItem === item.link}
+                  style={{
+                    top: `${tooltipPosition.top}px`,
+                    left: `${tooltipPosition.left}px`,
+                  }}
+                >
+                  {item.title}
+                </HistoryItemExpanded>
+              </HistoryItemWrapper>
+            ))}
+          </HistoryList>
+        </SidebarContent>
+      </SidebarContainer>
+    </>
   );
 }

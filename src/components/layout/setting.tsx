@@ -15,6 +15,22 @@ interface SettingProps {
   onChange?: (payload: UserSettings) => void;
 }
 
+const Backdrop = styled.div`
+  display: none;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(3px);
+    z-index: 49;
+  }
+`;
+
 const Container = styled.div`
   position: absolute;
   top: 90px; /* below header */
@@ -26,6 +42,16 @@ const Container = styled.div`
   box-shadow: ${({ theme }) => theme.shadows.lg};
   padding: ${({ theme }) => theme.spacing.lg};
   z-index: 50;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    right: auto;
+    width: calc(100% - 32px);
+    max-width: 360px;
+  }
 `;
 
 const Title = styled.h3`
@@ -128,8 +154,10 @@ export function Setting({ open, onClose, onChange }: SettingProps) {
   const availableDepartments = departmentMap.get(university) ?? [];
 
   return (
-    <Container role='dialog' aria-modal='true' aria-label='설정'>
-      <Title>설정</Title>
+    <>
+      <Backdrop onClick={onClose} />
+      <Container role='dialog' aria-modal='true' aria-label='설정'>
+        <Title>설정</Title>
       <Field>
         <Label htmlFor='university'>단과대학</Label>
         <Select
@@ -161,11 +189,12 @@ export function Setting({ open, onClose, onChange }: SettingProps) {
           ))}
         </Select>
       </Field>
-      <Actions>
-        <Button onClick={onClose}>취소</Button>
-        <Button onClick={handleSave}>저장</Button>
-      </Actions>
-    </Container>
+        <Actions>
+          <Button onClick={onClose}>취소</Button>
+          <Button onClick={handleSave}>저장</Button>
+        </Actions>
+      </Container>
+    </>
   );
 }
 

@@ -15,6 +15,10 @@ const HeaderContainer = styled.header`
   justify-content: space-between;
   padding: 0 ${({ theme }) => theme.spacing['2xl']};
   position: relative;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    padding: 0 ${({ theme }) => theme.spacing.sm};
+  }
 `;
 
 const HeaderActions = styled.div`
@@ -167,8 +171,7 @@ const HelpTooltip = styled.div<{ isVisible: boolean }>`
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     width: 320px;
     font-size: ${({ theme }) => theme.fontSizes.xs};
-    padding: ${({ theme }) => theme.spacing.sm}
-      ${({ theme }) => theme.spacing.md};
+    padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
   }
 `;
 

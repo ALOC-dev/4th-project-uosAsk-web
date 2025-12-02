@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { Sidebar } from './sidebar';
 import { Header } from './header';
@@ -21,6 +21,10 @@ const MainContent = styled.main<{ isSidebarVisible: boolean }>`
   height: 100vh;
   overflow: hidden;
   transition: margin-left 0.3s ease;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    margin-left: 0;
+  }
 `;
 
 const ContentArea = styled.div`
@@ -34,6 +38,11 @@ const ContentArea = styled.div`
   align-items: flex-start;
   overflow: hidden;
   position: relative;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    padding: 0;
+    border-radius: ${({ theme }) => theme.radii.sm};
+  }
 `;
 
 export const OpenSidebarButton = styled.button`
@@ -73,6 +82,10 @@ const ContentContainer = styled.div`
   border-radius: ${({ theme }) => theme.radii.lg};
   box-sizing: border-box;
   overflow: hidden;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    border-radius: 0;
+  }
 `;
 
 interface MainLayoutProps {
@@ -89,7 +102,22 @@ export function MainLayout({
   onNewChat,
 }: MainLayoutProps) {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(
+    window.innerWidth > 640,
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 640) {
+        setIsSidebarVisible(false);
+      }
+    };
+
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleOpenSettings = () => setIsSettingsOpen((prev) => !prev);
   const handleCloseSettings = () => setIsSettingsOpen(false);
