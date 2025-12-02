@@ -175,17 +175,33 @@ const HelpTooltip = styled.div<{ isVisible: boolean }>`
   }
 `;
 
+const OpenSidebarButtonWrapper = styled.div<{
+  isSidebarVisible: boolean | null;
+}>`
+  ${({ isSidebarVisible }) =>
+    isSidebarVisible === null
+      ? `
+    display: none;
+    @media (max-width: 640px) {
+      display: block;
+    }
+  `
+      : isSidebarVisible
+        ? `display: none;`
+        : `display: block;`}
+`;
+
 interface HeaderProps {
   onNewChat?: () => void;
   onSettingsClick?: () => void;
-  isSidebarVisible?: boolean;
+  isSidebarVisible?: boolean | null;
   onOpenSidebar?: () => void;
 }
 
 export function Header({
   onNewChat,
   onSettingsClick,
-  isSidebarVisible = true,
+  isSidebarVisible = null,
   onOpenSidebar,
 }: HeaderProps) {
   const { themeMode, toggleTheme } = useTheme();
@@ -201,8 +217,8 @@ export function Header({
 
   return (
     <HeaderContainer>
-      <div>
-        {!isSidebarVisible && onOpenSidebar && (
+      <OpenSidebarButtonWrapper isSidebarVisible={isSidebarVisible}>
+        {onOpenSidebar && (
           <OpenSidebarButton onClick={onOpenSidebar} aria-label='사이드바 열기'>
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -217,7 +233,7 @@ export function Header({
             </svg>
           </OpenSidebarButton>
         )}
-      </div>
+      </OpenSidebarButtonWrapper>
       <HeaderActions>
         <HelpButtonContainer
           onMouseEnter={handleMouseEnter}

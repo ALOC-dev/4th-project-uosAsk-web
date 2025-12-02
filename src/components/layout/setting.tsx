@@ -158,37 +158,37 @@ export function Setting({ open, onClose, onChange }: SettingProps) {
       <Backdrop onClick={onClose} />
       <Container role='dialog' aria-modal='true' aria-label='설정'>
         <Title>설정</Title>
-      <Field>
-        <Label htmlFor='university'>단과대학</Label>
-        <Select
-          id='university'
-          value={university}
-          onChange={(e) => setUniversity(e.target.value)}
-        >
-          <option value=''>선택하세요</option>
-          {universities.map((u) => (
-            <option key={u} value={u}>
-              {u}
-            </option>
-          ))}
-        </Select>
-      </Field>
-      <Field>
-        <Label htmlFor='department'>학과</Label>
-        <Select
-          id='department'
-          value={department}
-          onChange={(e) => setDepartment(e.target.value)}
-          disabled={!university}
-        >
-          <option value=''>선택하세요</option>
-          {availableDepartments.map((d) => (
-            <option key={d} value={d}>
-              {d}
-            </option>
-          ))}
-        </Select>
-      </Field>
+        <Field>
+          <Label htmlFor='university'>단과대학</Label>
+          <Select
+            id='university'
+            value={university}
+            onChange={(e) => setUniversity(e.target.value)}
+          >
+            <option value=''>선택하세요</option>
+            {universities.map((u) => (
+              <option key={u} value={u}>
+                {u}
+              </option>
+            ))}
+          </Select>
+        </Field>
+        <Field>
+          <Label htmlFor='department'>학과</Label>
+          <Select
+            id='department'
+            value={department}
+            onChange={(e) => setDepartment(e.target.value)}
+            disabled={!university}
+          >
+            <option value=''>선택하세요</option>
+            {availableDepartments.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </Select>
+        </Field>
         <Actions>
           <Button onClick={onClose}>취소</Button>
           <Button onClick={handleSave}>저장</Button>

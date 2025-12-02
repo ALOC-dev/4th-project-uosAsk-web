@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useState, useEffect } from 'react';
+import { ReactNode, useState } from 'react';
 import styled from '@emotion/styled';
 import { Sidebar } from './sidebar';
 import { Header } from './header';
@@ -13,16 +13,27 @@ const LayoutContainer = styled.div`
   overflow: hidden;
 `;
 
-const MainContent = styled.main<{ isSidebarVisible: boolean }>`
+const MainContent = styled.main<{ isSidebarVisible: boolean | null }>`
   flex: 1;
-  margin-left: ${({ isSidebarVisible }) => (isSidebarVisible ? '225px' : '0')};
   display: flex;
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
   transition: margin-left 0.3s ease;
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+  ${({ isSidebarVisible }) =>
+    isSidebarVisible === null
+      ? `
+    margin-left: 225px;
+    @media (max-width: 640px) {
+      margin-left: 0;
+    }
+  `
+      : `
+    margin-left: ${isSidebarVisible ? '225px' : '0'};
+  `}
+
+  @media (max-width: 640px) {
     margin-left: 0;
   }
 `;
@@ -102,22 +113,9 @@ export function MainLayout({
   onNewChat,
 }: MainLayoutProps) {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isSidebarVisible, setIsSidebarVisible] = useState(
-    window.innerWidth > 640,
+  const [isSidebarVisible, setIsSidebarVisible] = useState<boolean | null>(
+    null,
   );
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 640) {
-        setIsSidebarVisible(false);
-      }
-    };
-
-    handleResize();
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const handleOpenSettings = () => setIsSettingsOpen((prev) => !prev);
   const handleCloseSettings = () => setIsSettingsOpen(false);
@@ -127,7 +125,15 @@ export function MainLayout({
   }) => {
     // Reserved for propagating selection to app state if needed later
   };
-  const handleToggleSidebar = () => setIsSidebarVisible((prev) => !prev);
+  const handleToggleSidebar = () => {
+    setIsSidebarVisible((prev) => {
+      if (prev === null) {
+        // 첫 토글: 현재 화면 크기 기준으로 반대로
+        return window.innerWidth <= 640;
+      }
+      return !prev;
+    });
+  };
 
   return (
     <LayoutContainer>

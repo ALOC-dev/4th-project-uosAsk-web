@@ -8,17 +8,28 @@ import { theme } from '@/styles/theme';
 import SearchModal from '../modal/searchModal';
 import { useRecentNotices } from '@/services/notice/useRecentNotices';
 
-const SidebarContainer = styled.aside<{ isVisible: boolean }>`
+const SidebarContainer = styled.aside<{ isVisible: boolean | null }>`
   width: 225px;
   height: 100vh;
   background-color: ${({ theme }) => theme.colors.background};
   position: fixed;
-  left: ${({ isVisible }) => (isVisible ? '0' : '-225px')};
   top: 0;
   overflow: hidden;
   padding: 0;
   z-index: 1000;
   transition: left 0.3s ease;
+
+  ${({ isVisible }) =>
+    isVisible === null
+      ? `
+    left: 0;
+    @media (max-width: 640px) {
+      left: -225px;
+    }
+  `
+      : `
+    left: ${isVisible ? '0' : '-225px'};
+  `}
 `;
 
 const SidebarContent = styled.div`
@@ -224,26 +235,33 @@ const Divider = styled.div`
   margin: 0 ${({ theme }) => theme.spacing.md};
 `;
 
-const Backdrop = styled.div<{ isVisible: boolean }>`
+const Backdrop = styled.div<{ isVisible: boolean | null }>`
   display: none;
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    display: ${({ isVisible }) => (isVisible ? 'block' : 'none')};
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(3px);
-    z-index: 999;
+  @media (max-width: 640px) {
+    ${({ isVisible }) =>
+      isVisible === true
+        ? `
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(3px);
+      z-index: 999;
+    `
+        : `
+      display: none;
+    `}
   }
 `;
 
 interface SidebarProps {
   activeSection?: string;
   onNavigate?: (section: string) => void;
-  isVisible?: boolean;
+  isVisible?: boolean | null;
   onToggle?: () => void;
 }
 
@@ -259,7 +277,7 @@ const ROUTE_MAP: Record<string, string> = {
 export function Sidebar({
   activeSection,
   onNavigate,
-  isVisible = true,
+  isVisible = null,
   onToggle,
 }: SidebarProps) {
   const router = useRouter();
