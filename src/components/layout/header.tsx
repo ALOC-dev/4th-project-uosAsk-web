@@ -25,6 +25,7 @@ const HeaderActions = styled.div`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.md};
+  margin-left: auto;
 `;
 
 const NewChatButton = styled.button`
