@@ -72,6 +72,10 @@ const NoticeItem = styled.div`
   &:hover {
     background-color: ${({ theme }) => theme.colors.backgroundSecondary};
   }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    padding-left: ${({ theme }) => theme.spacing['lg']};
+  }
 `;
 
 const NoticeTitle = styled.h3`

@@ -74,6 +74,11 @@ const SearchIconWrapper = styled.div`
   img {
     filter: brightness(0.8) contrast(1.2) saturate(1.3);
   }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    width: 24px;
+    height: 24px;
+  }
 `;
 
 const SearchInput = styled.input`
@@ -91,6 +96,11 @@ const SearchInput = styled.input`
   &::placeholder {
     color: ${({ theme }) => theme.colors.textSecondary};
     opacity: 0.5;
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    font-size: ${({ theme }) => theme.fontSizes['xl']};
+    width: 100%;
   }
 `;
 
