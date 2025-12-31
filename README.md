@@ -1,7 +1,7 @@
 # uosAsk - 서울시립대 공지 검색 플랫폼
 
-![Next.js](https://img.shields.io/badge/Next.js-15.5.3-black?logo=next.js)
-![React](https://img.shields.io/badge/React-19.1.0-61DAFB?logo=react)
+![Next.js](https://img.shields.io/badge/Next.js-15.5.9-black?logo=next.js)
+![React](https://img.shields.io/badge/React-19.1.2-61DAFB?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-blue?logo=typescript)
 ![Emotion](https://img.shields.io/badge/Emotion-11.14.0-D26AC2?logo=styled-components)
 ![pnpm](https://img.shields.io/badge/pnpm-10.15.1-orange?logo=pnpm)
